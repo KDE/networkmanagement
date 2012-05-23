@@ -271,15 +271,22 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             Knm::Connection * c = conIter.next();
             if (c->uuid() == con->uuid()) {
                 QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(d->settingsToRead);
+                bool deleteConnection = false;
                 while (i.hasNext()) {
-                    if (i.next().key() != c->uuid())
+                    i.next();
+                    if (i.key() != c->uuid() || i.value().first != name)
                         continue;
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     i.remove();
+                    deleteConnection = true;
                     kDebug() << "Removing stale request" << c->uuid() << pair.first;
                 }
-                delete c;
-                conIter.remove();
+                // the same connection may contain secrets in different settings,
+                // delete the connection only if there is no more secrets to read from it.
+                if (deleteConnection && !d->settingsToRead.contains(con->uuid())) {
+                    delete c;
+                    conIter.remove();
+                }
             }
         }
 
