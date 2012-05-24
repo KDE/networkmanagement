@@ -133,6 +133,9 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS))) {
     setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
+  } else {
+    // this is needed when the connection is being updated instead of created.
+    setting->setIgnoredhcpdns(false);
   }
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES))) {
     setting->setIgnoreautoroute(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES)).value<bool>());
