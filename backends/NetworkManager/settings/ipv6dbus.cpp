@@ -176,6 +176,7 @@ QVariantMap Ipv6Dbus::toMap()
           break;
       case Knm::Ipv6Setting::EnumMethod::Dhcp:
           map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_DHCP));
+          break;
       case Knm::Ipv6Setting::EnumMethod::LinkLocal:
           map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_LINK_LOCAL));
           break;
