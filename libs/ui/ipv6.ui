@@ -109,12 +109,17 @@
         <widget class="KComboBox" name="method">
          <item>
           <property name="text">
-           <string>DHCP</string>
+           <string>Automatic</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>DHCP (only address)</string>
+           <string>Automatic (addresses only)</string>
+          </property>
+         </item>
+	 <item>
+          <property name="text">
+           <string>Automatic (DHCP only)</string>
           </property>
          </item>
          <item>

@@ -42,7 +42,7 @@ public:
     }
 
     // Make sure that this order is same as the combobox shown in ipv4.ui file
-    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, ManualMethodIndex, LinkLocalMethodIndex, SharedMethodIndex, IgnoreMethodIndex };
+    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticAddressesOnlyMethodIndex, DhcpMethodIndex, ManualMethodIndex, LinkLocalMethodIndex, SharedMethodIndex, IgnoreMethodIndex };
     Ui_SettingsIp6Config ui;
     Knm::Ipv6Setting * setting;
     bool isAdvancedModeOn;
@@ -56,40 +56,6 @@ IpV6Widget::IpV6Widget(Knm::Connection * connection, QWidget * parent)
     for(int index=0; index < d->ui.stackedWidget->count(); ++index) {
         d->ui.stackedWidget->widget(index)->layout()->setMargin(0);
     }
-
-    QString str_auto;
-    QString str_auto_only;
-    Knm::Connection::Type connType = connection->type();
-
-    kDebug() << connection->name() << connection->uuid().toString() << connection->typeAsString(connection->type());
-
-    if (Knm::Connection::Vpn == connType) {
-        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
-                         "Automatic (VPN)");
-        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
-                              "Automatic (VPN) addresses only");
-    }
-    else if (Knm::Connection::Gsm == connType
-             || Knm::Connection::Cdma == connType) {
-        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
-                         "Automatic (PPP)");
-        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
-                              "Automatic (PPP) addresses only");
-    }
-    else if (Knm::Connection::Pppoe == connType) {
-        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
-                         "Automatic (DSL)");
-        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
-                              "Automatic (DSL) addresses only");
-    }
-    else {
-        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
-                         "Automatic (DHCP)");
-        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
-                              "Automatic (DHCP) addresses only");
-    }
-    d->ui.method->setItemText(0, str_auto);
-    d->ui.method->setItemText(1, str_auto_only);
 
     d->ui.address->setValidator(new SimpleIpV6AddressValidator(this));
     d->ui.netMask->setValidator(new IntValidator(0, 128, this));
@@ -136,13 +102,16 @@ void IpV6Widget::readConfig()
         case Knm::Ipv6Setting::EnumMethod::Automatic:
             kDebug() << "Method: Automatic";
             if (d->setting->ignoredhcpdns()) {
-                d->ui.method->setCurrentIndex(d->AutomaticOnlyIPMethodIndex);
+                d->ui.method->setCurrentIndex(d->AutomaticAddressesOnlyMethodIndex);
                 dnsPartEnabled = true;
-            }
-            else {
+            } else {
                 d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
             }
             advancedSettingsPartEnabled = true;
+            break;
+        case Knm::Ipv6Setting::EnumMethod::Dhcp:
+            kDebug() << "Method: Dhcp";
+            d->ui.method->setCurrentIndex(d->DhcpMethodIndex);
             break;
         case Knm::Ipv6Setting::EnumMethod::LinkLocal:
             kDebug() << "Method: LinkLocal";
@@ -228,9 +197,13 @@ void IpV6Widget::writeConfig()
             d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Automatic);
             d->setting->setIgnoredhcpdns(false);
             break;
-        case IpV6WidgetPrivate::AutomaticOnlyIPMethodIndex:
+        case IpV6WidgetPrivate::AutomaticAddressesOnlyMethodIndex:
             d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Automatic);
             d->setting->setIgnoredhcpdns(true);
+            break;
+        case IpV6WidgetPrivate::DhcpMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Dhcp);
+            d->setting->setIgnoredhcpdns(false);
             break;
         case IpV6WidgetPrivate::LinkLocalMethodIndex:
             d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::LinkLocal);
@@ -312,10 +285,10 @@ void IpV6Widget::methodChanged(int currentIndex)
     if (IpV6WidgetPrivate::ManualMethodIndex == currentIndex) {
         addressPartEnabled = true;
         dnsPartEnabled = true;
-    }else if (IpV6WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
+    } else if (IpV6WidgetPrivate::AutomaticAddressesOnlyMethodIndex == currentIndex) {
         dnsPartEnabled = true;
-    }
-    else if (IpV6WidgetPrivate::AutomaticMethodIndex != currentIndex){
+    } else if (IpV6WidgetPrivate::AutomaticMethodIndex != currentIndex &&
+               IpV6WidgetPrivate::DhcpMethodIndex != currentIndex) {
         advancedSettingsPartEnabled = false;
     }
 
