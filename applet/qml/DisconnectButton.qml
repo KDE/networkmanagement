@@ -26,8 +26,12 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: disconnectButton
     
+    property bool status;
+    
     width: 16
     height: 16
+    opacity: (status) ? 1 : 0.2
+    
     
     signal hoverButton()
     
@@ -41,15 +45,30 @@ Item {
 
     }
     
+    
+    
     MouseArea {
         id: buttonMouseArea
         anchors.fill: parent
         hoverEnabled: true
         
-        onEntered: {parent.opacity = 0.7; hoverButton()}
+        onEntered: {
+            if(status) {
+                parent.opacity = 0.7; 
+            }
+            hoverButton();
+        }
         
-        onExited:  parent.opacity = 1.0
+        onExited:  {
+            if(status) {
+                parent.opacity = 1.0
+            }
+        }
     }
     
-    scale: buttonMouseArea.pressed ? 0.90 : 1.00
+    scale: {
+        if(status) {
+            buttonMouseArea.pressed ? 0.90 : 1.00
+        }
+    }
 }
