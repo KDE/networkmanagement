@@ -145,6 +145,8 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
   }
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_MAY_FAIL))) {
     setting->setMayfail(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_MAY_FAIL)).value<bool>());
+  } else {
+    setting->setMayfail(true);
   }
 }
 
@@ -270,7 +272,7 @@ QVariantMap Ipv6Dbus::toMap()
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS, setting->ignoredhcpdns());
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES, setting->ignoreautoroute());
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_NEVER_DEFAULT, setting->neverdefault());
-  insertIfTrue(map, NM_SETTING_IP6_CONFIG_MAY_FAIL, setting->mayfail());
+  insertIfFalse(map, NM_SETTING_IP6_CONFIG_MAY_FAIL, setting->mayfail());
   return map;
 }
 
