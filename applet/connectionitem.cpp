@@ -82,7 +82,7 @@ RemoteInterfaceConnection* ConnectionItem::interfaceConnection() const
     if(m_activatable) {
         return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
     }
-    return null;
+    return 0;
 }
 
 QString ConnectionItem::deviceUni()
