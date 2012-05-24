@@ -45,6 +45,7 @@ public:
     static QByteArray macBin2Hex(const QByteArray &binMac);
 protected:
     static void insertIfTrue(QVariantMap& map, const char * key, bool value);
+    static void insertIfFalse(QVariantMap& map, const char * key, bool value);
     static void insertIfNonZero(QVariantMap& map, const char * key, uint value);
     static void insertIfNonEmpty(QVariantMap& map, const char * key, const QString & value);
     Knm::Setting *m_setting;

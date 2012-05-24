@@ -135,6 +135,8 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   }
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL))) {
     setting->setMayfail(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL)).value<bool>());
+  } else {
+    setting->setMayfail(false);
   }
 }
 
@@ -222,7 +224,7 @@ QVariantMap Ipv4Dbus::toMap()
   insertIfTrue(map, NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, setting->neverdefault());
   insertIfNonEmpty(map, NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID, setting->dhcpclientid());
   insertIfNonEmpty(map, NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME, setting->dhcphostname());
-  insertIfTrue(map, NM_SETTING_IP4_CONFIG_MAY_FAIL, setting->mayfail());
+  insertIfFalse(map, NM_SETTING_IP4_CONFIG_MAY_FAIL, setting->mayfail());
   return map;
 }
 
