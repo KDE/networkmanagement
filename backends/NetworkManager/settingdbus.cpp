@@ -92,6 +92,13 @@ void SettingDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
     }
 }
 
+void SettingDbus::insertIfFalse(QVariantMap& map, const char * key, bool setting)
+{
+    if (!setting) {
+        map.insert(QLatin1String(key), false);
+    }
+}
+
 void SettingDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
 {
     if (setting != 0) {

@@ -192,7 +192,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
 
-    //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+    //connect(e, SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
 
     details = new InterfaceDetails();
 }

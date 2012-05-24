@@ -32,7 +32,7 @@ class OpenconnectAuthWorkerThread : public QThread
     Q_OBJECT
     friend class OpenconnectAuthStaticWrapper;
 public:
-    OpenconnectAuthWorkerThread(QMutex *, QWaitCondition *, bool *);
+    OpenconnectAuthWorkerThread(QMutex *, QWaitCondition *, bool *, int);
     ~OpenconnectAuthWorkerThread();
     struct openconnect_info* getOpenconnectInfo();
 

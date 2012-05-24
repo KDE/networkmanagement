@@ -133,6 +133,9 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS))) {
     setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
+  } else {
+    // this is needed when the connection is being updated instead of created.
+    setting->setIgnoredhcpdns(false);
   }
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES))) {
     setting->setIgnoreautoroute(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES)).value<bool>());
@@ -142,6 +145,8 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
   }
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_MAY_FAIL))) {
     setting->setMayfail(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_MAY_FAIL)).value<bool>());
+  } else {
+    setting->setMayfail(true);
   }
 }
 
@@ -176,6 +181,7 @@ QVariantMap Ipv6Dbus::toMap()
           break;
       case Knm::Ipv6Setting::EnumMethod::Dhcp:
           map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_DHCP));
+          break;
       case Knm::Ipv6Setting::EnumMethod::LinkLocal:
           map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_LINK_LOCAL));
           break;
@@ -266,7 +272,7 @@ QVariantMap Ipv6Dbus::toMap()
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS, setting->ignoredhcpdns());
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES, setting->ignoreautoroute());
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_NEVER_DEFAULT, setting->neverdefault());
-  insertIfTrue(map, NM_SETTING_IP6_CONFIG_MAY_FAIL, setting->mayfail());
+  insertIfFalse(map, NM_SETTING_IP6_CONFIG_MAY_FAIL, setting->mayfail());
   return map;
 }
 

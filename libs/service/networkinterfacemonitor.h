@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class NetworkInterfaceMonitorPrivate;
-class PinDialog;
 
 /**
  * Monitors network hardware and maintains NetworkInterfaceActivatableProviders for them
@@ -40,7 +39,7 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(NetworkInterfaceMonitor)
 public:
     NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
-    ~NetworkInterfaceMonitor();
+    virtual ~NetworkInterfaceMonitor();
 public Q_SLOTS:
     void deviceAdded(const QString &);
     void deviceRemoved(const QString &);
@@ -49,7 +48,6 @@ public Q_SLOTS:
     void onSendPinArrived(QDBusPendingCallWatcher *);
 private:
     NetworkInterfaceMonitorPrivate * d_ptr;
-    PinDialog * dialog;
 };
 
 #endif // NETWORKINTERFACEMONITOR_H

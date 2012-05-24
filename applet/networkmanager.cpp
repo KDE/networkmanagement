@@ -112,7 +112,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
 
     m_activatables = new RemoteActivatableList(this);
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)), this, SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), this, SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(disappeared()), this, SLOT(activatablesDisappeared()));
 }

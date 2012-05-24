@@ -83,7 +83,7 @@ void Nm08Connections::importNextNm08Connection()
                     //prefs->config()->deleteGroup(QLatin1String("Connection_") + con->uuid());
                     //QString configFile = KStandardDirs::locate("data", CONNECTION_PERSISTENCE_PATH + con->uuid());
                     //File::remove(configFile);
-		    m_connectionsToImport.removeOne(con->uuid());
+                    m_connectionsToImport.removeOne(con->uuid());
                 }
                 prefs->setConnections(m_connectionsToImport);
                 prefs->writeConfig();
@@ -138,7 +138,7 @@ void Nm08Connections::importNextNm08Connection()
         SettingPersistence * sp = persistenceFor(setting, config);
         sp->load();
 
-	// This is asynchronous, Nm08Connections::gotSecrets() is the callback.
+        // This is asynchronous, Nm08Connections::gotSecrets() is the callback.
         m_secretStorage->loadSecrets(connection, setting->name(), SecretsProvider::None);
     }
     return;

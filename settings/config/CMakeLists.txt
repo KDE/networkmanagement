@@ -16,6 +16,7 @@ set(kcm_networkmanagement_SRCS
    manageconnectionwidget.cpp
    mobileconnectionwizard.cpp
    mobileproviders.cpp
+   treewidgetitem.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 

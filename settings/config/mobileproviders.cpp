@@ -118,6 +118,8 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
     if (country.length() > 2) {
         country = mCountries.key(country);
     }
+    QMap<QString, QString> sortedGsm;
+    QMap<QString, QString> sortedCdma;
     while (!n.isNull()) {
         QDomElement e = n.toElement(); // <country ...>
 
@@ -156,9 +158,11 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
                     QString name = getNameByLocale(localizedProviderNames);
                     if (hasGsm) {
                         mProvidersGsm.insert(name, e2.firstChild());
+                        sortedGsm.insert(name.toLower(), name);
                     }
                     if (hasCdma) {
                         mProvidersCdma.insert(name, e2.firstChild());
+                        sortedCdma.insert(name.toLower(), name);
                     }
                 }
                 n2 = n2.nextSibling();
@@ -168,14 +172,10 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
         n = n.nextSibling();
     }
 
-    QStringList temp;
     if (type == Knm::Connection::Gsm) {
-        temp = mProvidersGsm.keys();
-    } else if (type == Knm::Connection::Cdma) {
-        temp = mProvidersCdma.keys();
+        return sortedGsm.values();
     }
-    temp.sort();
-    return temp;
+    return sortedCdma.values();
 }
 
 QStringList MobileProviders::getApns(const QString & provider)

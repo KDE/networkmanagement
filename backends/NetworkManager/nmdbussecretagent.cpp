@@ -74,8 +74,17 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
     pair.second = msg;
+
+    // remove stale request to prevent crashes.
+    // https://bugs.kde.org/show_bug.cgi?id=283105
+    if (d->connectionsToRead.contains(con->uuid() + setting_name)) {
+        d->connectionsToRead.remove(con->uuid() + setting_name);
+    }
     d->connectionsToRead.insert(con->uuid() + setting_name, pair);
-    d->objectPaths.append(connection_path.path() + setting_name);
+
+    if (!d->objectPaths.contains(connection_path.path() + setting_name)) {
+        d->objectPaths.append(connection_path.path() + setting_name);
+    }
 
     if (d->secretsProvider) {
         foreach (Knm::Setting * setting, con->settings()) {

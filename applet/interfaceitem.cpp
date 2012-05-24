@@ -65,7 +65,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_starting(true)
 {
     connect(m_activatables, SIGNAL(disappeared()), this, SLOT(serviceDisappeared()));
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)), SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));

@@ -53,9 +53,9 @@ public:
         enum type {NoError = 0, MissingContents, WalletDisabled, WalletNotFound, WalletOpenRefused };
     };
 
-    SecretStorage();
+    SecretStorage(QObject * parent = 0);
 
-    ~SecretStorage();
+    virtual ~SecretStorage();
 
     Knm::Connection * connection() const;
 

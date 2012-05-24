@@ -43,7 +43,7 @@ VpnInterfaceItem::VpnInterfaceItem(NetworkManager::Device * iface, RemoteActivat
 
     // Catch all kinds of signals to update the VPN widget
 
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)),
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)),
             SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
             SLOT(activatableRemoved(RemoteActivatable*)));
