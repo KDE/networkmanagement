@@ -428,7 +428,6 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
         return;
     }
 
-
     /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
      * effects work. However, setPopupIcon creates a Plasma::IconWidget object that draws itself over
      * contentsRect and, consequentely, over the overlays created by paintStatusOverlay and paintNeedAuthOverlay.
@@ -446,7 +445,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     painter.begin(&newIcon);
 
     if (el.isEmpty()) {
-	m_currentSvgElement = m_currentPixmapIconName;
+        m_currentSvgElement = m_currentPixmapIconName;
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     } else {
         m_currentSvgElement = el;
