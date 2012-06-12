@@ -199,6 +199,12 @@ void RemoteActivatableList::serviceOwnerChanged(const QString & changedService, 
             clear();
             emit disappeared();
         } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            if (d->iface) {
+                // this object is probably invalid now (d->iface->isValid() == false), so delete it.
+                d->iface->deleteLater();
+            }
+            d->iface = new NetworkManagementInterface("org.kde.networkmanagement", "/org/kde/networkmanagement", QDBusConnection::sessionBus(), this);
+
             init();
             emit appeared();
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {

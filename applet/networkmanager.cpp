@@ -1,6 +1,7 @@
 /*
 Copyright 2008, 2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -316,19 +317,6 @@ void NetworkManagerApplet::init()
         connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
 
-    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and
-    // NMPopup has been allocated.
-    m_activatables->init();
-    interfaceConnectionStateChanged();
-
-    // to force InterfaceItems to update their hasDefaultRoute state.
-    if (m_activeInterface) {
-        QMetaObject::invokeMethod(m_activeInterface, "connectionStateChanged",
-                                  Q_ARG(int, m_activeInterface->connectionState()),
-                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::UnknownState),
-                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::NoReason));
-    }
-
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ModuleReady", this, SLOT(finishInitialization()));
 
@@ -344,6 +332,21 @@ void NetworkManagerApplet::finishInitialization()
                                      QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
     networkmanagement.call(QLatin1String("FinishInitialization"));
+
+    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*,int)) has been connected and
+    // NMPopup has been allocated.
+    m_activatables->init();
+
+    // this needs m_activables initialized so that it can get the connection name to add to the InterfaceItem.
+    interfaceConnectionStateChanged();
+
+    // to force InterfaceItems to update their hasDefaultRoute state.
+    if (m_activeInterface) {
+        QMetaObject::invokeMethod(m_activeInterface, "connectionStateChanged",
+                                  Q_ARG(int, m_activeInterface->connectionState()),
+                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::UnknownState),
+                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::NoReason));
+    }
 }
 
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
