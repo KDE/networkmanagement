@@ -324,19 +324,6 @@ void NetworkManagerApplet::init()
     d->actions.append(action);
     setGraphicsWidget(d->m_popup);
 
-    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and
-    // NMPopup has been allocated.
-    m_activatables->init();
-    interfaceConnectionStateChanged();
-
-    // to force InterfaceItems to update their hasDefaultRoute state.
-    if (m_activeInterface) {
-        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
-                                  Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
-                                  Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
-                                  Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
-    }
-
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ModuleReady", this, SLOT(finishInitialization()));
 
@@ -352,6 +339,21 @@ void NetworkManagerApplet::finishInitialization()
                                      QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
     networkmanagement.call(QLatin1String("FinishInitialization"));
+
+    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*,int)) has been connected and
+    // NMPopup has been allocated.
+    m_activatables->init();
+
+    // this needs m_activables initialized so that it can get the connection name to add to the InterfaceItem.
+    interfaceConnectionStateChanged();
+
+    // to force InterfaceItems to update their hasDefaultRoute state.
+    if (m_activeInterface) {
+        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
+                                  Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
+                                  Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
+                                  Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
+    }
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
