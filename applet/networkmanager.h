@@ -125,6 +125,8 @@ private:
     bool hasInterfaceOfType(NetworkManager::Device::Type type);
     void setupInterfaceSignals();
     QString svgElement(NetworkManager::Device *iface);
+    QString m_currentSvgElement;
+    QString m_currentPixmapIconName;
 
     void paintStatusOverlay(QPainter* p, QRect & rect);
     void paintNeedAuthOverlay(QPainter* p, QRect & rect);
