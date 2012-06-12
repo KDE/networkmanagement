@@ -396,7 +396,8 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 void NetworkManagerApplet::updatePixmap()
 {
     int s = UiUtils::iconSize(contentsRect().size());
-    m_pixmap = KIcon(UiUtils::iconName(m_activeSystrayInterface)).pixmap(s, s);
+    m_currentPixmapIconName = UiUtils::iconName(m_activeSystrayInterface);
+    m_pixmap = KIcon(m_currentPixmapIconName).pixmap(s, s);
     update();
 }
 
@@ -410,6 +411,14 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
         adjustSize();
         return;
     }
+
+    QString el = svgElement(m_activeSystrayInterface);
+
+    if(el == m_currentSvgElement || (el.isEmpty() && m_currentSvgElement == m_currentPixmapIconName)) {
+        // no need to update systray icon
+        return;
+    }
+
 
     /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
      * effects work. However, setPopupIcon creates a Plasma::IconWidget object that draws itself over
@@ -427,11 +436,12 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     QPainter painter;
     painter.begin(&newIcon);
 
-    QString el = svgElement(m_activeSystrayInterface);
     if (el.isEmpty()) {
+        m_currentSvgElement = m_currentPixmapIconName;
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     } else {
-        if (el.startsWith("network-mobile")) {
+        m_currentSvgElement = el;
+        if (el.startsWith(QLatin1String("network-mobile"))) {
             m_svgMobile->paint(&painter, rect, el);
         } else {
             m_svg->paint(&painter, rect, el);

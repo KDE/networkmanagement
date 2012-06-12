@@ -128,6 +128,8 @@ private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
     void setupInterfaceSignals();
     QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
+    QString m_currentSvgElement;
+    QString m_currentPixmapIconName;
 
     void paintStatusOverlay(QPainter* p, QRect & rect);
     void paintNeedAuthOverlay(QPainter* p, QRect & rect);
