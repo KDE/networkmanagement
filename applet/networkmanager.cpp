@@ -461,27 +461,19 @@ bool NetworkManagerApplet::needToUpdateOverlay()
 
     if (m_activeSystrayInterface && m_activeSystrayInterface->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
         temp |= NetworkManagerApplet::NeedAuth;
-    } else {
-        temp &= ~NetworkManagerApplet::NeedAuth;
     }
 
     if (m_totalActiveVpnConnections > 0) {
         temp |= NetworkManagerApplet::Locked;
-    } else {
-        temp &= ~NetworkManagerApplet::Locked;
     }
 
     qreal opacity = m_overlayTimeline.currentValue();
     if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
         temp |= NetworkManagerApplet::PreviousOverlay;
-    } else {
-        temp &= ~NetworkManagerApplet::PreviousOverlay;
     }
 
     if (!m_statusOverlay.isNull()) {
         temp |= NetworkManagerApplet::StatusOverlay;
-    } else {
-        temp &= ~NetworkManagerApplet::StatusOverlay;
     }
 
     return (temp != m_systrayOverlayOption);
