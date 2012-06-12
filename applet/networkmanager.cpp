@@ -491,6 +491,7 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 {
     // Needs authentication, show this in the panel
     if (!m_activeSystrayInterface) {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::NeedAuth;
         kDebug() << "No active interface";
         return;
     }
