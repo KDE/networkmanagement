@@ -423,7 +423,8 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     }
 #endif
 
-    if(el == m_currentSvgElement || (el.isEmpty() && m_currentSvgElement == m_currentPixmapIconName)) {
+    if ((el == m_currentSvgElement || (el.isEmpty() && m_currentSvgElement == m_currentPixmapIconName)) &&
+        !needToUpdateOverlay()) {
         // no need to update systray icon
         return;
     }
@@ -462,6 +463,38 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     setPopupIcon(newIcon);
 }
 
+bool NetworkManagerApplet::needToUpdateOverlay()
+{
+    SystrayOverlayOptions temp;
+
+    if (m_activeSystrayInterface && m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
+        temp |= NetworkManagerApplet::NeedAuth;
+    } else {
+        temp &= ~NetworkManagerApplet::NeedAuth;
+    }
+
+    if (m_totalActiveVpnConnections > 0) {
+        temp |= NetworkManagerApplet::Locked;
+    } else {
+        temp &= ~NetworkManagerApplet::Locked;
+    }
+
+    qreal opacity = m_overlayTimeline.currentValue();
+    if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
+        temp |= NetworkManagerApplet::PreviousOverlay;
+    } else {
+        temp &= ~NetworkManagerApplet::PreviousOverlay;
+    }
+
+    if (!m_statusOverlay.isNull()) {
+        temp |= NetworkManagerApplet::StatusOverlay;
+    } else {
+        temp &= ~NetworkManagerApplet::StatusOverlay;
+    }
+
+    return (temp != m_systrayOverlayOption);
+}
+
 inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 {
     // Needs authentication, show this in the panel
@@ -472,7 +505,7 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
     /*
     kDebug() << "Painting overlay ...>" << m_activeSystrayInterface->state();
     */
-    if (m_activeSystrayInterface && m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
+    if (m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
         //kDebug() << "Needing auth ...>";
         int iconSize = (int)2*(rect.width()/3);
 
@@ -482,6 +515,9 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
                             rect.bottom() - iconSize);
 
         p->drawPixmap(pos, icon);
+        m_systrayOverlayOption |= NetworkManagerApplet::NeedAuth;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::NeedAuth;
     }
 }
 
@@ -491,6 +527,9 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
         int iconSize = (int)2*(rect.width()/3);
         QPixmap pix = KIcon("object-locked").pixmap(iconSize);
         p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
+        m_systrayOverlayOption |= NetworkManagerApplet::Locked;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::Locked;
     }
 
     int oldOpacity = p->opacity();
@@ -498,10 +537,17 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
     if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
         p->setOpacity(1 - opacity);
         p->drawPixmap(rect.left(), rect.bottom() - m_previousStatusOverlay.height(), m_previousStatusOverlay);
+        m_systrayOverlayOption |= NetworkManagerApplet::PreviousOverlay;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::PreviousOverlay;
     }
+
     if (!m_statusOverlay.isNull()) {
         p->setOpacity(opacity);
         p->drawPixmap(rect.left(), rect.bottom() - m_statusOverlay.height(), m_statusOverlay);
+        m_systrayOverlayOption |= NetworkManagerApplet::StatusOverlay;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::StatusOverlay;
     }
     p->setOpacity(oldOpacity);
 }
