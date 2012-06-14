@@ -394,8 +394,13 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 
 void NetworkManagerApplet::updatePixmap()
 {
+    QString iconName = UiUtils::iconName(m_activeSystrayInterface);
+    if (iconName == m_currentPixmapIconName) {
+        return;
+    }
+
     int s = UiUtils::iconSize(contentsRect().size());
-    m_currentPixmapIconName = UiUtils::iconName(m_activeSystrayInterface);
+    m_currentPixmapIconName = iconName;
     m_pixmap = KIcon(m_currentPixmapIconName).pixmap(s, s);
     update();
 }
