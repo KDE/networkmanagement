@@ -29,9 +29,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 extern "C"
 {
 #include <openconnect.h>
+#include <stdlib.h>
+#if !OPENCONNECT_CHECK_VER(1,5)
 #include <openssl/ssl.h>
 #include <openssl/bio.h>
 #include <openssl/ossl_typ.h>
+#endif
 #include <errno.h>
 }
 
@@ -46,7 +49,7 @@ public:
             return static_cast<OpenconnectAuthWorkerThread*>(obj)->writeNewConfig(str, num);
         return -1;
     }
-    static int validatePeerCert(void *obj, struct x509_st *cert, const char *str)
+    static int validatePeerCert(void *obj, OPENCONNECT_X509 *cert, const char *str)
     {
         if (obj)
             return static_cast<OpenconnectAuthWorkerThread*>(obj)->validatePeerCert(cert, str);
@@ -69,13 +72,10 @@ public:
     }
 };
 
-#ifndef OPENCONNECT_CHECK_VER
-#define OPENCONNECT_CHECK_VER(x,y) 0
-#endif
 OpenconnectAuthWorkerThread::OpenconnectAuthWorkerThread(QMutex *mutex, QWaitCondition *waitForUserInput, bool *userDecidedToQuit, int cancelFd)
 : QThread(), m_mutex(mutex), m_waitForUserInput(waitForUserInput), m_userDecidedToQuit(userDecidedToQuit)
 {
-    m_openconnectInfo = openconnect_vpninfo_new_with_cbdata((char*)"OpenConnect VPN Agent (NetworkManager - running on KDE)",
+    m_openconnectInfo = openconnect_vpninfo_new((char*)"OpenConnect VPN Agent (NetworkManager - running on KDE)",
                                          OpenconnectAuthStaticWrapper::validatePeerCert,
                                          OpenconnectAuthStaticWrapper::writeNewConfig,
                                          OpenconnectAuthStaticWrapper::processAuthForm,
@@ -96,7 +96,7 @@ OpenconnectAuthWorkerThread::~OpenconnectAuthWorkerThread()
 
 void OpenconnectAuthWorkerThread::run()
 {
-    openconnect_init_openssl();
+    openconnect_init_ssl();
     int ret = openconnect_obtain_cookie(m_openconnectInfo);
     if (*m_userDecidedToQuit)
         return;
@@ -116,33 +116,50 @@ int OpenconnectAuthWorkerThread::writeNewConfig(char *buf, int buflen)
     emit writeNewConfig(QString(QByteArray(buf).toBase64()));
     return 0;
 }
+#if !OPENCONNECT_CHECK_VER(1,5)
+static char *openconnect_get_cert_details(struct openconnect_info *vpninfo,
+                                          OPENCONNECT_X509 *cert)
+{
+        Q_UNUSED(vpninfo)
 
-int OpenconnectAuthWorkerThread::validatePeerCert(struct x509_st *cert, const char *reason)
+        BIO *bp = BIO_new(BIO_s_mem());
+        BUF_MEM *certinfo;
+        char zero = 0;
+        char *ret;
+
+        X509_print_ex(bp, cert, 0, 0);
+        BIO_write(bp, &zero, 1);
+        BIO_get_mem_ptr(bp, &certinfo);
+
+        ret = strdup(certinfo->data);
+        BIO_free(bp);
+
+        return ret;
+}
+#endif
+
+int OpenconnectAuthWorkerThread::validatePeerCert(OPENCONNECT_X509 *cert, const char *reason)
 {
     if (*m_userDecidedToQuit)
         return -EINVAL;
-    char fingerprint[EVP_MAX_MD_SIZE * 2 + 1];
+    char fingerprint[41];
     int ret = 0;
 
     ret = openconnect_get_cert_sha1(m_openconnectInfo, cert, fingerprint);
     if (ret)
         return ret;
 
-    BIO *bp = BIO_new(BIO_s_mem());
-    BUF_MEM *certinfo;
-    X509_print_ex(bp, cert, 0, 0);
-
-    BIO_get_mem_ptr(bp, &certinfo);
+    char *details = openconnect_get_cert_details(m_openconnectInfo, cert);
 
     bool accepted = false;
     m_mutex->lock();
     QString qFingerprint(fingerprint);
-    QString qCertinfo(certinfo->data);
+    QString qCertinfo(details);
     QString qReason(reason);
     emit validatePeerCert(qFingerprint, qCertinfo, qReason, &accepted);
     m_waitForUserInput->wait(m_mutex);
     m_mutex->unlock();
-    BIO_free(bp);
+    ::free(details);
     if (*m_userDecidedToQuit)
         return -EINVAL;
 

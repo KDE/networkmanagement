@@ -34,7 +34,6 @@ namespace Knm
 class QLayout;
 struct openconnect_info;
 struct oc_auth_form;
-struct x509_st;
 
 class OpenconnectAuthWidgetPrivate;
 

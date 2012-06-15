@@ -35,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPushButton>
 #include <KComboBox>
 #include <QDomDocument>
+#include <QCryptographicHash>
 
 #include "nm-openconnect-service.h"
 
@@ -45,8 +46,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 extern "C"
 {
 #include <string.h>
-#include <openssl/ssl.h>
-#include <openconnect.h>
 #include <unistd.h>
 #include <fcntl.h>
 }
@@ -184,21 +183,13 @@ void OpenconnectAuthWidget::readSecrets()
         d->certificateFingerprints.append(d->secrets[NM_OPENCONNECT_KEY_GWCERT]);
     }
     if (!d->secrets["xmlconfig"].isEmpty()) {
-        unsigned char sha1[SHA_DIGEST_LENGTH];
-        char sha1_text[SHA_DIGEST_LENGTH * 2];
-        EVP_MD_CTX c;
-        int i;
 
         QByteArray config = QByteArray::fromBase64(d->secrets["xmlconfig"].toAscii());
 
-        EVP_MD_CTX_init (&c);
-        EVP_Digest (config.data(), config.size(), sha1, NULL, EVP_sha1(), NULL);
-        EVP_MD_CTX_cleanup (&c);
-
-        for (i = 0; i < SHA_DIGEST_LENGTH; i++)
-            sprintf (&sha1_text[i*2], "%02x", sha1[i]);
-
-        openconnect_set_xmlsha1 (d->vpninfo, sha1_text, sizeof(sha1_text));
+        QCryptographicHash hash(QCryptographicHash::Sha1);
+        hash.addData(config.data(), config.size());
+        const char *sha1_text = hash.result().toHex();
+        openconnect_set_xmlsha1 (d->vpninfo, (char *)sha1_text, strlen(sha1_text)+1);
 
         QDomDocument xmlconfig;
         xmlconfig.setContent(config);
@@ -293,8 +284,8 @@ void OpenconnectAuthWidget::writeConfig()
     secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_COOKIE), QLatin1String(openconnect_get_cookie(d->vpninfo)));
     openconnect_clear_cookie(d->vpninfo);
 
-    struct x509_st *cert = openconnect_get_peer_cert(d->vpninfo);
-    char fingerprint[EVP_MAX_MD_SIZE * 2 + 1];
+    OPENCONNECT_X509 *cert = openconnect_get_peer_cert(d->vpninfo);
+    char fingerprint[41];
     openconnect_get_cert_sha1(d->vpninfo, cert, fingerprint);
     secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_GWCERT), QLatin1String(fingerprint));
     secretData.insert(QLatin1String("certsigs"), d->certificateFingerprints.join("\t"));
