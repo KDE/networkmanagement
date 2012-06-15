@@ -21,6 +21,25 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef OPENCONNECTAUTHWORKERTHREAD_H
 #define OPENCONNECTAUTHWORKERTHREAD_H
 
+extern "C" {
+#include <openconnect.h>
+}
+
+#if OPENCONNECT_API_VERSION_MAJOR == 1
+#define openconnect_vpninfo_new openconnect_vpninfo_new_with_cbdata
+#define openconnect_init_ssl openconnect_init_openssl
+#endif
+
+#ifndef OPENCONNECT_CHECK_VER
+#define OPENCONNECT_CHECK_VER(x,y) 0
+#endif
+
+#if !OPENCONNECT_CHECK_VER(1,5)
+struct x509_st;
+#define OPENCONNECT_X509 struct x509_st
+#define OPENCONNECT_OPENSSL
+#endif
+
 #include <QThread>
 
 class QMutex;
@@ -48,7 +67,7 @@ protected:
 
 private:
     int writeNewConfig(char *, int);
-    int validatePeerCert(struct x509_st *, const char *);
+    int validatePeerCert(OPENCONNECT_X509 *, const char *);
     int processAuthFormP(struct oc_auth_form *);
     void writeProgress(int level, const char *, va_list);
 
