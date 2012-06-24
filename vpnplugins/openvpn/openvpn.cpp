@@ -411,7 +411,7 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
         }
         if (key_value[0] == TLS_REMOTE_TAG) {
             if (!unQuote(key_value[1], fileName).isEmpty()) {
-                dataMap.insert(QLatin1String(NM_OPENVPN_KEY_CIPHER), key_value[1]);
+                dataMap.insert(QLatin1String(NM_OPENVPN_KEY_TLS_REMOTE), key_value[1]);
             }
             else {
                 KMessageBox::information(0, i18n("Unknown option: %1", line));
