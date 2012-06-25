@@ -329,6 +329,7 @@ void NMPopup::readConfig()
         m_interfaceLayout->addItem(m_warning);
     } else if (m_warning) {
         m_warning->deleteLater();
+        m_warning = 0;
     }
 }
 
@@ -529,6 +530,7 @@ void NMPopup::networkingEnabledToggled(bool checked)
 {
     if (checked && m_warning) {
         m_warning->deleteLater();
+        m_warning = 0;
     }
 
     // Switch networking on / off
