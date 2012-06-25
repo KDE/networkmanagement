@@ -102,6 +102,7 @@ private:
     QGraphicsGridLayout* m_mainLayout;
     // Interfaces label
     Plasma::Label* m_leftLabel;
+    Plasma::Label* m_warning;
     // Container for interface overview and interface details widgets
     Plasma::TabBar* m_leftWidget;
     // Overall layout for interface overview

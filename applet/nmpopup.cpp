@@ -66,6 +66,7 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_hasWirelessInterface(false),
     m_widget(0),
     m_mainLayout(0),
+    m_warning(0),
     m_leftWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
@@ -315,13 +316,19 @@ void NMPopup::readConfig()
 
     QString version = Solid::Control::NetworkManagerNm09::version();
     if (version.isEmpty()) {
-        Plasma::Label * warning = new Plasma::Label(this);
-        warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
-        m_interfaceLayout->addItem(warning);
+        if (!m_warning) {
+            m_warning = new Plasma::Label(this);
+        }
+        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
+        m_interfaceLayout->addItem(m_warning);
     } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
-        Plasma::Label * warning = new Plasma::Label(this);
-        warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
-        m_interfaceLayout->addItem(warning);
+        if (!m_warning) {
+            m_warning = new Plasma::Label(this);
+        }
+        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
+        m_interfaceLayout->addItem(m_warning);
+    } else if (m_warning) {
+        m_warning->deleteLater();
     }
 }
 
@@ -520,6 +527,10 @@ void NMPopup::wwanEnabledToggled(bool checked)
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
+    if (checked && m_warning) {
+        m_warning->deleteLater();
+    }
+
     // Switch networking on / off
     if (Solid::Control::NetworkManagerNm09::isNetworkingEnabled() != checked) {
         Solid::Control::NetworkManagerNm09::setNetworkingEnabled(checked);
