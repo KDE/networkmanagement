@@ -77,6 +77,7 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_widget(0),
     m_tab1Layout(0),
     m_interfaceDetailsWidget(0),
+    m_warning(0),
     m_interfaceLayout(0),
     m_connectionList(0),
     m_currentIfaceItem(0),
@@ -363,13 +364,19 @@ void NMPopup::readConfig()
 
     QString version = NetworkManager::version();
     if (version.isEmpty()) {
-        Plasma::Label * warning = new Plasma::Label(this);
-        warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
-        m_tab1Layout->addItem(warning, 10, 0);
+        if (!m_warning) {
+            m_warning = new Plasma::Label(this);
+        }
+        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
+        m_tab1Layout->addItem(m_warning, 10, 0);
     } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
-        Plasma::Label * warning = new Plasma::Label(this);
-        warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
-        m_tab1Layout->addItem(warning, 10, 0);
+        if (!m_warning) {
+            m_warning = new Plasma::Label(this);
+        }
+        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
+        m_tab1Layout->addItem(m_warning, 10, 0);
+    } else if (m_warning) {
+        m_warning->deleteLater();
     }
 }
 
@@ -581,6 +588,10 @@ void NMPopup::wwanEnabledToggled(bool checked)
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
+    if (checked && m_warning) {
+        m_warning->deleteLater();
+    }
+
     // Switch networking on / off
     if (NetworkManager::isNetworkingEnabled() != checked) {
         NetworkManager::setNetworkingEnabled(checked);
