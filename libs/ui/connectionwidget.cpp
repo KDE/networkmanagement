@@ -21,6 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionwidget.h"
 #include "settingwidget_p.h"
 
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusPendingCall>
+#include <QtDBus/QDBusPendingCallWatcher>
+#include <QtDBus/QDBusPendingReply>
+
 #include <KDebug>
 
 #include <kicondialog.h>
@@ -51,6 +57,19 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
     d->ui.pushButtonPermissions->setIcon(KIcon("preferences-desktop-user"));
     connect(d->ui.pushButtonPermissions, SIGNAL(clicked()), this, SLOT(buttonPermissionsClicked()));
     connect(d->ui.id, SIGNAL(textChanged(QString)), this, SLOT(validate()));
+
+    d->ui.cmbZone->setVisible(false);
+    d->ui.label_2->setVisible(false);
+    QDBusInterface firewalld("org.fedoraproject.FirewallD1", "/org/fedoraproject/FirewallD1",
+                             "org.fedoraproject.FirewallD1.zone", QDBusConnection::systemBus());
+    if (firewalld.isValid()) {
+        QDBusPendingCall pcall = firewalld.asyncCall(QLatin1String("getZones"));
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pcall, this);
+        QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                         this, SLOT(getZonesCallFinished(QDBusPendingCallWatcher*)));
+    } else {
+        kDebug() << "error during creation of interface org.fedoraproject.FirewallD1.zone";
+    }
 }
 
 ConnectionWidget::~ConnectionWidget()
@@ -102,6 +121,12 @@ void ConnectionWidget::writeConfig()
         }
     } else
         connection()->setPermissions(QHash<QString,QString>());
+
+    if (d->ui.cmbZone->currentText() == i18n("Default")) {
+        connection()->setZone("");
+    } else {
+        connection()->setZone(d->ui.cmbZone->currentText());
+    }
 }
 
 void ConnectionWidget::validate()
@@ -124,6 +149,33 @@ void ConnectionWidget::buttonPermissionsClicked()
     if (dialog.exec() == QDialog::Accepted) {
         d->permissions = permissionsWid.currentUsers();
     }
+}
+
+void ConnectionWidget::getZonesCallFinished(QDBusPendingCallWatcher* call)
+{
+    Q_D(ConnectionWidget);
+
+    QDBusPendingReply<QStringList> reply = *call;
+    if (!reply.isError()) {
+        d->ui.cmbZone->addItem(i18n("Default"));
+        foreach (const QString &zone, reply.value())
+            d->ui.cmbZone->addItem(zone);
+
+        int index;
+        if (connection()->zone().isEmpty()) {
+            index = d->ui.cmbZone->findText(i18n("Default"));
+        } else {
+            index = d->ui.cmbZone->findText(connection()->zone());
+        }
+        d->ui.cmbZone->setCurrentIndex(index);
+
+        d->ui.cmbZone->setVisible(true);
+        d->ui.label_2->setVisible(true);
+    } else {
+        kDebug() << "remote function getZones() call failed.";
+    }
+
+    call->deleteLater();
 }
 
 // vim: sw=4 sts=4 et tw=100

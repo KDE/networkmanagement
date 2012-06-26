@@ -6,26 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
+    <width>459</width>
     <height>356</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
+   <item row="2" column="0" colspan="2">
+    <widget class="KTabWidget" name="tabwidget"/>
+   </item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>&amp;Connection name:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>id</cstring>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="KLineEdit" name="id">
        <property name="minimumSize">
@@ -33,6 +23,41 @@
          <width>250</width>
          <height>0</height>
         </size>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Firewall zone:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>cmbZone</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" rowspan="2">
+      <widget class="QLabel" name="connectionIcon">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>48</horstretch>
+         <verstretch>48</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
        </property>
       </widget>
      </item>
@@ -50,14 +75,14 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QCheckBox" name="system">
-         <property name="text">
-          <string>&amp;System connection</string>
-         </property>
          <property name="toolTip">
           <string>Save secrets in system storage</string>
          </property>
          <property name="whatsThis">
           <string>If checked, secrets (passwords and encryption keys) will be saved in system storage, which allows the connection to work without a KDE session.</string>
+         </property>
+         <property name="text">
+          <string>&amp;System connection</string>
          </property>
         </widget>
        </item>
@@ -82,42 +107,43 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="2" rowspan="2">
-      <widget class="QLabel" name="connectionIcon">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>48</horstretch>
-         <verstretch>48</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>48</width>
-         <height>48</height>
-        </size>
-       </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string notr="true"/>
+        <string>&amp;Connection name:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>id</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="KComboBox" name="cmbZone">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="toolTip">
+        <string>The zone defines trust level of the connection. Default is not a regular zone, selecting it results in the use of the default zone set in the firewall. Only usable if firewalld is active.</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="KTabWidget" name="tabwidget"/>
-   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>
@@ -126,6 +152,14 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>id</tabstop>
+  <tabstop>autoconnect</tabstop>
+  <tabstop>system</tabstop>
+  <tabstop>pushButtonPermissions</tabstop>
+  <tabstop>cmbZone</tabstop>
+  <tabstop>tabwidget</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
