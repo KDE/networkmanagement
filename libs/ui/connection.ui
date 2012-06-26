@@ -11,10 +11,10 @@
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="2">
    <item row="2" column="0" colspan="2">
     <widget class="KTabWidget" name="tabwidget"/>
    </item>
+   <item row="0" column="0" rowspan="2">
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="1">
       <widget class="KLineEdit" name="id">
