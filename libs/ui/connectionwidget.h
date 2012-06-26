@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 
 class KTabWidget;
+class QDBusPendingCallWatcher;
 namespace Knm
 {
     class Connection;
@@ -66,6 +67,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void buttonPermissionsClicked();
+    void getZonesCallFinished(QDBusPendingCallWatcher* watcher);
 };
 
 #endif // CONNECTIONWIDGET_H
