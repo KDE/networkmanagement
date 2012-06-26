@@ -122,7 +122,7 @@ void ConnectionWidget::writeConfig()
     } else
         connection()->setPermissions(QHash<QString,QString>());
 
-    if (d->ui.cmbZone->currentText() == i18n("Default")) {
+    if (d->ui.cmbZone->currentText() == i18nc("@item::inlist default firewall zone item", "Default")) {
         connection()->setZone("");
     } else {
         connection()->setZone(d->ui.cmbZone->currentText());
@@ -160,13 +160,13 @@ void ConnectionWidget::getZonesCallFinished(QDBusPendingCallWatcher* call)
 
     QDBusPendingReply<QStringList> reply = *call;
     if (!reply.isError()) {
-        d->ui.cmbZone->addItem(i18n("Default"));
+        d->ui.cmbZone->addItem(i18nc("@item::inlist default firewall zone item", "Default"));
         foreach (const QString &zone, reply.value())
             d->ui.cmbZone->addItem(zone);
 
         int index;
         if (connection()->zone().isEmpty()) {
-            index = d->ui.cmbZone->findText(i18n("Default"));
+            index = d->ui.cmbZone->findText(i18nc("@item::inlist default firewall zone item", "Default"));
         } else {
             index = d->ui.cmbZone->findText(connection()->zone());
         }
