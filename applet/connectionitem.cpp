@@ -13,6 +13,10 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
                    remote->activationState() == Knm::InterfaceConnection::Activated)) {
         m_connected = true;
     }
+    if(remote) {
+        connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
+    }
 }
 
 QString ConnectionItem::ssid()
@@ -29,6 +33,29 @@ QString ConnectionItem::ssid()
     }
 
     return QString();
+}
+
+QString ConnectionItem::connectionUuid()
+{
+    RemoteWirelessInterfaceConnection *rwic2;
+
+    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+    if(rwic2) {
+        return rwic2->connectionUuid();
+    }
+
+    return QString();
+
+}
+
+void ConnectionItem::disconnect() {
+    if (m_activatable) {
+        RemoteInterfaceConnection * remote = interfaceConnection();
+        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
+            remote->deactivate();
+        }
+    }
 }
 
 int ConnectionItem::signalStrength()
@@ -102,6 +129,6 @@ bool ConnectionItem::isShared()
 
 bool ConnectionItem::equals(const ConnectionItem *item)
 {
-    if(item->interfaceConnection() == interfaceConnection()) return true;
+    if((item) && item->interfaceConnection() == interfaceConnection()) return true;
     return false;
 }

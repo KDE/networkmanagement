@@ -34,6 +34,7 @@ Item {
     
     
     signal hoverButton()
+    signal disconnectClicked()
     
     QIconItem {
         id: menuIconElement
@@ -63,6 +64,10 @@ Item {
             if(status) {
                 parent.opacity = 1.0
             }
+        }
+        
+        onClicked: {
+            disconnectClicked();
         }
     }
     

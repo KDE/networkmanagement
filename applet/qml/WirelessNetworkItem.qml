@@ -28,10 +28,13 @@ Item {
     width: 300
     height: 30
     
+    property string uuid;
     property string networkName;
     property double signalStrengthValue;
     property bool connected;
     property bool protectedNetwork: true
+    
+    signal disconnect(string uuidProperty)
     
     Rectangle {
         anchors.leftMargin: 2
@@ -124,6 +127,9 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 onHoverButton: {
                     shadow.state = "hover"
+                }
+                onDisconnectClicked: {
+                    disconnect(uuid);
                 }
                 status: connected
             }

@@ -41,6 +41,7 @@ Item {
         model: connectionsListModel
         delegate: WirelessNetworkItem {
             width: parent.width - 10
+            uuid: connectionUuid;
             networkName: ssid;
             signalStrengthValue: strength;
             protectedNetwork: modelProtectedNetwork;

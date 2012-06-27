@@ -17,8 +17,10 @@ public:
     QString ssid();
     int signalStrength();
     bool connected();
+    QString connectionUuid();
     RemoteInterfaceConnection* interfaceConnection() const;
     bool equals(const ConnectionItem *item);
+    void disconnect();
 
 protected Q_SLOTS:
     void handlePropertiesChanges(int strength);

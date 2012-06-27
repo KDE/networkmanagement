@@ -35,8 +35,7 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             //return connections.at(index.row())->connectionType();
             return QVariant();
         case ConnectionUuidRole:
-            //return connections.at(index.row())->connectionUuid().toString();
-            return QVariant();
+            return connections.at(index.row())->connectionUuid();
         case ConnectionNameRole:
             //return connections.at(index.row())->connectionName();
             return QVariant();
@@ -78,6 +77,18 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
     }
 
     return QVariant();
+}
+
+void ConnectionsListModel::disconnectFrom(QVariant uuid) {
+    QString connectionId = uuid.toString();
+    if(connectionId != "") {
+        foreach (ConnectionItem *item, connections) {
+            if (item->connectionUuid() == connectionId) {
+                item->disconnect();
+            }
+        }
+    }
+
 }
 
 int ConnectionsListModel::rowCount(const QModelIndex &parent) const {
@@ -129,7 +140,7 @@ bool ConnectionsListModel::removeItem(ConnectionItem *act) {
         }
         i++;
     }
-    if (row > 0) {
+    if (row > -1) {
         return this->removeRow(row);
     }
     return false;
@@ -148,8 +159,10 @@ bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &par
 
 QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) const
 {
-  for(int row=0; row < connections.size(); ++row) {
-      if(connections.at(row)->equals(item)) return index(row);
-  }
-  return QModelIndex();
+    if(item) {
+        for(int row=0; row < connections.size(); ++row) {
+            if(connections.at(row)->equals(item)) return index(row);
+        }
+    }
+    return QModelIndex();
 }

@@ -54,7 +54,7 @@ public:
 
 private slots:
     void itemChanged();
-
+    void disconnectFrom(QVariant uuid);
 private:
     QList<ConnectionItem *> connections;
 

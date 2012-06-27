@@ -316,6 +316,7 @@ void NetworkManagerApplet::init()
     d->m_popup->engine()->rootContext()->setContextProperty("connectionsListModel", d->listModel);
     d->m_popup->setQmlPath(KStandardDirs::locate("data",
                                                  "networkmanagement/qml/NMPopup.qml"));
+    connect(d->m_popup->rootObject(), SIGNAL(disconnect(QVariant)), d->listModel, SLOT(disconnectFrom(QVariant)));
 #else
     d->m_popup = new NMPopup(m_activatables, this);
 #endif
@@ -1090,6 +1091,7 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
         kDebug() << "removed network " + rwic2->ssid();
     }
 
+    kDebug() << "removed network any";
     ConnectionItem *connection = new ConnectionItem(activatable);
     d->listModel->removeItem(connection);
 #endif
