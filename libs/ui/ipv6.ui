@@ -109,7 +109,7 @@
         <widget class="KComboBox" name="method">
          <item>
           <property name="text">
-           <string>Automatic</string>
+           <string comment="like in use Automatic configuration">Automatic</string>
           </property>
          </item>
          <item>

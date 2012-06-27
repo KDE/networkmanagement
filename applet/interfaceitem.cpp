@@ -361,16 +361,11 @@ void InterfaceItem::stateChanged(NetworkManager::Device::State state, bool updat
         return;
     }
     m_state = state;
-    // TODO:
-    // get the active connections
-    // check if any of them affect our interface
-    // setActiveConnection on ourself
-    // button to connect, disconnect
-    //bool old_disco = m_disconnect;
-
     m_disconnect = false;
+
     // Name and info labels
     QString lname;
+
     if (updateConnection) {
         currentConnectionChanged();
     }
@@ -411,10 +406,6 @@ void InterfaceItem::stateChanged(NetworkManager::Device::State state, bool updat
             break;
     }
 
-    // Update connect button
-    /*if (old_disco != m_disconnect) {
-        showItem(m_disconnectButton, m_disconnect);
-    }*/
     m_connectionNameLabel->setText(lname);
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 

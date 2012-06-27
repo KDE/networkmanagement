@@ -195,6 +195,10 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), permissionsDbus);
     }
 
+#ifdef NM_SETTING_CONNECTION_ZONE
+    connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_ZONE), m_connection->zone());
+#endif
+
     //kDebug() << "Printing connection map: ";
     //foreach(QString key, connectionMap.keys())
         //kDebug() << key << " : " << connectionMap.value(key);
@@ -268,6 +272,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
     QString dbusConnectionType = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
     bool autoconnect = true; //default value must be true according to NM settings spec
+#ifdef NM_SETTING_CONNECTION_ZONE
+    QString zone = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ZONE)).toString();
+#endif
 
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT)))
         autoconnect = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT)).toBool();
@@ -315,6 +322,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     m_connection->setUuid(uuid);
     m_connection->setType(type, bt_cap);
     m_connection->setAutoConnect(autoconnect);
+#ifdef NM_SETTING_CONNECTION_ZONE
+    m_connection->setZone(zone);
+#endif
 
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {

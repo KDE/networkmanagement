@@ -196,6 +196,12 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
 
 void RemoteActivatableList::serviceRegistered()
 {
+    Q_D(RemoteActivatableList);
+    if (d->iface) {
+        // this object is probably invalid now (d->iface->isValid() == false), so delete it.
+        d->iface->deleteLater();
+    }
+    d->iface = new NetworkManagementInterface("org.kde.networkmanagement", "/org/kde/networkmanagement", QDBusConnection::sessionBus(), this);
     init();
     emit appeared();
 }

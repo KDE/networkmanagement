@@ -45,8 +45,8 @@ AddEditDeleteButtonSet::AddEditDeleteButtonSet(QWidget* parent)
     mDeleteButton->setGuiItem(KStandardGuiItem::del());
     mDeleteButton->setEnabled(false);
 
-    mImportButton->setGuiItem(KGuiItem(i18n("Import"), "arrow-down"));
-    mExportButton->setGuiItem(KGuiItem(i18n("Export"), "arrow-up"));
+    mImportButton->setGuiItem(KGuiItem(i18n("Import"), "document-import"));
+    mExportButton->setGuiItem(KGuiItem(i18n("Export"), "document-export"));
     mImportButton->setVisible(false);
     mExportButton->setVisible(false);
     mExportButton->setEnabled(false);

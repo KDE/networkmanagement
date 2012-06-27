@@ -334,19 +334,6 @@ void NetworkManagerApplet::init()
     d->actions.append(action);
     setGraphicsWidget(d->m_popup);
 
-    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and
-    // NMPopup has been allocated.
-    m_activatables->init();
-    interfaceConnectionStateChanged();
-
-    // to force InterfaceItems to update their hasDefaultRoute state.
-    if (m_activeInterface) {
-        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
-                                  Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
-                                  Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
-                                  Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
-    }
-
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ModuleReady", this, SLOT(finishInitialization()));
 
@@ -362,6 +349,21 @@ void NetworkManagerApplet::finishInitialization()
                                      QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
     networkmanagement.call(QLatin1String("FinishInitialization"));
+
+    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*,int)) has been connected and
+    // NMPopup has been allocated.
+    m_activatables->init();
+
+    // this needs m_activables initialized so that it can get the connection name to add to the InterfaceItem.
+    interfaceConnectionStateChanged();
+
+    // to force InterfaceItems to update their hasDefaultRoute state.
+    if (m_activeInterface) {
+        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
+                                  Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
+                                  Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
+                                  Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
+    }
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -402,8 +404,14 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 
 void NetworkManagerApplet::updatePixmap()
 {
+    QString iconName = UiUtils::iconName(m_activeSystrayInterface);
+    if (iconName == m_currentPixmapIconName) {
+        return;
+    }
+
     int s = UiUtils::iconSize(contentsRect().size());
-    m_pixmap = KIcon(UiUtils::iconName(m_activeSystrayInterface)).pixmap(s, s);
+    m_currentPixmapIconName = iconName;
+    m_pixmap = KIcon(m_currentPixmapIconName).pixmap(s, s);
     update();
 }
 
@@ -415,6 +423,24 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     if (!m_panelContainment) {
         /* To make applet's size matches the popup's size. The applet is the tray icon, which is 16x16 pixels size by default.*/
         adjustSize();
+        return;
+    }
+
+#if 1
+    QString el = svgElement(m_activeSystrayInterface);
+#else
+    QString el;
+    foreach (NetworkManager::Device *d, NetworkManager::networkInterfaces()) {
+        if (d->type() == NetworkManager::Device::Modem) {
+            el = svgElement(d);
+            break;
+        }
+    }
+#endif
+
+    if ((el == m_currentSvgElement || (el.isEmpty() && m_currentSvgElement == m_currentPixmapIconName)) &&
+        !needToUpdateOverlay()) {
+        // no need to update systray icon
         return;
     }
 
@@ -434,21 +460,11 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     QPainter painter;
     painter.begin(&newIcon);
 
-#if 1
-    QString el = svgElement(m_activeSystrayInterface);
-#else
-    QString el;
-    foreach (NetworkManager::Device *d, NetworkManager::networkInterfaces()) {
-        if (d->type() == NetworkManager::Device::Modem) {
-            el = svgElement(d);
-            break;
-        }
-    }
-#endif
-
     if (el.isEmpty()) {
+        m_currentSvgElement = m_currentPixmapIconName;
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     } else {
+        m_currentSvgElement = el;
         if (el.startsWith(QLatin1String("network-mobile"))) {
             m_svgMobile->paint(&painter, rect, el);
         } else {
@@ -462,17 +478,42 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     setPopupIcon(newIcon);
 }
 
+bool NetworkManagerApplet::needToUpdateOverlay()
+{
+    SystrayOverlayOptions temp;
+
+    if (m_activeSystrayInterface && m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
+        temp |= NetworkManagerApplet::NeedAuth;
+    }
+
+    if (m_totalActiveVpnConnections > 0) {
+        temp |= NetworkManagerApplet::Locked;
+    }
+
+    qreal opacity = m_overlayTimeline.currentValue();
+    if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
+        temp |= NetworkManagerApplet::PreviousOverlay;
+    }
+
+    if (!m_statusOverlay.isNull()) {
+        temp |= NetworkManagerApplet::StatusOverlay;
+    }
+
+    return (temp != m_systrayOverlayOption);
+}
+
 inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 {
     // Needs authentication, show this in the panel
     if (!m_activeSystrayInterface) {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::NeedAuth;
         kDebug() << "No active interface";
         return;
     }
     /*
     kDebug() << "Painting overlay ...>" << m_activeSystrayInterface->state();
     */
-    if (m_activeSystrayInterface && m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
+    if (m_activeSystrayInterface->state() == NetworkManager::Device::NeedAuth) {
         //kDebug() << "Needing auth ...>";
         int iconSize = (int)2*(rect.width()/3);
 
@@ -482,6 +523,9 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
                             rect.bottom() - iconSize);
 
         p->drawPixmap(pos, icon);
+        m_systrayOverlayOption |= NetworkManagerApplet::NeedAuth;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::NeedAuth;
     }
 }
 
@@ -491,6 +535,9 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
         int iconSize = (int)2*(rect.width()/3);
         QPixmap pix = KIcon("object-locked").pixmap(iconSize);
         p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
+        m_systrayOverlayOption |= NetworkManagerApplet::Locked;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::Locked;
     }
 
     int oldOpacity = p->opacity();
@@ -498,10 +545,17 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
     if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
         p->setOpacity(1 - opacity);
         p->drawPixmap(rect.left(), rect.bottom() - m_previousStatusOverlay.height(), m_previousStatusOverlay);
+        m_systrayOverlayOption |= NetworkManagerApplet::PreviousOverlay;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::PreviousOverlay;
     }
+
     if (!m_statusOverlay.isNull()) {
         p->setOpacity(opacity);
         p->drawPixmap(rect.left(), rect.bottom() - m_statusOverlay.height(), m_statusOverlay);
+        m_systrayOverlayOption |= NetworkManagerApplet::StatusOverlay;
+    } else {
+        m_systrayOverlayOption &= ~NetworkManagerApplet::StatusOverlay;
     }
     p->setOpacity(oldOpacity);
 }
