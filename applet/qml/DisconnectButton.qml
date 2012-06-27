@@ -33,6 +33,8 @@ Item {
     opacity: (status) ? 1 : 0.2
     
     
+    property alias showIcon: menuIconElement.visible
+
     signal hoverButton()
     signal disconnectClicked()
     
@@ -42,7 +44,6 @@ Item {
         icon: QIcon("user-offline")
         width: parent.width
         height: parent.height
-        visible: true
 
     }
     

@@ -128,9 +128,11 @@ Item {
                 onHoverButton: {
                     shadow.state = "hover"
                 }
+                
                 onDisconnectClicked: {
                     disconnect(uuid);
                 }
+                
                 status: connected
             }
 
