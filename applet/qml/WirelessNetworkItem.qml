@@ -90,6 +90,7 @@ Item {
 
             PlasmaComponents.Label {
                 text: networkName
+                font.weight: (connected) ? Font.Bold : Font.Normal
             }
         }
      

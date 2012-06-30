@@ -83,7 +83,7 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid) {
     QString connectionId = uuid.toString();
     if(connectionId != "") {
         foreach (ConnectionItem *item, connections) {
-            if (item->connectionUuid() == connectionId) {
+            if (item != 0 && item->connectionUuid() == connectionId) {
                 item->disconnect();
             }
         }

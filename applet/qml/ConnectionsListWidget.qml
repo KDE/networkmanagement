@@ -31,7 +31,7 @@ Item {
 
     height: widgetHeight
     width: widgetWidth
-
+    
     ListView {
         id: scrollList
 
@@ -46,6 +46,9 @@ Item {
             signalStrengthValue: strength;
             protectedNetwork: modelProtectedNetwork;
             connected: connectedNetwork;
+            onDisconnect: {
+                connectionsListModel.disconnectFrom(uuid);
+            }
         }
 
         Rectangle {

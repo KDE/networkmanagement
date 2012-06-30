@@ -30,8 +30,14 @@ Item {
     
     width: 16
     height: 16
+    
     opacity: (status) ? 1 : 0.2
     
+    onStatusChanged: {
+        console.log("mudou o status");
+        if(!status) opacity = 0.2;
+        else opacity = 1;
+    }
     
     property alias showIcon: menuIconElement.visible
 
@@ -46,9 +52,7 @@ Item {
         height: parent.height
 
     }
-    
-    
-    
+        
     MouseArea {
         id: buttonMouseArea
         anchors.fill: parent

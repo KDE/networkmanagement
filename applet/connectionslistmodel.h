@@ -52,7 +52,7 @@ public:
 
     QModelIndex indexFromItem(const ConnectionItem *item) const;
 
-private slots:
+public slots:
     void itemChanged();
     void disconnectFrom(QVariant uuid);
 private:

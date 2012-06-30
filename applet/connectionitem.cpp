@@ -1,5 +1,7 @@
 #include "connectionitem.h"
 
+#include <kdebug.h>
+
 ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) :
     QObject(parent),
     m_activatable(activatable)
@@ -39,9 +41,11 @@ QString ConnectionItem::connectionUuid()
 {
     RemoteWirelessInterfaceConnection *rwic2;
 
-    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-    if(rwic2) {
-        return rwic2->connectionUuid();
+    if(m_activatable) {
+        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+        if(rwic2) {
+            return rwic2->connectionUuid();
+        }
     }
 
     return QString();
@@ -89,15 +93,20 @@ void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::Activation
 {
     Q_UNUSED(oldState);
 
+    kDebug() << "mudou o estado da conexao";
+
     switch (newState) {
         case Knm::InterfaceConnection::Activated:
             m_connected = true;
+            kDebug() << "mudou para ativado";
             break;
         case Knm::InterfaceConnection::Unknown:
             m_connected = false;
+            kDebug() << "mudou para desconectado";
             break;
         case Knm::InterfaceConnection::Activating:
             m_connected = true;
+            kDebug() << "mudou para ativando";
             break;
     }
 
