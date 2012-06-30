@@ -44,10 +44,14 @@ Item {
             uuid: connectionUuid;
             networkName: ssid;
             signalStrengthValue: strength;
-            protectedNetwork: modelProtectedNetwork;
+            protectedNetworkIcon: protectedIcon;
             connected: connectedNetwork;
+            wifiStatus: networkStatus;
             onDisconnect: {
                 connectionsListModel.disconnectFrom(uuid);
+            }
+            onConnectionClicked: {
+                connectionsListModel.connectTo(index);
             }
         }
 

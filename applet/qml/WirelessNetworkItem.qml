@@ -30,11 +30,13 @@ Item {
     
     property string uuid;
     property string networkName;
+    property string wifiStatus;
     property double signalStrengthValue;
     property bool connected;
-    property bool protectedNetwork: true
+    property string protectedNetworkIcon;
     
     signal disconnect(string uuidProperty)
+    signal connectionClicked(int index)
     
     Rectangle {
         anchors.leftMargin: 2
@@ -56,6 +58,8 @@ Item {
             onEntered: shadow.state = "hover"
             
             onExited: shadow.state = "hidden"
+            
+            onClicked: connectionClicked(index);
         }
         
         
@@ -78,19 +82,20 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
             
-            QIconItem {
-                id: connectionIcon
-
-                icon: QIcon("network-wireless-connected-100")
-                width: 16
-                height: 16
-                visible: true
-                anchors.verticalCenter: parent.verticalCenter
+            WirelessNetworkIcon {
+                status: wifiStatus
             }
 
             PlasmaComponents.Label {
                 text: networkName
-                font.weight: (connected) ? Font.Bold : Font.Normal
+                font.weight: {
+                    if(wifiStatus == "connected") Font.Bold 
+                    else Font.Normal
+                }
+                font.italic: {
+                    if(wifiStatus == "connecting") true 
+                    else false
+                }
             }
         }
      
@@ -117,7 +122,7 @@ Item {
             QIconItem {
                 id: protectIcon
 
-                icon: (protectedNetwork) ? QIcon("security-high") : QIcon("security-low")
+                icon: QIcon(protectedNetworkIcon)
                 width: 22
                 height: 22
                 visible: true

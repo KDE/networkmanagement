@@ -16,6 +16,8 @@ ConnectionsListModel::ConnectionsListModel(QObject *parent)
     roles[SsidRole] = "ssid";
     roles[StrengthRole] = "strength";
     roles[ConnectedRole] = "connectedNetwork";
+    roles[StatusRole] = "networkStatus";
+    roles[ProtectedIconRole] = "protectedIcon";
     setRoleNames(roles);
 }
 
@@ -24,56 +26,62 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
     if(index.row() < 0 || index.row() >= connections.size() || !index.isValid())
         return QVariant();
 
-    switch(role) {
-        case DeviceUniRole:
-            return connections.at(index.row())->deviceUni();
-        case ActivatableTypeRole:
-            return connections.at(index.row())->activatableType();
-        case IsSharedRole:
-            return connections.at(index.row())->isShared();
-        case ConnectionTypeRole:
-            //return connections.at(index.row())->connectionType();
-            return QVariant();
-        case ConnectionUuidRole:
-            return connections.at(index.row())->connectionUuid();
-        case ConnectionNameRole:
-            //return connections.at(index.row())->connectionName();
-            return QVariant();
-        case ActivationStateRole:
-            //return connections.at(index.row())->activationStateRole();
-            return QVariant();
-        case OldActivationStateRole:
-            //return connections.at(index.row())->oldActivationState();
-            return QVariant();
-        case HasDefaultRouteRole:
-            //return connections.at(index.row())->hasDefaultRoute();
-            return QVariant();
-        case SsidRole:
-            return connections.at(index.row())->ssid();
-        case StrengthRole:
-            return connections.at(index.row())->signalStrength();
-        case ConnectedRole:
-            return connections.at(index.row())->connected();
-        /**
-        case InterfaceCapabilitiesRole:
-            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
-            rwic->
-            return ;
-        case ApCapabilitiesRole:
-            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
-            break;
-        case WpaFlagsRole:
-            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
-            break;
-        case RsnFlagsRole:
-            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
-            break;
-        case OperationModeRole:
-            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
-            break;
-            **/
-        default:
-            return QVariant();
+    if(connections.at(index.row())) {
+        switch(role) {
+            case DeviceUniRole:
+                return connections.at(index.row())->deviceUni();
+            case ActivatableTypeRole:
+                return connections.at(index.row())->activatableType();
+            case IsSharedRole:
+                return connections.at(index.row())->isShared();
+            case ConnectionTypeRole:
+                //return connections.at(index.row())->connectionType();
+                return QVariant();
+            case ConnectionUuidRole:
+                return connections.at(index.row())->connectionUuid();
+            case ConnectionNameRole:
+                //return connections.at(index.row())->connectionName();
+                return QVariant();
+            case ActivationStateRole:
+                //return connections.at(index.row())->activationStateRole();
+                return QVariant();
+            case OldActivationStateRole:
+                //return connections.at(index.row())->oldActivationState();
+                return QVariant();
+            case HasDefaultRouteRole:
+                //return connections.at(index.row())->hasDefaultRoute();
+                return QVariant();
+            case SsidRole:
+                return connections.at(index.row())->ssid();
+            case StrengthRole:
+                return connections.at(index.row())->signalStrength();
+            case ConnectedRole:
+                return connections.at(index.row())->connected();
+            case StatusRole:
+                return connections.at(index.row())->status();
+            case ProtectedIconRole:
+                return connections.at(index.row())->protectedIcon();
+            /**
+            case InterfaceCapabilitiesRole:
+                RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
+                rwic->
+                return ;
+            case ApCapabilitiesRole:
+                RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
+                break;
+            case WpaFlagsRole:
+                RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
+                break;
+            case RsnFlagsRole:
+                RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
+                break;
+            case OperationModeRole:
+                RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
+                break;
+                **/
+            default:
+                return QVariant();
+        }
     }
 
     return QVariant();
@@ -83,12 +91,21 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid) {
     QString connectionId = uuid.toString();
     if(connectionId != "") {
         foreach (ConnectionItem *item, connections) {
-            if (item != 0 && item->connectionUuid() == connectionId) {
+            if (item && item->connectionUuid() == connectionId) {
                 item->disconnect();
             }
         }
     }
 
+}
+
+void ConnectionsListModel::connectTo(int index) {
+    if(index > -1 && index < connections.size()) {
+        ConnectionItem *item = connections.at(index);
+        if(item != 0) {
+            item->connectNetwork();
+        }
+    }
 }
 
 int ConnectionsListModel::rowCount(const QModelIndex &parent) const {

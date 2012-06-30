@@ -31,7 +31,9 @@ public:
         WpaFlagsRole,
         RsnFlagsRole,
         OperationModeRole,
-        ConnectedRole
+        ConnectedRole,
+        StatusRole,
+        ProtectedIconRole
     };
 
     ConnectionsListModel(QObject *parent = 0);
@@ -55,6 +57,8 @@ public:
 public slots:
     void itemChanged();
     void disconnectFrom(QVariant uuid);
+    void connectTo(int index);
+
 private:
     QList<ConnectionItem *> connections;
 

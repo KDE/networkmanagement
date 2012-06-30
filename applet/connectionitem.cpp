@@ -1,6 +1,37 @@
 #include "connectionitem.h"
 
+#include "activatableitem.h"
 #include <kdebug.h>
+#include "remoteactivatable.h"
+
+#include <QPainter>
+#include <QGraphicsSceneHoverEvent>
+#include <QSize>
+
+#include <KIcon>
+#include <KNotification>
+#include <KGlobalSettings>
+
+#include <Plasma/Animation>
+#include <Plasma/PushButton>
+
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/wirelessdevice.h>
+
+#include <activatable.h>
+#include <remotewirelessobject.h>
+#include <remotewirelessinterfaceconnection.h>
+#include <remotewirelessnetwork.h>
+#include <wirelesssecurityidentifier.h>
+
+#include "activatableitem.h"
+//#include "wirelessinterfaceconnectionitem.h"
+#include "wirelessnetworkitem.h"
+
+#include "../libs/service/events.h"
+
+K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
+static const int m_iconSize = 48;
 
 ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) :
     QObject(parent),
@@ -14,6 +45,12 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
     if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
                    remote->activationState() == Knm::InterfaceConnection::Activated)) {
         m_connected = true;
+        if(remote->activationState() == Knm::InterfaceConnection::Activated) {
+            m_status = "connected";
+        } else {
+            m_status = "connecting";
+        }
+
     }
     if(remote) {
         connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
@@ -21,20 +58,48 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
     }
 }
 
+QString ConnectionItem::protectedIcon()
+{
+    if(m_activatable) {
+        bool isShared = false;
+        if (m_activatable) {
+            isShared = m_activatable->isShared();
+        }
+        RemoteWirelessNetwork *rwic;
+        RemoteWirelessInterfaceConnection *rwic2;
+        RemoteWirelessObject *wobj;
+        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+        if(rwic) {
+            wobj = rwic;
+        }
+        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+        if(rwic2) {
+            wobj = rwic2;
+        }
+        if(wobj) {
+            Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), !isShared, (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
+            return Knm::WirelessSecurity::iconName(best);
+        }
+    }
+    return QString();
+}
+
 QString ConnectionItem::ssid()
 {
-    RemoteWirelessNetwork *rwic;
-    RemoteWirelessInterfaceConnection *rwic2;
-    rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
-    if(rwic) {
-        return rwic->ssid();
-    }
-    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-    if(rwic2) {
-        return rwic2->ssid();
+    if(m_activatable) {
+        RemoteWirelessNetwork *rwic;
+        RemoteWirelessInterfaceConnection *rwic2;
+        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+        if(rwic) {
+            return rwic->ssid();
+        }
+        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+        if(rwic2) {
+            return rwic2->ssid();
+        }
     }
 
-    return QString();
+    return "";
 }
 
 QString ConnectionItem::connectionUuid()
@@ -62,17 +127,43 @@ void ConnectionItem::disconnect() {
     }
 }
 
+void ConnectionItem::connectNetwork() {
+    if(m_activatable) {
+        RemoteInterfaceConnection * remote = interfaceConnection();
+        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
+            // Show interface details
+        } else {
+            QTimer::singleShot(0, m_activatable, SLOT(activate()));
+        }
+    }
+    QTimer::singleShot(0, this, SLOT(notifyNetworkingState()));
+}
+
+void ConnectionItem::notifyNetworkingState()
+{
+    if (!NetworkManager::isNetworkingEnabled()) {
+        KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
+    } else if (!NetworkManager::isWirelessEnabled() &&
+               m_activatable &&
+               m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize,m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
+    }
+}
+
 int ConnectionItem::signalStrength()
 {
-    RemoteWirelessNetwork *rwic;
-    RemoteWirelessInterfaceConnection *rwic2;
-    rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
-    if(rwic) {
-        return rwic->strength();
-    }
-    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-    if(rwic2) {
-        return rwic2->strength();
+    if(m_activatable) {
+        RemoteWirelessNetwork *rwic;
+        RemoteWirelessInterfaceConnection *rwic2;
+        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+        if(rwic) {
+            return rwic->strength();
+        }
+        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+        if(rwic2) {
+            return rwic2->strength();
+        }
     }
 
     return 0;
@@ -89,24 +180,27 @@ bool ConnectionItem::connected()
     return m_connected;
 }
 
+QString ConnectionItem::status()
+{
+    return m_status;
+}
+
 void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     Q_UNUSED(oldState);
 
-    kDebug() << "mudou o estado da conexao";
-
     switch (newState) {
         case Knm::InterfaceConnection::Activated:
+            m_status = "connected";
             m_connected = true;
-            kDebug() << "mudou para ativado";
             break;
         case Knm::InterfaceConnection::Unknown:
+            m_status = "not connected";
             m_connected = false;
-            kDebug() << "mudou para desconectado";
             break;
         case Knm::InterfaceConnection::Activating:
+            m_status = "connecting";
             m_connected = true;
-            kDebug() << "mudou para ativando";
             break;
     }
 

@@ -34,7 +34,6 @@ Item {
     opacity: (status) ? 1 : 0.2
     
     onStatusChanged: {
-        console.log("mudou o status");
         if(!status) opacity = 0.2;
         else opacity = 1;
     }
