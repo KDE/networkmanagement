@@ -215,6 +215,11 @@ RemoteInterfaceConnection* ConnectionItem::interfaceConnection() const
     return 0;
 }
 
+RemoteActivatable * ConnectionItem::activatable() const
+{
+    return m_activatable;
+}
+
 QString ConnectionItem::deviceUni()
 {
     return m_activatable->deviceUni();
@@ -232,23 +237,22 @@ bool ConnectionItem::isShared()
 
 bool ConnectionItem::equals(const ConnectionItem *item)
 {
-    if (!item) {
+    if (!item || !item->activatable()) {
         return false;
+    }
+
+    if (!m_activatable) {
+        return false;
+    }
+
+    if (m_activatable == item->activatable()) {
+        return true;
     }
 
     RemoteInterfaceConnection * a = interfaceConnection();
-
-    if (!a) {
-        return false;
-    }
-
     RemoteInterfaceConnection * b = item->interfaceConnection();
 
-    if (!b) {
-        return false;
-    }
-
-    if (a->connectionUuid() == b->connectionUuid()) {
+    if (a && b && a->connectionUuid() == b->connectionUuid()) {
         return true;
     }
 
