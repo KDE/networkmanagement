@@ -167,7 +167,7 @@ bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &par
     if(row < 0 || (row+count) >= connections.size()) return false;
     beginRemoveRows(QModelIndex(), row, row+count-1);
     for(int i=0; i<count; ++i) {
-      delete connections.takeAt(row);
+      delete connections.takeAt(row+i);
     }
     endRemoveRows();
     return true;
