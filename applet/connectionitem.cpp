@@ -67,7 +67,7 @@ QString ConnectionItem::protectedIcon()
         }
         RemoteWirelessNetwork *rwic;
         RemoteWirelessInterfaceConnection *rwic2;
-        RemoteWirelessObject *wobj;
+        RemoteWirelessObject *wobj = 0;
         rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
         if(rwic) {
             wobj = rwic;
@@ -232,6 +232,25 @@ bool ConnectionItem::isShared()
 
 bool ConnectionItem::equals(const ConnectionItem *item)
 {
-    if((item) && item->interfaceConnection() == interfaceConnection()) return true;
+    if (!item) {
+        return false;
+    }
+
+    RemoteInterfaceConnection * a = interfaceConnection();
+
+    if (!a) {
+        return false;
+    }
+
+    RemoteInterfaceConnection * b = item->interfaceConnection();
+
+    if (!b) {
+        return false;
+    }
+
+    if (a->connectionUuid() == b->connectionUuid()) {
+        return true;
+    }
+
     return false;
 }
