@@ -1136,16 +1136,18 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
 #ifdef USE_QML
     RemoteWirelessNetwork *rwic;
     RemoteWirelessInterfaceConnection *rwic2;
-    rwic = qobject_cast<RemoteWirelessNetwork *> (static_cast<RemoteActivatable *> (activatable));
+    rwic = qobject_cast<RemoteWirelessNetwork *>(activatable);
     if(rwic) {
         kDebug() << "removed network " + rwic->ssid();
+    } else {
+        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(activatable);
+        if(rwic2) {
+            kDebug() << "removed network " + rwic2->ssid();
+        } else {
+            kDebug() << "removed network any";
+        }
     }
-    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(static_cast<RemoteActivatable *>(activatable));
-    if(rwic2) {
-        kDebug() << "removed network " + rwic2->ssid();
-    }
-
-    kDebug() << "removed network any";
+    // TODO: avoid allocating a new object just to remove it afterwards.
     ConnectionItem *connection = new ConnectionItem(activatable);
     d->listModel->removeItem(connection);
 #endif
