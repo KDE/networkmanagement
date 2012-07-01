@@ -132,7 +132,11 @@ void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
 }
 
 void ConnectionsListModel::itemChanged() {
-    QModelIndex index = indexFromItem((ConnectionItem*)sender());
+    ConnectionItem * item = qobject_cast<ConnectionItem *>(sender());
+    if (!item) {
+        return;
+    }
+    QModelIndex index = indexFromItem(item);
     if(index.isValid()) {
         emit dataChanged(index, index);
     }
@@ -148,17 +152,12 @@ bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent) {
 }
 
 bool ConnectionsListModel::removeItem(ConnectionItem *act) {
-    int row = -1;
-    int i = 0;
+    int row = 0;
     foreach (ConnectionItem *item, connections) {
         if(item->equals(act)) {
-            row = i;
-            break;
+            return removeRow(row);
         }
-        i++;
-    }
-    if (row > -1) {
-        return this->removeRow(row);
+        row++;
     }
     return false;
 }
