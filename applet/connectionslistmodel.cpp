@@ -146,7 +146,7 @@ bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent) {
     Q_UNUSED(parent);
     if(row < 0 || row >= connections.size()) return false;
     beginRemoveRows(QModelIndex(), row, row);
-    connections.removeAt(row);
+    connections.takeAt(row)->deleteLater();
     endRemoveRows();
     return true;
 }
