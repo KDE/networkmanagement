@@ -19,6 +19,7 @@ public:
     bool connected();
     QString connectionUuid();
     RemoteInterfaceConnection* interfaceConnection() const;
+    RemoteActivatable* activatable() const;
     bool equals(const ConnectionItem *item);
     void disconnect();
     void connectNetwork();

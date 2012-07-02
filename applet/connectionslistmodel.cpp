@@ -132,7 +132,11 @@ void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
 }
 
 void ConnectionsListModel::itemChanged() {
-    QModelIndex index = indexFromItem((ConnectionItem*)sender());
+    ConnectionItem * item = qobject_cast<ConnectionItem *>(sender());
+    if (!item) {
+        return;
+    }
+    QModelIndex index = indexFromItem(item);
     if(index.isValid()) {
         emit dataChanged(index, index);
     }
@@ -142,23 +146,20 @@ bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent) {
     Q_UNUSED(parent);
     if(row < 0 || row >= connections.size()) return false;
     beginRemoveRows(QModelIndex(), row, row);
-    connections.removeAt(row);
+    ConnectionItem * c = connections.takeAt(row);
+    QObject::disconnect(c, 0, this, 0);
+    c->deleteLater();
     endRemoveRows();
     return true;
 }
 
 bool ConnectionsListModel::removeItem(ConnectionItem *act) {
-    int row = -1;
-    int i = 0;
+    int row = 0;
     foreach (ConnectionItem *item, connections) {
         if(item->equals(act)) {
-            row = i;
-            break;
+            return removeRow(row);
         }
-        i++;
-    }
-    if (row > -1) {
-        return this->removeRow(row);
+        row++;
     }
     return false;
 }
@@ -168,7 +169,7 @@ bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &par
     if(row < 0 || (row+count) >= connections.size()) return false;
     beginRemoveRows(QModelIndex(), row, row+count-1);
     for(int i=0; i<count; ++i) {
-      delete connections.takeAt(row);
+      delete connections.takeAt(row+i);
     }
     endRemoveRows();
     return true;
