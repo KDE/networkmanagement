@@ -41,6 +41,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
     connect(m_activatable, SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
     connect(m_activatable, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
             SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
+
     RemoteInterfaceConnection * remote = interfaceConnection();
     if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
                    remote->activationState() == Knm::InterfaceConnection::Activated)) {
@@ -52,10 +53,9 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
         }
 
     }
-    if(remote) {
-        connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+
+    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                 SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
-    }
 }
 
 QString ConnectionItem::protectedIcon()
@@ -65,17 +65,20 @@ QString ConnectionItem::protectedIcon()
         if (m_activatable) {
             isShared = m_activatable->isShared();
         }
-        RemoteWirelessNetwork *rwic;
-        RemoteWirelessInterfaceConnection *rwic2;
         RemoteWirelessObject *wobj = 0;
-        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
-        if(rwic) {
-            wobj = rwic;
+
+        if (m_activatable->activatableType() == Knm::Activatable::WirelessNetwork){
+            RemoteWirelessNetwork *rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+            if(rwic) {
+                wobj = rwic;
+            }
+        } else if (m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+            if(rwic) {
+                wobj = rwic;
+            }
         }
-        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-        if(rwic2) {
-            wobj = rwic2;
-        }
+
         if(wobj) {
             Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), !isShared, (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
             return Knm::WirelessSecurity::iconName(best);
@@ -87,15 +90,16 @@ QString ConnectionItem::protectedIcon()
 QString ConnectionItem::ssid()
 {
     if(m_activatable) {
-        RemoteWirelessNetwork *rwic;
-        RemoteWirelessInterfaceConnection *rwic2;
-        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
-        if(rwic) {
-            return rwic->ssid();
-        }
-        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-        if(rwic2) {
-            return rwic2->ssid();
+        if (m_activatable->activatableType() == Knm::Activatable::WirelessNetwork){
+            RemoteWirelessNetwork *rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+            if(rwic) {
+                return rwic->ssid();
+            }
+        } else if (m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+            if(rwic) {
+                return rwic->ssid();
+            }
         }
     }
 
@@ -154,15 +158,16 @@ void ConnectionItem::notifyNetworkingState()
 int ConnectionItem::signalStrength()
 {
     if(m_activatable) {
-        RemoteWirelessNetwork *rwic;
-        RemoteWirelessInterfaceConnection *rwic2;
-        rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
-        if(rwic) {
-            return rwic->strength();
-        }
-        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-        if(rwic2) {
-            return rwic2->strength();
+        if (m_activatable->activatableType() == Knm::Activatable::WirelessNetwork){
+            RemoteWirelessNetwork *rwic = qobject_cast<RemoteWirelessNetwork *>(m_activatable);
+            if(rwic) {
+                return rwic->strength();
+            }
+        } else if (m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+            if(rwic) {
+                return rwic->strength();
+            }
         }
     }
 

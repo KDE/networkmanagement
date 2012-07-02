@@ -1039,17 +1039,6 @@ void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
     #ifdef USE_QML
     ConnectionItem *listItem = new ConnectionItem(activatable);
     d->listModel->appendRow(listItem);
-
-    RemoteWirelessNetwork *rwic;
-    RemoteWirelessInterfaceConnection *rwic2;
-    rwic = qobject_cast<RemoteWirelessNetwork *> (static_cast<RemoteActivatable *> (activatable));
-    if(rwic) {
-        kDebug() << "added network " + rwic->ssid();
-    }
-    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(static_cast<RemoteActivatable *>(activatable));
-    if(rwic2) {
-        kDebug() << "added network " + rwic2->ssid();
-    }
     #endif
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
