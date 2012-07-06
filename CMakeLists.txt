@@ -2,7 +2,11 @@ project(plasma-networkmanagement)
 
 set (MINIMUM_NM_VERSION_REQUIRED "0.9.0")
 
+# We need some QML components from kde-runtime >= 4.8.95 to work properly,
+# like TextField.qml for instance.
+#find_package(KDE4 "4.8.95" REQUIRED)
 find_package(KDE4 REQUIRED)
+
 include (KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
 include(TestBigEndian)
