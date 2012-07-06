@@ -45,8 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 
-#define USE_QML
-
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
 /* for qSort()ing */
@@ -317,7 +315,7 @@ void NetworkManagerApplet::init()
     d->m_popup->engine()->rootContext()->setContextProperty("connectionsListModel", d->listModel);
     d->m_popup->setQmlPath(KStandardDirs::locate("data",
                                                  "networkmanagement/qml/NMPopup.qml"));
-    connect(d->m_popup->rootObject(), SIGNAL(disconnect(QVariant)), d->listModel, SLOT(disconnectFrom(QVariant)));
+    connect(d->m_popup, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
 #else
     d->m_popup = new NMPopup(m_activatables, this);
 #endif
@@ -342,6 +340,14 @@ void NetworkManagerApplet::init()
         QTimer::singleShot(0, this, SLOT(finishInitialization()));
     }
 }
+
+#ifdef USE_QML
+void NetworkManagerApplet::qmlCreationFinished()
+{
+    kDebug() << "Lamarque" << d->m_popup->rootObject();
+    connect(d->m_popup->rootObject(), SIGNAL(disconnect(QVariant)), d->listModel, SLOT(disconnectFrom(QVariant)));
+}
+#endif
 
 void NetworkManagerApplet::finishInitialization()
 {
