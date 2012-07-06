@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkmanager.h"
 #include "nmpopup.h"
+#include "declarativenmpopup.h"
 #include "uiutils.h"
 #include "remoteactivatablelist.h"
 #include "paths.h"
@@ -58,7 +59,7 @@ public:
     Private(): m_popup(0) { }
 
 #ifdef USE_QML
-    Plasma::DeclarativeWidget * m_popup;
+    DeclarativeNMPopup * m_popup;
 #else
     NMPopup * m_popup;
 #endif
@@ -311,7 +312,7 @@ void NetworkManagerApplet::init()
 
 #ifdef USE_QML
     d->listModel = new ConnectionsListModel(this);
-    d->m_popup = new Plasma::DeclarativeWidget(this);
+    d->m_popup = new DeclarativeNMPopup(this);
     d->m_popup->setInitializationDelayed(true);
     d->m_popup->engine()->rootContext()->setContextProperty("connectionsListModel", d->listModel);
     d->m_popup->setQmlPath(KStandardDirs::locate("data",
