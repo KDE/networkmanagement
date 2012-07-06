@@ -134,6 +134,7 @@ private Q_SLOTS:
 
 #ifdef USE_QML
     void qmlCreationFinished();
+    void updateWireless(bool checked);
 #endif
 private:
     SystrayOverlayOptions m_systrayOverlayOption;

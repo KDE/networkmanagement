@@ -61,7 +61,6 @@ public:
 #else
     NMPopup * m_popup;
 #endif
-    ConnectionsListModel *listModel;
     QList<QAction*> actions;
 };
 
@@ -309,10 +308,7 @@ void NetworkManagerApplet::init()
 
 
 #ifdef USE_QML
-    d->listModel = new ConnectionsListModel(this);
     d->m_popup = new DeclarativeNMPopup(this);
-    d->m_popup->setInitializationDelayed(true);
-    d->m_popup->engine()->rootContext()->setContextProperty("connectionsListModel", d->listModel);
     d->m_popup->setQmlPath(KStandardDirs::locate("data",
                                                  "networkmanagement/qml/NMPopup.qml"));
     connect(d->m_popup, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
@@ -344,9 +340,16 @@ void NetworkManagerApplet::init()
 #ifdef USE_QML
 void NetworkManagerApplet::qmlCreationFinished()
 {
-    kDebug() << "Lamarque" << d->m_popup->rootObject();
-    connect(d->m_popup->rootObject(), SIGNAL(disconnect(QVariant)), d->listModel, SLOT(disconnectFrom(QVariant)));
+    kDebug() << "Lamarque2" << d->m_popup->rootObject();
+    connect(d->m_popup->rootObject(), SIGNAL(enableWireless(bool)), d->m_popup, SLOT(updateWireless(bool)));
+    connect(d->m_popup->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
 }
+
+void NetworkManagerApplet::updateWireless(bool checked)
+{
+    d->m_popup->updateWireless(checked);
+}
+
 #endif
 
 void NetworkManagerApplet::finishInitialization()
@@ -1045,7 +1048,7 @@ void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(activatable);
     #ifdef USE_QML
     ConnectionItem *listItem = new ConnectionItem(activatable);
-    d->listModel->appendRow(listItem);
+    d->m_popup->connectionAdded(listItem);
     #endif
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
@@ -1145,7 +1148,7 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
     }
     // TODO: avoid allocating a new object just to remove it afterwards.
     ConnectionItem *connection = new ConnectionItem(activatable);
-    d->listModel->removeItem(connection);
+    d->m_popup->connectionRemoved(connection);
 #endif
 }
 

@@ -30,6 +30,8 @@ Item {
     property int minimumHeight: 280
 
     property int iconSize: 22
+        
+    signal enableWireless(bool status)
 
     Component.onCompleted: {
     }
@@ -72,14 +74,9 @@ Item {
             text: i18n("Enable Wireless")
 
             onCheckedChanged: {
-                if (checked)
-                    console.log("CheckBox checked");
-                else
-                    console.log("CheckBox unchecked");
+                enableWireless(checked)
             }
-            onClicked: {
-                console.log("CheckBox clicked");
-            }
+            checked: wirelessChecked
         }
 
         PlasmaComponents.CheckBox {

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DECLARATIVE_NM_POPUP_H
 
 #include <Plasma/DeclarativeWidget>
+#include "connectionslistmodel.h"
 
 class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 {
@@ -29,6 +30,23 @@ class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 public:
     DeclarativeNMPopup(QGraphicsWidget *parent=0);
 
+    void connectionAdded(ConnectionItem *connection);
+    void connectionRemoved(ConnectionItem *connection);
+    void updateHasWireless(bool checked);
+
+public Q_SLOTS:
+    void updateWireless(bool checked);
+
+private Q_SLOTS:
+    void readConfig();
+    void connectSignals();
+    void managerWirelessEnabledChanged(bool);
+    void managerWirelessHardwareEnabledChanged(bool);
+
+    void qmlCreationFinished();
+private:
+    ConnectionsListModel *listModel;
+    bool m_hasWirelessInterface;
 };
 
 #endif
