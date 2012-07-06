@@ -68,7 +68,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         if (args.count() > 3 && args[3].toString() == QLatin1String("shared")) {
             static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             shared = true;
-            ssid = i18n("Shared_Wireless_Connection");
+            ssid = i18nc("ssid of the wifi connection. Use ASCII letters and underscore *only* (no spaces!). Leave it unstranslated if your language does not support ASCII characters", "Shared_Wireless_Connection");
             m_connection->setAutoConnect(false);
         }
     } else {
