@@ -10,11 +10,13 @@ class ConnectionItem : public QObject
     Q_OBJECT
 
 public:
-    ConnectionItem(RemoteActivatable *activatable, QObject *parent = 0);
+    ConnectionItem(RemoteActivatable *activatable, bool hidden = false, QObject *parent = 0);
     QString deviceUni();
     QString activatableType();
     bool isShared();
     QString ssid();
+    QString wiredName();
+    bool hidden();
     int signalStrength();
     bool connected();
     QString connectionUuid();
@@ -25,6 +27,7 @@ public:
     void connectNetwork();
     QString status();
     QString protectedIcon();
+    QString connectionType();
 
 protected Q_SLOTS:
     void handlePropertiesChanges(int strength);
@@ -38,6 +41,8 @@ private:
     RemoteActivatable *m_activatable;
     bool m_connected;
     QString m_status;
+    QString m_type;
+    bool m_hidden;
 };
 
 #endif

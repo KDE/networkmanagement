@@ -7,7 +7,7 @@ ConnectionsListModel::ConnectionsListModel(QObject *parent)
     roles[DeviceUniRole] = "deviceUni";
     roles[ActivatableTypeRole] = "activatableType";
     roles[IsSharedRole] = "isShared";
-    roles[ConnectionTypeRole] = "connectionType";
+    roles[ConnectionTypeRole] = "networkType";
     roles[ConnectionUuidRole] = "connectionUuid";
     roles[ConnectionNameRole] = "connectionName";
     roles[ActivationStateRole] = "activationState";
@@ -18,6 +18,8 @@ ConnectionsListModel::ConnectionsListModel(QObject *parent)
     roles[ConnectedRole] = "connectedNetwork";
     roles[StatusRole] = "networkStatus";
     roles[ProtectedIconRole] = "protectedIcon";
+    roles[HiddenRole] = "hiddenNetwork";
+    roles[WiredNetworkNameRole] = "wiredName";
     setRoleNames(roles);
 }
 
@@ -35,8 +37,7 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             case IsSharedRole:
                 return connections.at(index.row())->isShared();
             case ConnectionTypeRole:
-                //return connections.at(index.row())->connectionType();
-                return QVariant();
+                return connections.at(index.row())->connectionType();
             case ConnectionUuidRole:
                 return connections.at(index.row())->connectionUuid();
             case ConnectionNameRole:
@@ -61,6 +62,10 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 return connections.at(index.row())->status();
             case ProtectedIconRole:
                 return connections.at(index.row())->protectedIcon();
+            case HiddenRole:
+                return connections.at(index.row())->hidden();
+            case WiredNetworkNameRole:
+                return connections.at(index.row())->wiredName();
             /**
             case InterfaceCapabilitiesRole:
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());

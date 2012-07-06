@@ -33,7 +33,9 @@ public:
         OperationModeRole,
         ConnectedRole,
         StatusRole,
-        ProtectedIconRole
+        ProtectedIconRole,
+        HiddenRole,
+        WiredNetworkNameRole
     };
 
     ConnectionsListModel(QObject *parent = 0);

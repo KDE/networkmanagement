@@ -99,13 +99,13 @@ Item {
     
     PlasmaComponents.TextField {
         id: networkNameEdit
-        placeholderText: "Enter network name and press <enter>"
+        placeholderText: i18n("Enter network name and press <enter>")
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         visible: false
     }
-    
+        
     states: [
         State {
             name: "State1"

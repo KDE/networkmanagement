@@ -39,18 +39,21 @@ Item {
         height: parent.height
         clip: true
         model: connectionsListModel
-        delegate: WirelessNetworkItem {
+        delegate: ConnectionItem {
             width: parent.width - 10
-            uuid: connectionUuid;
-            networkName: ssid;
-            signalStrengthValue: strength;
-            protectedNetworkIcon: protectedIcon;
-            connected: connectedNetwork;
-            wifiStatus: networkStatus;
-            onDisconnect: {
-                connectionsListModel.disconnectFrom(uuid);
+            networkUuid: connectionUuid;
+            wiredNetworkName: wiredName;
+            connectionType: networkType;
+            hidden: hiddenNetwork
+            wirelessNetworkName: ssid;
+            wirelessSignalStrength: strength;
+            wirelessNetworkIcon: protectedIcon;
+            networkConnected: connectedNetwork;
+            status: networkStatus;
+            onDisconnectNetwork: {
+                connectionsListModel.disconnectFrom(uuidProperty);
             }
-            onConnectionClicked: {
+            onConnectNetwork: {
                 connectionsListModel.connectTo(index);
             }
         }

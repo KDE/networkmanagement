@@ -33,9 +33,10 @@
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 static const int m_iconSize = 48;
 
-ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) :
+ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObject *parent) :
     QObject(parent),
-    m_activatable(activatable)
+    m_activatable(activatable),
+    m_hidden(hidden)
 {
     m_connected = false;
     connect(m_activatable, SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
@@ -52,6 +53,19 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, QObject *parent) 
             m_status = "connecting";
         }
 
+    }
+
+    if(m_activatable) {
+        if(m_activatable->activatableType() == Knm::Activatable::WirelessNetwork ||
+                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            m_type = "wireless";
+        } else if (m_activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
+            m_type = "wired";
+        }
+    }
+
+    if(hidden) {
+        m_type = "wireless";
     }
 
     connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
@@ -106,14 +120,41 @@ QString ConnectionItem::ssid()
     return "";
 }
 
+QString ConnectionItem::wiredName()
+{
+    kDebug() << "getting network name";
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        kDebug() << "getting network name " + remoteconnection->connectionName();
+        return remoteconnection->connectionName();
+    }
+    return "";
+}
+
+QString ConnectionItem::connectionType()
+{
+    return m_type;
+}
+
+bool ConnectionItem::hidden()
+{
+    return m_hidden;
+}
+
 QString ConnectionItem::connectionUuid()
 {
     RemoteWirelessInterfaceConnection *rwic2;
 
     if(m_activatable) {
-        rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-        if(rwic2) {
-            return rwic2->connectionUuid();
+        if(m_activatable->activatableType() == Knm::Activatable::WirelessNetwork ||
+                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
+            if(rwic2)
+                return rwic2->connectionUuid();
+        } else {
+            RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+            if(remoteconnection)
+                return remoteconnection->connectionUuid();
         }
     }
 
