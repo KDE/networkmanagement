@@ -41,6 +41,7 @@ private:
 
 public Q_SLOTS:
     void updateWireless(bool checked);
+    void manageConnections();
 
 private Q_SLOTS:
     void readConfig();

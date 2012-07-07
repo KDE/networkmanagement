@@ -32,6 +32,7 @@ Item {
     property int iconSize: 22
         
     signal enableWireless(bool status)
+    signal settingsClicked()
 
     Component.onCompleted: {
     }
@@ -103,6 +104,9 @@ Item {
             PlasmaComponents.ToolButton {
                 text: i18n("Settings...")
                 iconSource: "configure"
+                onClicked: {
+                    settingsClicked();
+                }
             }
             PlasmaComponents.ToolButton {
                 id: showConnectionButton

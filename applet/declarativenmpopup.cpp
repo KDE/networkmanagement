@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include <KToolInvocation>
 #include <KStandardDirs>
 
 #include <QtDeclarative/QDeclarativeEngine>
@@ -78,6 +79,15 @@ DeclarativeNMPopup::DeclarativeNMPopup(QGraphicsWidget *parent) : Plasma::Declar
 void DeclarativeNMPopup::qmlCreationFinished()
 {
     connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
+    connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
+}
+
+void DeclarativeNMPopup::manageConnections()
+{
+    //kDebug() << "opening connection management dialog";
+    QStringList args;
+    args << "--icon" << "networkmanager" << "kcm_networkmanagement" << "kcm_networkmanagement_tray";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
