@@ -309,9 +309,6 @@ void NetworkManagerApplet::init()
 
 #ifdef USE_QML
     d->m_popup = new DeclarativeNMPopup(this);
-    d->m_popup->setQmlPath(KStandardDirs::locate("data",
-                                                 "networkmanagement/qml/NMPopup.qml"));
-    connect(d->m_popup, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
 #else
     d->m_popup = new NMPopup(m_activatables, this);
 #endif

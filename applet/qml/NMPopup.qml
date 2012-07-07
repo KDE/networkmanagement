@@ -73,10 +73,14 @@ Item {
             height: 30
             text: i18n("Enable Wireless")
 
+            visible: wirelessVisible
+            
             onCheckedChanged: {
                 enableWireless(checked)
             }
             checked: wirelessChecked
+            enabled: wirelessEnabled
+            
         }
 
         PlasmaComponents.CheckBox {

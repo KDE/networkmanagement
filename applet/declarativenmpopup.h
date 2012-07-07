@@ -26,20 +26,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 {
+    Q_OBJECT
 
 public:
     DeclarativeNMPopup(QGraphicsWidget *parent=0);
 
     void connectionAdded(ConnectionItem *connection);
     void connectionRemoved(ConnectionItem *connection);
-    void updateHasWireless(bool checked);
+    void updateHasWireless(bool checked = true);
+    //void updateHasWwan();
+
+private:
+    void addInterfaceInternal(NetworkManager::Device *);
 
 public Q_SLOTS:
     void updateWireless(bool checked);
 
 private Q_SLOTS:
     void readConfig();
-    void connectSignals();
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
 

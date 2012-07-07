@@ -49,43 +49,35 @@ DeclarativeNMPopup::DeclarativeNMPopup(QGraphicsWidget *parent) : Plasma::Declar
 
     this->setInitializationDelayed(true);
     this->engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
-
-    connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-            this, SLOT(managerWirelessEnabledChanged(bool)));
-    connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-            this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
-
-    readConfig();
-
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
-    dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
-
-    /**
-
-    this->setInitializationDelayed(true);
-    this->engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
     this->setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
 
-    connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
+    this->engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
 
+    connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
     connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
+    connect(NetworkManager::notifier(), SIGNAL(wwanEnabledChanged(bool)),
+            this, SLOT(managerWwanEnabledChanged(bool)));
+    connect(NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
+            this, SLOT(managerWwanHardwareEnabledChanged(bool)));
+
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        addInterfaceInternal(iface);
+        kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+    }
 
     readConfig();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
-    **/
 }
 
 void DeclarativeNMPopup::qmlCreationFinished()
 {
-    kDebug() << "Lamarque2" << this->rootObject();
-    connect(this->rootObject(), SIGNAL(disconnect(QVariant)), this->listModel, SLOT(disconnectFrom(QVariant)));
+    connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
 }
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
@@ -96,11 +88,6 @@ void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
 void DeclarativeNMPopup::connectionRemoved(ConnectionItem *connection)
 {
     listModel->removeItem(connection);
-}
-
-void DeclarativeNMPopup::connectSignals()
-{
-    kDebug() << "Connect signals";
 }
 
 void DeclarativeNMPopup::updateWireless(bool checked)
@@ -146,8 +133,8 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     if (!m_hasWirelessInterface) {
         kDebug() << "no ifaces";
         hasWireless = false;
-        this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
     }
+    this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
 }
 
 
@@ -202,4 +189,43 @@ void DeclarativeNMPopup::readConfig()
         m_warning = 0;
     }
     **/
+}
+
+void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
+{
+    if (!iface) {
+        // the interface might be gone in the meantime...
+        return;
+    }
+    /**
+    if (!m_interfaces.contains(iface->uni())) {
+        InterfaceItem * ifaceItem = 0;
+        if (iface->type() == NetworkManager::Device::Wifi) {
+            // Create the wireless interface item
+            WirelessInterfaceItem* wifiItem = 0;
+            wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
+            ifaceItem = wifiItem;
+            wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
+            kDebug() << "WiFi added";
+            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
+        } else {
+            // Create the interfaceitem
+            ifaceItem = new InterfaceItem(static_cast<NetworkManager::WiredDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
+            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
+        }
+        connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+        connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
+                m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
+    /**
+        connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
+        connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
+
+        // Catch connection changes
+        connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
+        m_interfaceLayout->addItem(ifaceItem);
+        m_interfaces.insert(iface->uni(), ifaceItem);
+    }
+    */
+    updateHasWireless();
+    //updateHasWwan();
 }
