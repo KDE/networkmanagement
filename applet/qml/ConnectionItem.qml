@@ -38,57 +38,67 @@ Item {
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
     
-    WiredNetworkItem {
-        id: wiredItem
-        
-        width: parent.width;
-        uuid: networkUuid;
-        networkName: wiredNetworkName;
-        connected: networkConnected;
-        wiredStatus: status;
-        onDisconnect: {
-            disconnectNetwork(uuid);
+    Component {
+        id: wiredNetworkItemComponent
+
+        WiredNetworkItem {
+            id: wiredItem
+
+            width: connectionItem.width;
+            uuid: connectionItem.networkUuid;
+            networkName: connectionItem.wiredNetworkName;
+            connected: connectionItem.networkConnected;
+            wiredStatus: connectionItem.status;
+            onDisconnect: {
+                connectionItem.disconnectNetwork(uuid);
+            }
+            onConnectionClicked: {
+                connectionItem.connectNetwork(index);
+            }
         }
-        onConnectionClicked: {
-            connectNetwork(index);
-        }
-        visible: false
     }
     
-    HiddenWirelessNetwork {
-        id: hiddenItem
-        width: parent.width;
-        visible: false
+    Component {
+        id: hiddenWirelessNetworkComponent
+
+        HiddenWirelessNetwork {
+            id: hiddenItem
+            width: connectionItem.width;
+        }
     }
     
-    WirelessNetworkItem {
-        id: wirelessItem
-        width: parent.width;
-        uuid: networkUuid;
-        networkName: wirelessNetworkName;
-        signalStrengthValue: wirelessSignalStrength;
-        protectedNetworkIcon: wirelessNetworkIcon;
-        connected: networkConnected;
-        wifiStatus: status;
-        onDisconnect: {
-            console.log("uuid eh: " + uuid);
-            disconnectNetwork(uuid);
-        }
-        onConnectionClicked: {
-            connectNetwork(index);
-        }
-        visible: false
+    Component {
+       id: wirelessNetworkItemComponent
+
+       WirelessNetworkItem {
+           id: wirelessItem
+
+           width: connectionItem.width;
+           uuid: connectionItem.networkUuid;
+           networkName: connectionItem.wirelessNetworkName;
+           signalStrengthValue: connectionItem.wirelessSignalStrength;
+           protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
+           connected: connectionItem.networkConnected;
+           wifiStatus: connectionItem.status;
+           onDisconnect: {
+               console.log("uuid eh: " + uuid);
+               connectionItem.disconnectNetwork(uuid);
+           }
+           onConnectionClicked: {
+               connectionItem.connectNetwork(index);
+           }
+       }
     }
     
     Component.onCompleted: {
         if (connectionType == "wireless") {
             if(hidden) {
-                hiddenItem.visible = true;
+                hiddenItemComponent.createObject(connectionItem);
             } else {
-                wirelessItem.visible = true;
+                wirelessNetworkItemComponent.createObject(connectionItem);
             }
         } else if (connectionType == "wired") {
-            wiredItem.visible = true;
+            hiddenItemComponent.createObject(connectionItem);
         }
     }
 }
