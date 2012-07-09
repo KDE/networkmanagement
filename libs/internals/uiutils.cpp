@@ -88,8 +88,6 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
         return QString("dialog-error");
     }
     QString icon;
-    QString strength = "00";
-    NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
     switch (iface->type()) {
         case NetworkManager::Device::Ethernet: {
@@ -101,12 +99,12 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
             }
             break;
         }
-        case NetworkManager::Device::Wifi:
+        case NetworkManager::Device::Wifi: {
+            QString strength = "00";
+            NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
-                //QString uni = wiface->activeAccessPoint()->signalStrength();
-                //int s =
                 NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
                 if (ap) {
                     int s = ap->signalStrength();
@@ -127,6 +125,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
+        }
         case NetworkManager::Device::Bluetooth:
             icon = "preferences-system-bluetooth";
             break;
