@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
 
 // Qt
 #include <QSizeF>
@@ -92,9 +93,15 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
     Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
 
     switch (iface->type()) {
-        case Solid::Control::NetworkInterfaceNm09::Ethernet:
+        case Solid::Control::NetworkInterfaceNm09::Ethernet: {
             icon = "network-wired";
+
+            Solid::Control::WiredNetworkInterfaceNm09 *wiredIface = qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*>(iface);
+            if (wiredIface && wiredIface->carrier()) {
+                icon = "network-wired-activated";
+            }
             break;
+	}
         case Solid::Control::NetworkInterfaceNm09::Wifi:
 
             if (wiface) {
