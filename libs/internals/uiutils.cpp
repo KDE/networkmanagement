@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wireddevice.h>
 #include <QtNetworkManager/wirelessdevice.h>
 
 // Qt
@@ -91,9 +92,15 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
     NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
     switch (iface->type()) {
-        case NetworkManager::Device::Ethernet:
+        case NetworkManager::Device::Ethernet: {
             icon = "network-wired";
+
+            NetworkManager::WiredDevice *wiredIface = qobject_cast<NetworkManager::WiredDevice*>(iface);
+            if (wiredIface && wiredIface->carrier()) {
+                icon = "network-wired-activated";
+            }
             break;
+        }
         case NetworkManager::Device::Wifi:
 
             if (wiface) {
