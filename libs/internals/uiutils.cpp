@@ -89,8 +89,6 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
         return QString("dialog-error");
     }
     QString icon;
-    QString strength = "00";
-    Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
 
     switch (iface->type()) {
         case Solid::Control::NetworkInterfaceNm09::Ethernet: {
@@ -101,8 +99,10 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
                 icon = "network-wired-activated";
             }
             break;
-	}
-        case Solid::Control::NetworkInterfaceNm09::Wifi:
+        }
+        case Solid::Control::NetworkInterfaceNm09::Wifi: {
+            QString strength = "00";
+            Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
@@ -128,6 +128,7 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
+        }
         case Solid::Control::NetworkInterfaceNm09::Bluetooth:
             icon = "preferences-system-bluetooth";
             break;
