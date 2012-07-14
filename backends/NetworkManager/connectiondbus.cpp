@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2012 Lamarque Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -59,6 +60,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "serialdbus.h"
 #include "settings/vpn.h"
 #include "vpndbus.h"
+
+#include <QtNetworkManager/manager.h>
 
 using namespace Knm;
 
