@@ -33,6 +33,9 @@ public:
     NMNetworkManagerNm09Private();
     OrgFreedesktopNetworkManagerInterface iface;
     QString version;
+    int x;
+    int y;
+    int z;
     uint nmState;
     bool isWirelessEnabled;
     bool isWirelessHardwareEnabled;

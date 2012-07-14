@@ -193,7 +193,12 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     }
 
 #ifdef NM_SETTING_CONNECTION_ZONE
-    connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_ZONE), m_connection->zone());
+    // NetworkManager 0.9.4 has a bug where it refuses to create the connection if zone is empty,
+    // but an empty zone means the default zone according to firewalld developers. The bug will be
+    // fixed in NetworkManager 0.9.6.
+    if (!m_connection->zone().isEmpty() || Solid::Control::NetworkManagerNm09::compareVersion(0, 9, 6) >= 0) {
+        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_ZONE), m_connection->zone());
+    }
 #endif
 
     //kDebug() << "Printing connection map: ";

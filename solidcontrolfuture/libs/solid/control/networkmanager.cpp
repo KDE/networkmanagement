@@ -165,6 +165,16 @@ QString Solid::Control::NetworkManagerNm09::version()
     return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), QString(), version());
 }
 
+int Solid::Control::NetworkManagerNm09::compareVersion(const QString & version)
+{
+    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), -1, compareVersion(version));
+}
+
+int Solid::Control::NetworkManagerNm09::compareVersion(const int x, const int y, const int z)
+{
+    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), -1, compareVersion(x, y, z));
+}
+
 Solid::Networking::Status Solid::Control::NetworkManagerNm09::status()
 {
     return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());

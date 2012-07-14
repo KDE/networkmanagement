@@ -61,6 +61,18 @@ namespace Ifaces
         virtual QString version() const = 0;
 
         /**
+         * Compares NetworkManager's version to the parameter version.
+         * returns 1, -1 or 0 if the parameter version is greater, lesser or equal to NetworkManager's version.
+         */
+        virtual int compareVersion(const QString & version) = 0;
+
+        /**
+         * Compares NetworkManager version to x.y.z.
+         * returns 1, -1 or 0 if x.y.z is greater, lesser or equal to NetworkManager's version.
+         */
+        virtual int compareVersion(const int x, const int y, const int z) const = 0;
+
+        /**
          * Get the manager connection state
          */
         virtual Solid::Networking::Status status() const = 0;

@@ -260,34 +260,6 @@ void NMPopup::init()
     adjustSize();
 }
 
-static int compareVersions(const QString & version1, const QString & version2)
-{
-    QStringList sl1 = version1.split('.');
-    QStringList sl2 = version2.split('.');
-
-    if (sl1.size() > 2 && sl2.size() > 2) {
-        int v1[3] = { sl1[0].toInt(), sl1[1].toInt(), sl1[2].toInt() };
-        int v2[3] = { sl2[0].toInt(), sl2[1].toInt(), sl2[2].toInt() };
-
-        if (v1[0] > v2[0]) {
-            return 1;
-        } else if (v1[0] < v2[0]) {
-            return -1;
-        } else if (v1[1] > v2[1]) {
-            return 1;
-        } else if (v1[1] < v2[1]) {
-            return -1;
-        } else if (v1[2] > v2[2]) {
-            return 1;
-        } else if (v1[2] < v2[2]) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-    return 0;
-}
-
 void NMPopup::readConfig()
 {
     kDebug();
@@ -321,7 +293,7 @@ void NMPopup::readConfig()
         }
         m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
         m_interfaceLayout->addItem(m_warning);
-    } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
+    } else if (Solid::Control::NetworkManagerNm09::compareVersion(QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
         if (!m_warning) {
             m_warning = new Plasma::Label(this);
         }

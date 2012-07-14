@@ -50,6 +50,9 @@ public:
     void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
     /* TODO: add methods addAndActivateConnection, isWimaxEnabled, isWimaxHardwareEnabled */
     QString version() const;
+    void parseVersion();
+    int compareVersion(const QString & version);
+    int compareVersion(const int x, const int y, const int z) const;
     void deactivateConnection(const QString & activeConnection);
     QStringList activeConnections() const;
     QStringList activeConnectionsUuid() const;

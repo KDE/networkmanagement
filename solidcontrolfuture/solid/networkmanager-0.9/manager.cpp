@@ -42,6 +42,7 @@ NMNetworkManagerNm09::NMNetworkManagerNm09(QObject * parent, const QVariantList 
     d_ptr = new NMNetworkManagerNm09Private;
     Q_D(NMNetworkManagerNm09);
     d->version = d->iface.version();
+    parseVersion();
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
     d->isWirelessEnabled = d->iface.wirelessEnabled();
@@ -88,6 +89,60 @@ NMNetworkManagerNm09::NMNetworkManagerNm09(QObject * parent, const QVariantList 
 NMNetworkManagerNm09::~NMNetworkManagerNm09()
 {
     delete d_ptr;
+}
+
+void NMNetworkManagerNm09::parseVersion()
+{
+    Q_D(NMNetworkManagerNm09);
+    QStringList sl = d->version.split('.');
+
+    if (sl.size() == 3) {
+        d->x = sl[0].toInt();
+        d->y = sl[1].toInt();
+        d->z = sl[2].toInt();
+    } else {
+        d->x = -1;
+        d->y = -1;
+        d->z = -1;
+    }
+}
+
+int NMNetworkManagerNm09::compareVersion(const QString & version)
+{
+    int x, y, z;
+
+    QStringList sl = version.split('.');
+
+    if (sl.size() == 3) {
+        x = sl[0].toInt();
+        y = sl[1].toInt();
+        z = sl[2].toInt();
+    } else {
+        x = -1;
+        y = -1;
+        z = -1;
+    }
+
+    return compareVersion(x, y, z);
+}
+
+int NMNetworkManagerNm09::compareVersion(const int x, const int y, const int z) const
+{
+    Q_D(const NMNetworkManagerNm09);
+    if (x > d->x) {
+        return 1;
+    } else if (x < d->x) {
+        return -1;
+    } if (y > d->y) {
+        return 1;
+    } else if (y < d->y) {
+        return -1;
+    } else if (z > d->z) {
+        return 1;
+    } else if (z < d->z) {
+        return -1;
+    }
+    return 0;
 }
 
 Solid::Networking::Status NMNetworkManagerNm09::status() const
