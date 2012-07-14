@@ -58,6 +58,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/vpn.h"
 #include "vpndbus.h"
 
+#include <solid/control/networkmanager.h>
+
 using namespace Knm;
 
 ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
