@@ -165,7 +165,6 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
             // Decrypt the password and insert into map
             decrArgs.clear();
             decrArgs << cg.readEntry("enc_UserPassword");
-            decrPlugin->ciscoDecrypt = new KProcess(this);
             decrPlugin->ciscoDecrypt->setProgram(ciscoDecryptBinary, decrArgs);
             decrPlugin->ciscoDecrypt->start();
             if (decrPlugin->ciscoDecrypt->waitForStarted() && decrPlugin->ciscoDecrypt->waitForFinished()) {
@@ -195,7 +194,6 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
             //Decrypt the password and insert into map
             decrArgs.clear();
             decrArgs << cg.readEntry("enc_GroupPwd");
-            decrPlugin->ciscoDecrypt = new KProcess(this);
             decrPlugin->ciscoDecrypt->setProgram(ciscoDecryptBinary, decrArgs);
             decrPlugin->ciscoDecrypt->start();
             if (decrPlugin->ciscoDecrypt->waitForStarted() && decrPlugin->ciscoDecrypt->waitForFinished()) {
