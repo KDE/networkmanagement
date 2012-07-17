@@ -115,9 +115,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);
     mWiredMenu = new QMenu(this);
     QAction * action = new QAction(i18nc("Like in 'add wired connection'", "Wired"), this);
+    action->setWhatsThis (i18nc("@info:whatsthis", "Create regular wired connection"));
     action->setData(false);
     mWiredMenu->addAction(action);
     action = new QAction(i18nc("Like in 'add shared connection'", "Shared"), this);
+    action->setWhatsThis (i18nc("@info:whatsthis", "Click here to share this computer's wired Internet connection to other computers"));
     action->setData(true);
     mWiredMenu->addAction(action);
     connect(mWiredMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
@@ -126,9 +128,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetWireless, mConnEditUi.listWireless);
     mWirelessMenu = new QMenu(this);
     action = new QAction(i18nc("Like in 'add wireless connection'", "Wireless"), this);
+    action->setWhatsThis (i18nc("@info:whatsthis", "Create regular wireless connection"));
     action->setData(false);
     mWirelessMenu->addAction(action);
     action = new QAction(i18nc("Like in 'add shared connection'", "Shared"), this);
+    action->setWhatsThis (i18nc("@info:whatsthis", "Click here to share this computer's wireless Internet connection to other computers"));
     action->setData(true);
     mWirelessMenu->addAction(action);
     connect(mWirelessMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
