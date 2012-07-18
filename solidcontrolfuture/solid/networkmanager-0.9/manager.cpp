@@ -133,7 +133,7 @@ int NMNetworkManagerNm09::compareVersion(const int x, const int y, const int z) 
         return 1;
     } else if (x < d->x) {
         return -1;
-    } if (y > d->y) {
+    } else if (y > d->y) {
         return 1;
     } else if (y < d->y) {
         return -1;
