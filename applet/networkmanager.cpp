@@ -1029,7 +1029,7 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
             if (!m_activeVpnConnections.contains(id)) {
                 m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
                 m_totalActiveVpnConnections++;
-                setStatusOverlay(generateVpnProgressStatusOverlay(ic));
+                setStatusOverlay(generateProgressStatusOverlay());
                 setStatusOverlay("task-complete");
                 QTimer::singleShot(4000, this, SLOT(clearActivatedOverlay()));
             }
