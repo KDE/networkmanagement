@@ -1026,10 +1026,9 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
     switch (newState)
     {
         case Knm::InterfaceConnection::Activated:
-            if (!m_activeVpnConnections.contains(id)) {
+            m_totalActiveVpnConnections++;
+            if (!m_activeVpnConnections.contains(id))
                 m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
-                m_totalActiveVpnConnections++;
-            }
             break;
         case Knm::InterfaceConnection::Activating:
             m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
