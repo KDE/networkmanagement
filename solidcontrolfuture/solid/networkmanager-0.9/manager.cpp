@@ -96,7 +96,7 @@ void NMNetworkManagerNm09::parseVersion()
     Q_D(NMNetworkManagerNm09);
     QStringList sl = d->version.split('.');
 
-    if (sl.size() == 3) {
+    if (sl.size() > 2) {
         d->x = sl[0].toInt();
         d->y = sl[1].toInt();
         d->z = sl[2].toInt();
@@ -113,7 +113,7 @@ int NMNetworkManagerNm09::compareVersion(const QString & version)
 
     QStringList sl = version.split('.');
 
-    if (sl.size() == 3) {
+    if (sl.size() > 2) {
         x = sl[0].toInt();
         y = sl[1].toInt();
         z = sl[2].toInt();
