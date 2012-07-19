@@ -27,6 +27,9 @@ Item {
     id: wirelessInterfaceItem
     width: 240
     height: 50
+    
+    property string interfaceTitle;
+    property string connectionDescription;
 
     Rectangle {
         anchors.leftMargin: 2
@@ -83,11 +86,11 @@ Item {
             Column {
                 spacing: 10
                 PlasmaComponents.Label {
-                    text: i18n("Wireless 802.11")
+                    text: interfaceTitle
                     font.weight: Font.Bold
                 }
                 PlasmaComponents.Label {
-                    text: i18n("Not connected")
+                    text: connectionDescription
                 }
             }
         }

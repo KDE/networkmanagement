@@ -24,12 +24,13 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: wiredInterfaceItem
-    width: 240
-    height: 50
+    id: modemInterfaceItem
     
     property string interfaceTitle;
     property string connectionDescription;
+    
+    width: 240
+    height: 50
 
     Rectangle {
         anchors.leftMargin: 2
@@ -76,7 +77,7 @@ Item {
             QIconItem {
                 id: connectionIcon
 
-                icon: QIcon("network-wired")
+                icon: QIcon("phone")
                 width: 48
                 height: 48
                 visible: true

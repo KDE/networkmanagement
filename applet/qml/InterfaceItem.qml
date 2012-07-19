@@ -21,84 +21,61 @@
 import QtQuick 1.1
 
 Item {
-    id: connectionItem
-    width: 300
-    height: 30
+    id: interfaceItem
+    width: 240
+    height: 50
     
-    property string networkUuid;
-    property string wiredNetworkName;
-    property string wirelessNetworkName;
-    property string status;
-    property double wirelessSignalStrength;
-    property bool networkConnected;
-    property string wirelessNetworkIcon;
-    property string connectionType;
-    property bool hidden;
-    
-    signal disconnectNetwork(string uuidProperty)
-    signal connectNetwork(int index)
-    
+    property string interfaceType;
+    property string name;
+    property string connection;
+    property bool enabledInterface;
+        
     Component {
-        id: wiredNetworkItemComponent
+        id: wiredInterfaceComponent
 
-        WiredNetworkItem {
+        WiredInterfaceItem {
             id: wiredItem
 
-            width: connectionItem.width;
-            uuid: connectionItem.networkUuid;
-            networkName: connectionItem.wiredNetworkName;
-            connected: connectionItem.networkConnected;
-            wiredStatus: connectionItem.status;
-            onDisconnect: {
-                connectionItem.disconnectNetwork(uuid);
-            }
-            onConnectionClicked: {
-                connectionItem.connectNetwork(index);
-            }
+            width: interfaceItem.width;
+            opacity: enabledInterface ? 1.0 : 0.7
+            connectionDescription: connection
+            interfaceTitle: name
         }
     }
     
     Component {
-        id: hiddenWirelessNetworkComponent
+        id: modemInterfaceComponent
 
-        HiddenWirelessNetwork {
-            id: hiddenItem
-            width: connectionItem.width;
+        ModemInterfaceItem {
+            id: modemItem
+            width: interfaceItem.width;
+            
+            interfaceTitle: name
+            opacity: enabledInterface ? 1.0 : 0.7
+            connectionDescription: connection
         }
     }
     
     Component {
-       id: wirelessNetworkItemComponent
+       id: wirelessInterfaceComponent
 
-       WirelessNetworkItem {
+       WirelessInterfaceItem {
            id: wirelessItem
 
-           width: connectionItem.width;
-           uuid: connectionItem.networkUuid;
-           networkName: connectionItem.wirelessNetworkName;
-           signalStrengthValue: connectionItem.wirelessSignalStrength;
-           protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
-           connected: connectionItem.networkConnected;
-           wifiStatus: connectionItem.status;
-           onDisconnect: {
-               console.log("uuid eh: " + uuid);
-               connectionItem.disconnectNetwork(uuid);
-           }
-           onConnectionClicked: {
-               connectionItem.connectNetwork(index);
-           }
+           width: interfaceItem.width;
+           interfaceTitle: name
+           opacity: enabledInterface ? 1.0 : 0.7
+           connectionDescription: connection
        }
     }
     
     Component.onCompleted: {
-        if (connectionType == "wireless") {
-            if(hidden) {
-                hiddenItemComponent.createObject(connectionItem);
-            } else {
-                wirelessNetworkItemComponent.createObject(connectionItem);
-            }
-        } else if (connectionType == "wired") {
-            hiddenItemComponent.createObject(connectionItem);
+        if (interfaceType == "wifi") {
+            wirelessInterfaceComponent.createObject(interfaceItem);
+        } else if (interfaceType == "wired") {
+            wiredInterfaceComponent.createObject(interfaceItem);
+        } else if (interfaceType == "modem") {
+            modemInterfaceComponent.createObject(interfaceItem);
         }
     }
 }

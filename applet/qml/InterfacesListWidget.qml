@@ -35,13 +35,17 @@ Item {
     ListView {
         id: scrollList
 
-        spacing: 10
+        spacing: 20
         width: parent.width
         height: parent.height
         clip: true
         model: interfacesListModel
-        delegate: WirelessInterfaceItem {
+        delegate: InterfaceItem {
             //width: parent.width - 10
+            interfaceType: type
+            name: interfaceName
+            enabledInterface: interfaceEnabled
+            connection: interfaceConnection
         }
 
         Rectangle {

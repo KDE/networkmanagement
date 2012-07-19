@@ -24,7 +24,10 @@ InterfacesListModel::InterfacesListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     QHash<int, QByteArray> roles;
-    roles[ConnectionNameRole] = "connectionName";
+    roles[InterfaceNameRole] = "interfaceName";
+    roles[TypeRole] = "type";
+    roles[EnabledRole] = "interfaceEnabled";
+    roles[ConnectionRole] = "interfaceConnection";
     setRoleNames(roles);
 }
 
@@ -35,8 +38,14 @@ QVariant InterfacesListModel::data(const QModelIndex &index, int role) const
 
     if(interfaces.at(index.row())) {
         switch(role) {
-            case ConnectionNameRole:
-                return interfaces.at(index.row())->connectionName();
+            case InterfaceNameRole:
+                return interfaces.at(index.row())->interfaceTitle();
+            case TypeRole:
+                return interfaces.at(index.row())->type();
+            case EnabledRole:
+                return interfaces.at(index.row())->enabled();
+            case ConnectionRole:
+                return interfaces.at(index.row())->connection();
             default:
                 return QVariant();
         }
@@ -50,6 +59,17 @@ int InterfacesListModel::rowCount(const QModelIndex & parent) const
 {
     Q_UNUSED(parent);
     return interfaces.size();
+}
+
+void InterfacesListModel::itemChanged() {
+    DeclarativeInterfaceItem * item = qobject_cast<DeclarativeInterfaceItem *>(sender());
+    if (!item) {
+        return;
+    }
+    QModelIndex index = indexFromItem(item);
+    if(index.isValid()) {
+        emit dataChanged(index, index);
+    }
 }
 
 void InterfacesListModel::appendRow(DeclarativeInterfaceItem *item)

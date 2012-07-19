@@ -48,11 +48,16 @@ public:
     NetworkManager::Device* interface();
     bool equals(const DeclarativeInterfaceItem *item);
     QString connectionName();
+    QString connection();
+    QString type();
+    QString interfaceTitle();
+    bool enabled();
 
     QWeakPointer<NetworkManager::Device> m_iface;
 
 Q_SIGNALS:
     void stateChanged();
+    void itemChanged();
 
 public Q_SLOTS:
     void activeConnectionsChanged();
@@ -68,15 +73,19 @@ public Q_SLOTS:
     QWeakPointer<NetworkManager::Device> iface();
 
 private:
+    void setNameDisplayMode(NameDisplayMode mode);
+    void setEnabled(bool enabled);
+
     RemoteInterfaceConnection* m_currentConnection;
-
-
     RemoteActivatableList* m_activatables;
 
     NameDisplayMode m_nameMode;
     bool m_enabled;
     NetworkManager::Device::State m_state;
     QString m_interfaceName;
+    QString m_connectionName;
+    QString m_interfaceTitle;
+    QString m_type;
     bool m_disconnect;
     bool m_hasDefaultRoute;
     bool m_starting;

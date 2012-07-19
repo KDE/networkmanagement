@@ -91,6 +91,7 @@ Item {
     }
     
     Component.onCompleted: {
+        console.log("connection type is: " + connectionType);
         if (connectionType == "wireless") {
             if(hidden) {
                 hiddenItemComponent.createObject(connectionItem);
@@ -98,7 +99,7 @@ Item {
                 wirelessNetworkItemComponent.createObject(connectionItem);
             }
         } else if (connectionType == "wired") {
-            hiddenItemComponent.createObject(connectionItem);
+            wiredNetworkItemComponent.createObject(connectionItem);
         }
     }
 }

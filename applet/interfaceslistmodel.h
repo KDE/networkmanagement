@@ -31,7 +31,10 @@ Q_OBJECT
 
 public:
     enum Roles {
-        ConnectionNameRole = Qt::UserRole+1
+        InterfaceNameRole = Qt::UserRole+1,
+        TypeRole,
+        EnabledRole,
+        ConnectionRole
     };
 
     InterfacesListModel(QObject *parent=0);
@@ -51,6 +54,9 @@ public:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
     QModelIndex indexFromItem(const DeclarativeInterfaceItem *item) const;
+
+protected Q_SLOTS:
+    void itemChanged();
 
 private:
     QList<DeclarativeInterfaceItem *> interfaces;

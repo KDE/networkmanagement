@@ -51,15 +51,32 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
     }
 
+    setNameDisplayMode(mode);
+
     if (m_iface) {
         if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
             NetworkManager::WiredDevice* wirediface =
                             static_cast<NetworkManager::WiredDevice*>(m_iface.data());
+            m_type = "wired";
             //connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+        } else if (m_iface.data()->type() == NetworkManager::Device::Wifi) {
+            m_type = "wifi";
+        } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
+            m_type = "modem";
         }
         m_state = NetworkManager::Device::UnknownState;
         stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+
+        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
+            m_type = "wired";
+        } else if (m_iface.data()->type() == NetworkManager::Device::Wifi) {
+            m_type = "wifi";
+        } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
+            m_type = "modem";
+        }
     }
+
+
 
     m_starting = false;
 }
@@ -67,6 +84,16 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
 void DeclarativeInterfaceItem::serviceDisappeared()
 {
     m_currentConnection = 0;
+}
+
+void DeclarativeInterfaceItem::setEnabled(bool enable)
+{
+    m_enabled = enable;
+}
+
+bool DeclarativeInterfaceItem::enabled()
+{
+    return m_enabled;
 }
 
 void DeclarativeInterfaceItem::activatableAdded(RemoteActivatable * activatable)
@@ -78,6 +105,26 @@ void DeclarativeInterfaceItem::activatableAdded(RemoteActivatable * activatable)
            signal, so update the interface state here but do not search for current connection
            since it is already known. */
         stateChanged(m_iface.data()->state(), false);
+    }
+}
+
+void DeclarativeInterfaceItem::setNameDisplayMode(NameDisplayMode mode)
+{
+    m_nameMode = mode;
+    if (m_iface) {
+        m_interfaceName = UiUtils::interfaceNameLabel(m_iface.data()->uni());
+    }
+    if (m_nameMode == InterfaceName) {
+        m_interfaceTitle = m_interfaceName;
+    } else if (m_nameMode == HardwareName) {
+        if (m_iface) {
+            m_interfaceTitle = m_iface.data()->interfaceName();
+        } else {
+            m_interfaceTitle = "Network Interface";
+        }
+
+    } else {
+        m_interfaceTitle = "Unknown Network Interface";
     }
 }
 
@@ -142,9 +189,9 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
         currentConnectionChanged();
     }
     if (m_currentConnection) {
-        //lname = UiUtils::connectionStateToString(state, m_currentConnection->connectionName());
+        lname = UiUtils::connectionStateToString(state, m_currentConnection->connectionName());
     } else {
-        //lname = UiUtils::connectionStateToString(state, QString());
+        lname = UiUtils::connectionStateToString(state, QString());
         // to allow updating connection's name in the next call of stateChanged()
         // even if the state has not changed.
         m_state = NetworkManager::Device::UnknownState;
@@ -153,13 +200,13 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
     switch (state) {
         case NetworkManager::Device::Unavailable:
             if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
-                //lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
+                lname = "Cable Unplugged";
             }
-            //setEnabled(false); // FIXME: tone down colors using an animation
+            setEnabled(false); // FIXME: tone down colors using an animation
             break;
         case NetworkManager::Device::Disconnected:
         case NetworkManager::Device::Deactivating:
-            //setEnabled(true);
+            setEnabled(true);
             break;
         case NetworkManager::Device::Preparing:
         case NetworkManager::Device::ConfiguringHardware:
@@ -168,21 +215,23 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
         case NetworkManager::Device::CheckingIp:
         case NetworkManager::Device::WaitingForSecondaries:
         case NetworkManager::Device::Activated:
-            //setEnabled(true);
+            setEnabled(true);
             m_disconnect = true;
             break;
         case NetworkManager::Device::Unmanaged:
         case NetworkManager::Device::Failed:
         case NetworkManager::Device::UnknownState:
-            //setEnabled(false);
+            setEnabled(false);
             break;
     }
 
-    //m_connectionNameLabel->setText(lname);
     //m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
-    //kDebug() << "State changed" << lname;
+    kDebug() << "State changed" << lname;
+    m_connectionName = lname;
+
     emit stateChanged();
+    emit itemChanged();
 }
 
 NetworkManager::Device* DeclarativeInterfaceItem::interface()
@@ -212,6 +261,21 @@ QString DeclarativeInterfaceItem::connectionName()
         return m_currentConnection->connectionName();
     }
     return QString();
+}
+
+QString DeclarativeInterfaceItem::type()
+{
+    return m_type;
+}
+
+QString DeclarativeInterfaceItem::interfaceTitle()
+{
+    return m_interfaceTitle;
+}
+
+QString DeclarativeInterfaceItem::connection()
+{
+    return m_connectionName;
 }
 
 bool DeclarativeInterfaceItem::equals(const DeclarativeInterfaceItem *item)
