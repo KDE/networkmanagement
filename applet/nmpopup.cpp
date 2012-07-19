@@ -293,7 +293,7 @@ void NMPopup::readConfig()
         }
         m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
         m_interfaceLayout->addItem(m_warning);
-    } else if (Solid::Control::NetworkManagerNm09::compareVersion(QString(MINIMUM_NM_VERSION_REQUIRED)) > 0) {
+    } else if (Solid::Control::NetworkManagerNm09::compareVersion(QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
         if (!m_warning) {
             m_warning = new Plasma::Label(this);
         }

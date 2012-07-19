@@ -129,17 +129,17 @@ int NMNetworkManagerNm09::compareVersion(const QString & version)
 int NMNetworkManagerNm09::compareVersion(const int x, const int y, const int z) const
 {
     Q_D(const NMNetworkManagerNm09);
-    if (x > d->x) {
+    if (d->x > x) {
         return 1;
-    } else if (x < d->x) {
+    } else if (d->x < x) {
         return -1;
-    } else if (y > d->y) {
+    } else if (d->y > y) {
         return 1;
-    } else if (y < d->y) {
+    } else if (d->y < y) {
         return -1;
-    } else if (z > d->z) {
+    } else if (d->z > z) {
         return 1;
-    } else if (z < d->z) {
+    } else if (d->z < z) {
         return -1;
     }
     return 0;

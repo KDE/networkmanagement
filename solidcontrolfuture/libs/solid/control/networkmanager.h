@@ -57,12 +57,12 @@ namespace Control
         SOLIDCONTROL_EXPORT QString version();
         /**
          * Compares NetworkManager's version to the parameter version.
-         * returns 1, -1 or 0 if the parameter version is greater, lesser or equal to NetworkManager's version.
+         * returns 1, -1 or 0 if NetworkManager's version is greater, lesser or equal to parameter.
          */
         SOLIDCONTROL_EXPORT int compareVersion(const QString & version);
         /**
          * Compares NetworkManager version to x.y.z.
-         * returns 1, -1 or 0 if x.y.z is greater, lesser or equal to NetworkManager's version.
+         * returns 1, -1 or 0 if NetworkManager's version is greater, lesser or equal to x.y.z.
          */
         SOLIDCONTROL_EXPORT int compareVersion(const int x, const int y, const int z);
         /**
