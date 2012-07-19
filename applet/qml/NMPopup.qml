@@ -27,11 +27,12 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: main
     property int minimumWidth: 320
-    property int minimumHeight: 280
+    property int minimumHeight: 290
 
     property int iconSize: 22
         
     signal enableWireless(bool status)
+    signal enableMobile(bool status)
     signal settingsClicked()
 
     Component.onCompleted: {
@@ -58,14 +59,19 @@ Item {
             font.weight : Font.Bold
             font.pixelSize: theme.defaultFont.pointSize + 6
         }
-        WirelessInterfaceItem{}
-        WiredInterfaceItem{}
-        VpnInterfaceItem {}
+        //WirelessInterfaceItem{}
+        //WiredInterfaceItem{}
+        //VpnInterfaceItem {}
+        InterfacesListWidget {
+            widgetHeight: 250
+            widgetWidth: 300
+        }
     }
 
     Column {
         anchors.right: parent.right
-        anchors.rightMargin: 20
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
         spacing: 2
 
         ConnectionsTabWidget {}
@@ -87,15 +93,13 @@ Item {
         PlasmaComponents.CheckBox {
             height: 30
             text: i18n("Enable Mobile Broadband")
-
+            
+            visible: mobileVisible
+            checked: mobileChecked
+            enabled: mobileEnabled
+            
             onCheckedChanged: {
-                if (checked)
-                    console.log("CheckBox checked");
-                else
-                    console.log("CheckBox unchecked");
-            }
-            onClicked: {
-                console.log("CheckBox clicked");
+                enableMobile(checked)
             }
         }
 

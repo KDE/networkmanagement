@@ -308,7 +308,7 @@ void NetworkManagerApplet::init()
 
 
 #ifdef USE_QML
-    d->m_popup = new DeclarativeNMPopup(this);
+    d->m_popup = new DeclarativeNMPopup(m_activatables, this);
 #else
     d->m_popup = new NMPopup(m_activatables, this);
 #endif

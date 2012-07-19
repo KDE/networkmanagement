@@ -20,6 +20,10 @@ set(networkmanager_SRCS
 
     declarativenmpopup.cpp
 
+    declarativeinterfaceitem.cpp
+
+    interfaceslistmodel.cpp
+
     interfaceitem.cpp
     wirelessinterfaceitem.cpp
     vpninterfaceitem.cpp

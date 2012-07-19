@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotewirelessinterfaceconnection.h"
 
 // More own includes
-#include "interfaceitem.h"
+#include "declarativeinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "vpninterfaceitem.h"
 #include "activatablelistwidget.h"
@@ -44,15 +44,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "paths.h"
 
 
-DeclarativeNMPopup::DeclarativeNMPopup(QGraphicsWidget *parent) : Plasma::DeclarativeWidget(parent)
+DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent) :
+    Plasma::DeclarativeWidget(parent),
+    m_activatables(activatableList)
 {
     listModel = new ConnectionsListModel(parent);
+    interfaceListModel = new InterfacesListModel(parent);
 
     this->setInitializationDelayed(true);
     this->engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
+    this->engine()->rootContext()->setContextProperty("interfacesListModel", interfaceListModel);
     this->setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
 
     this->engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
+    this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
 
     connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -69,6 +74,11 @@ DeclarativeNMPopup::DeclarativeNMPopup(QGraphicsWidget *parent) : Plasma::Declar
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
 
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
+            SLOT(interfaceAdded(QString)));
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
+            SLOT(interfaceRemoved(QString)));
+
     readConfig();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -79,7 +89,58 @@ DeclarativeNMPopup::DeclarativeNMPopup(QGraphicsWidget *parent) : Plasma::Declar
 void DeclarativeNMPopup::qmlCreationFinished()
 {
     connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
+    connect(this->rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
+}
+
+void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed wwan enable state" << enabled;
+    //m_wwanCheckBox->nativeWidget()->setCheckState(enabled ? Qt::Checked : Qt::Unchecked);
+    this->engine()->rootContext()->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
+    if (enabled) {
+        //m_wwanCheckBox->setEnabled(enabled);
+        this->engine()->rootContext()->setContextProperty("mobileEnabled", enabled);
+    }
+}
+
+void DeclarativeNMPopup::interfaceAdded(const QString& uni)
+{
+    if (m_interfaces.contains(uni)) {
+        return;
+    }
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+    if (iface) {
+        kDebug() << "Interface Added:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+        addInterfaceInternal(iface);
+    }
+}
+
+void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
+{
+    if (m_interfaces.contains(uni)) {
+        // To prevent crashes when the interface removed is the one in interfaceDetailsWidget.
+        // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
+        /**
+        if (m_interfaceDetailsWidget && uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
+            m_interfaceDetailsWidget->setInterface(0, false);
+            // Since it is invalid go back to "main" window.
+            m_connectionsTabBar->setCurrentIndex(ConnectionsTabIndex);
+        }
+        **/
+        DeclarativeInterfaceItem* item = m_interfaces.take(uni);
+        interfaceListModel->removeItem(item);
+        //connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
+        //item->disappear();
+        updateHasWireless();
+        updateHasWwan();
+    }
+}
+
+void DeclarativeNMPopup::managerWwanHardwareEnabledChanged(bool enabled)
+{
+    kDebug() << "Hardware wwan enable switch state changed" << enabled;
+    this->engine()->rootContext()->setContextProperty("mobileVisible", enabled);
 }
 
 void DeclarativeNMPopup::manageConnections()
@@ -104,6 +165,13 @@ void DeclarativeNMPopup::updateWireless(bool checked)
 {
     if (NetworkManager::isWirelessEnabled() != checked) {
         NetworkManager::setWirelessEnabled(checked);
+    }
+}
+
+void DeclarativeNMPopup::updateMobile(bool checked)
+{
+    if (NetworkManager::isWwanEnabled() != checked) {
+        NetworkManager::setWwanEnabled(checked);
     }
 }
 
@@ -143,6 +211,8 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     if (!m_hasWirelessInterface) {
         kDebug() << "no ifaces";
         hasWireless = false;
+    } else {
+        //listModel->insertHiddenItem();
     }
     this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
 }
@@ -167,12 +237,14 @@ void DeclarativeNMPopup::readConfig()
 #if KDE_IS_VERSION(4,6,2)
     this->engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessHardwareEnabled());
 #else
-    //this->engine()->rootContext()->setContextProperty("wirelessEnabled", true);
+    this->engine()->rootContext()->setContextProperty("wirelessEnabled", QVariant(true));
 #endif
 
     /*m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
                                  NetworkManager::isWirelessEnabled());*/
 
+    this->engine()->rootContext()->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
+    this->engine()->rootContext()->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
     /**
     m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
     m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
@@ -207,35 +279,53 @@ void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
         // the interface might be gone in the meantime...
         return;
     }
-    /**
+
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * ifaceItem = 0;
+        DeclarativeInterfaceItem * ifaceItem = 0;
         if (iface->type() == NetworkManager::Device::Wifi) {
             // Create the wireless interface item
-            WirelessInterfaceItem* wifiItem = 0;
-            wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
-            ifaceItem = wifiItem;
-            wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
+            //WirelessInterfaceItem* wifiItem = 0;
+            //wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
+            ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
+            //wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
-            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
+            //connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         } else {
             // Create the interfaceitem
-            ifaceItem = new InterfaceItem(static_cast<NetworkManager::WiredDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
-            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
+            kDebug() << "Interface Item added";
+            ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
+            //connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         }
-        connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
-        connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
-                m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
-    /**
-        connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
-        connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
+       // connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+        //connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
+         //       m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
+
+        //connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
+        //connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
 
         // Catch connection changes
         connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
-        m_interfaceLayout->addItem(ifaceItem);
+        //m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
+        interfaceListModel->appendRow(ifaceItem);
     }
-    */
     updateHasWireless();
-    //updateHasWwan();
+    updateHasWwan();
+}
+
+void DeclarativeNMPopup::updateHasWwan()
+{
+    bool hasWwan = false;
+    foreach (DeclarativeInterfaceItem* ifaceitem, m_interfaces) {
+        NetworkManager::ModemDevice* iface = qobject_cast<NetworkManager::ModemDevice *>(ifaceitem->interface());
+        if (iface) {
+            hasWwan = true;
+            break;
+        }
+    }
+    if (hasWwan) {
+        this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(true));
+    } else {
+        this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
+    }
 }

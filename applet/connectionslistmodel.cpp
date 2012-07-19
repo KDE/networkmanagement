@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionslistmodel.h"
 
 ConnectionsListModel::ConnectionsListModel(QObject *parent)
-    : QAbstractListModel(parent)
+    : QAbstractListModel(parent),
+      hiddenInserted(false)
 {
     QHash<int, QByteArray> roles;
     roles[DeviceUniRole] = "deviceUni";
@@ -145,6 +146,15 @@ void ConnectionsListModel::appendRow(ConnectionItem *item) {
 
     connections.append(item);
     endInsertRows();
+}
+
+void ConnectionsListModel::insertHiddenItem() {
+    if(!hiddenInserted) {
+        beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
+        connections.insert(0, new ConnectionItem(0, true));
+        hiddenInserted = true;
+        endInsertRows();
+    }
 }
 
 void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {

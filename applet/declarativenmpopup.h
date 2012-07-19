@@ -23,35 +23,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/DeclarativeWidget>
 #include "connectionslistmodel.h"
+#include "interfaceslistmodel.h"
+#include "declarativeinterfaceitem.h"
 
 class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 {
     Q_OBJECT
 
 public:
-    DeclarativeNMPopup(QGraphicsWidget *parent=0);
+    DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent=0);
 
     void connectionAdded(ConnectionItem *connection);
     void connectionRemoved(ConnectionItem *connection);
     void updateHasWireless(bool checked = true);
-    //void updateHasWwan();
+    void updateHasWwan();
+
+    QHash<QString, DeclarativeInterfaceItem*> m_interfaces;
 
 private:
     void addInterfaceInternal(NetworkManager::Device *);
 
 public Q_SLOTS:
     void updateWireless(bool checked);
+    void updateMobile(bool checked);
     void manageConnections();
 
 private Q_SLOTS:
     void readConfig();
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
+    void managerWwanHardwareEnabledChanged(bool);
+    void managerWwanEnabledChanged(bool);
+    void interfaceRemoved(const QString& uni);
+    void interfaceAdded(const QString& uni);
 
     void qmlCreationFinished();
 private:
     ConnectionsListModel *listModel;
+    InterfacesListModel *interfaceListModel;
     bool m_hasWirelessInterface;
+    RemoteActivatableList* m_activatables;
 };
 
 #endif

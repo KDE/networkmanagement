@@ -68,6 +68,8 @@ public:
 
     void appendRows(const QList<ConnectionItem*> &items);
 
+    void insertHiddenItem();
+
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     bool removeItem(ConnectionItem *act);
@@ -83,7 +85,7 @@ public slots:
 
 private:
     QList<ConnectionItem *> connections;
-
+    bool hiddenInserted;
 };
 
 #endif // CONNECTIONSLISTMODEL_H
