@@ -96,10 +96,8 @@ void DeclarativeNMPopup::qmlCreationFinished()
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wwan enable state" << enabled;
-    //m_wwanCheckBox->nativeWidget()->setCheckState(enabled ? Qt::Checked : Qt::Unchecked);
     this->engine()->rootContext()->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
     if (enabled) {
-        //m_wwanCheckBox->setEnabled(enabled);
         this->engine()->rootContext()->setContextProperty("mobileEnabled", enabled);
     }
 }
@@ -183,6 +181,8 @@ void DeclarativeNMPopup::managerWirelessEnabledChanged(bool enabled)
     this->engine()->rootContext()->setContextProperty("wirelessChecked", enabled);
     if (enabled) {
         this->engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+    } else {
+        //listModel->removeHiddenItem();
     }
 }
 
@@ -212,7 +212,7 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
         kDebug() << "no ifaces";
         hasWireless = false;
     } else {
-        //listModel->insertHiddenItem();
+        listModel->insertHiddenItem();
     }
     this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
 }
@@ -222,6 +222,7 @@ void DeclarativeNMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     this->engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+    //if(!enabled) listModel->removeHiddenItem();
 }
 
 void DeclarativeNMPopup::readConfig()

@@ -39,6 +39,7 @@ Item {
         height: parent.height
         clip: true
         model: connectionsListModel
+        spacing: 3
         delegate: ConnectionItem {
             width: parent.width - 10
             networkUuid: connectionUuid;
@@ -55,6 +56,9 @@ Item {
             }
             onConnectNetwork: {
                 connectionsListModel.connectTo(index);
+            }
+            onConnectToHiddenNetwork: {
+                connectionsListModel.connectToHiddenNetwork(ssid);
             }
         }
 

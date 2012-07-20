@@ -29,14 +29,11 @@ Item {
     height: 30
     
     property string uuid;
-    property string networkName;
     property string wifiStatus;
-    property double signalStrengthValue;
     property bool connected;
     property string protectedNetworkIcon;
     
-    signal disconnect(string uuidProperty)
-    signal connectionClicked(int index)
+    signal enterPressed(string networkName);
     
     Rectangle {
         id: content
@@ -104,6 +101,13 @@ Item {
         anchors.rightMargin: 2
         anchors.fill: parent
         visible: false
+        onAccepted: {
+            if(networkNameEdit.text != "") {
+                enterPressed(networkNameEdit.text);
+                networkNameEdit.text = "";
+            }
+            hiddenWirelessItem.state = "base state"
+        }
     }
         
     states: [

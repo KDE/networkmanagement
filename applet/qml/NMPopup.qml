@@ -64,7 +64,7 @@ Item {
         //VpnInterfaceItem {}
         InterfacesListWidget {
             widgetHeight: 250
-            widgetWidth: 300
+            widgetWidth: 250
         }
     }
 

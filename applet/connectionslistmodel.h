@@ -70,6 +70,8 @@ public:
 
     void insertHiddenItem();
 
+    void removeHiddenItem();
+
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
     bool removeItem(ConnectionItem *act);
@@ -82,6 +84,7 @@ public slots:
     void itemChanged();
     void disconnectFrom(QVariant uuid);
     void connectTo(int index);
+    void connectToHiddenNetwork(QVariant ssid);
 
 private:
     QList<ConnectionItem *> connections;

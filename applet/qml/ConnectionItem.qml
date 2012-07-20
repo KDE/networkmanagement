@@ -37,6 +37,7 @@ Item {
     
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
+    signal connectToHiddenNetwork(string ssid);
     
     Component {
         id: wiredNetworkItemComponent
@@ -64,6 +65,9 @@ Item {
         HiddenWirelessNetwork {
             id: hiddenItem
             width: connectionItem.width;
+            onEnterPressed: {
+                connectionItem.connectToHiddenNetwork(networkName);
+            }
         }
     }
     
@@ -94,7 +98,7 @@ Item {
         console.log("connection type is: " + connectionType);
         if (connectionType == "wireless") {
             if(hidden) {
-                hiddenItemComponent.createObject(connectionItem);
+                hiddenWirelessNetworkComponent.createObject(connectionItem);
             } else {
                 wirelessNetworkItemComponent.createObject(connectionItem);
             }

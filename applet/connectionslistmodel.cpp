@@ -20,6 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionslistmodel.h"
 
+#include <KDebug>
+#include <QtNetworkManager/manager.h>
+#include <KToolInvocation>
+#include <KStandardDirs>
+
+#include "remoteactivatable.h"
+#include "remoteactivatablelist.h"
+#include "remoteinterfaceconnection.h"
+#include "remotewirelessinterfaceconnection.h"
+#include "remotewirelessnetwork.h"
+#include "remotegsminterfaceconnection.h"
+#include "activatableitem.h"
+
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
+
 ConnectionsListModel::ConnectionsListModel(QObject *parent)
     : QAbstractListModel(parent),
       hiddenInserted(false)
@@ -157,6 +172,15 @@ void ConnectionsListModel::insertHiddenItem() {
     }
 }
 
+void ConnectionsListModel::removeHiddenItem() {
+    if(hiddenInserted) {
+        beginRemoveRows(QModelIndex(), 0, 0);
+        connections.takeAt(0);
+        hiddenInserted = false;
+        endRemoveRows();
+    }
+}
+
 void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
     beginInsertRows(QModelIndex(), rowCount(), rowCount()+items.size()-1);
     foreach (ConnectionItem *item, items) {
@@ -218,4 +242,43 @@ QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) cons
         }
     }
     return QModelIndex();
+}
+
+void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
+{
+    QString ssid = ssidParam.toString();
+    kDebug() << "ssid is: " << ssid;
+    NetworkManager::WirelessDevice * wiface = 0;
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi && iface->state() > NetworkManager::Device::Unavailable) {
+            wiface = qobject_cast<NetworkManager::WirelessDevice *>(iface);
+            break;
+        }
+    }
+
+    if (!wiface) {
+        return;
+    }
+
+    QStringList args;
+    QString moduleArgs;
+
+    NetworkManager::WirelessNetworkInterfaceEnvironment envt(wiface);
+    NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
+
+    if (network) {
+        moduleArgs = QString::fromLatin1("%1 %2")
+            .arg(wiface->uni())
+            .arg(network->referenceAccessPoint());
+
+    } else {
+        moduleArgs = QString::fromLatin1("%1 %2")
+            .arg(wiface->uni())
+            .arg(ssid);
+    }
+
+    args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");
+    kDebug() << "invoking networkmanagement_configshell" << args;
+    int ret = KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
+    kDebug() << ret << args;
 }
