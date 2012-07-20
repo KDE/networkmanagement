@@ -18,53 +18,37 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-import QtQuick 1.1
-import org.kde.plasma.core 0.1 as PlasmaCore
-import org.kde.plasma.components 0.1 as PlasmaComponents
+import QtQuick 1.0
+import org.kde.qtextracomponents 0.1
 
-
-Item {
-    id: listWidget;
-
-    property int widgetHeight;
-    property int widgetWidth;
-
-    height: widgetHeight
-    width: widgetWidth
+Item {  
+    id: wirelessIcon
     
-    ListView {
-        id: scrollList
+    width: 48
+    height: 48
+    
+    property bool routeDefault;
+    
+    QIconItem {
+        id: connectionIcon
 
-        spacing: 20
-        width: parent.width
-        height: parent.height
-        clip: true
-        model: interfacesListModel
-        delegate: InterfaceItem {
-            //width: parent.width - 10
-            interfaceType: type
-            name: interfaceName
-            enabledInterface: interfaceEnabled
-            connection: interfaceConnection
-            isDefault: defaultRoute
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            color: "#00000000"
-        }
-
-        PlasmaComponents.ScrollBar {
-            id: scrollBar
-            orientation: Qt.Vertical
-            flickableItem: scrollList
-            //stepSize: 40
-            scrollButtonInterval: 50
-            anchors {
-                top: scrollList.top
-                right: scrollList.right
-                bottom: scrollList.bottom
-            }
-        }
+        icon: QIcon("network-wireless")
+        width: 48
+        height: 48
+        visible: true
+        anchors.verticalCenter: parent.verticalCenter
     }
-}
+            
+    QIconItem {
+        id: connectionIcon2
+
+        icon: QIcon("network-defaultroute.png")
+        width: 16
+        height: 16
+        visible: {
+            if(routeDefault) true
+            else false
+        }
+        anchors.verticalCenter: parent.verticalCenter
+    } 
+} 

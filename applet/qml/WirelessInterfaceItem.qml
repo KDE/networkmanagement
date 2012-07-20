@@ -30,6 +30,7 @@ Item {
     
     property string interfaceTitle;
     property string connectionDescription;
+    property bool defaultRoute;
 
     Rectangle {
         anchors.leftMargin: 2
@@ -73,13 +74,9 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
 
-            QIconItem {
-                id: connectionIcon
-
-                icon: QIcon("network-wireless")
-                width: 48
-                height: 48
+            WirelessInterfaceIcon {
                 visible: true
+                routeDefault: defaultRoute;
                 anchors.verticalCenter: parent.verticalCenter
             }
 

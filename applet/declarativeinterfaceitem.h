@@ -52,6 +52,7 @@ public:
     QString type();
     QString interfaceTitle();
     bool enabled();
+    bool defaultRoute();
 
     QWeakPointer<NetworkManager::Device> m_iface;
 

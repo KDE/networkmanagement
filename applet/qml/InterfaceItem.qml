@@ -29,6 +29,7 @@ Item {
     property string name;
     property string connection;
     property bool enabledInterface;
+    property bool isDefault;
         
     Component {
         id: wiredInterfaceComponent
@@ -40,6 +41,7 @@ Item {
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
             interfaceTitle: name
+            defaultRoute: isDefault;
         }
     }
     
@@ -53,6 +55,7 @@ Item {
             interfaceTitle: name
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
+            //defaultRoute: isDefault;
         }
     }
     
@@ -66,6 +69,7 @@ Item {
            interfaceTitle: name
            opacity: enabledInterface ? 1.0 : 0.7
            connectionDescription: connection
+           defaultRoute: isDefault;
        }
     }
     

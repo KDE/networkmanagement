@@ -34,7 +34,8 @@ public:
         InterfaceNameRole = Qt::UserRole+1,
         TypeRole,
         EnabledRole,
-        ConnectionRole
+        ConnectionRole,
+        DefaultRouteRole
     };
 
     InterfacesListModel(QObject *parent=0);

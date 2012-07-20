@@ -163,7 +163,13 @@ void DeclarativeInterfaceItem::updateCurrentConnection(RemoteInterfaceConnection
 void DeclarativeInterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
     m_hasDefaultRoute = changed;
-    //kDebug() << "Default Route changed!!" << changed;
+    kDebug() << "Default Route changed!!" << changed;
+    emit itemChanged();
+}
+
+bool DeclarativeInterfaceItem::defaultRoute()
+{
+    return m_hasDefaultRoute;
 }
 
 void DeclarativeInterfaceItem::setConnectionInfo()
