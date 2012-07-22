@@ -312,6 +312,28 @@ void NMPopup::readConfig()
 {
     kDebug();
     KNetworkManagerServicePrefs::self()->readConfig();
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+
+    if (config.readEntry(QLatin1String("DetailKeys"), QStringList()).isEmpty()) {
+        QStringList keys;
+        keys << "interface:type"
+             << "interface:status"
+             << "ipv4:address"
+             << "interface:bitrate"
+             << "interface:name"
+             << "interface:hardwareaddress"
+             << "interface:driver"
+             << "wireless:ssid"
+             << "wireless:accesspoint"
+             << "wireless:band"
+             << "wireless:channel"
+             << "mobile:operator"
+             << "mobile:quality"
+             << "mobile:technology";
+
+        config.writeEntry(QLatin1String("DetailKeys"), keys);
+        config.sync();
+    }
 
     //m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
     m_wifiCheckBox->setChecked(NetworkManager::isWirelessEnabled());

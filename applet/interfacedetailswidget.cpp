@@ -1,7 +1,7 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2010 Alexander Naumov <posix.ru@gmail.com>
-Copyright 2010-2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -63,9 +63,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class InterfaceDetails
 {
     public:
+        QStringList keys;
         NetworkManager::Device::Type type;
         NetworkManager::Device::State connectionState;
-        QString ipAddress;
+        QString ipv4Address;
+        QString ipv4Gateway;
         int bitRate;
         QString interfaceName;
         QString mac;
@@ -256,9 +258,13 @@ void InterfaceDetailsWidget::getDetails()
         return;
     }
 
+    KNetworkManagerServicePrefs::self()->readConfig();
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+    details->keys = config.readEntry(QLatin1String("DetailKeys"), QStringList());
+
     details->type = m_iface->type();
     details->connectionState = static_cast<NetworkManager::Device::State>(m_iface->state());
-    details->ipAddress = currentIpAddress();
+    updateIPv4Details();
     details->bitRate = bitRate();
     details->interfaceName = m_iface->ipInterfaceName();
     if (details->interfaceName.isEmpty()) {
@@ -303,16 +309,11 @@ void InterfaceDetailsWidget::getDetails()
             details->unlockRequired = modemNetworkIface->unlockRequired();
         }
 
-        /*
-         * These calls are protectec by policy kit. Without proper configuration policy kit agent
-         * will ask por password, which is bothering users (BUG #266807).
-         * Plasma NM still does not use this information, so I will leave them
-         * commented until I really need them.
-        ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+        ModemManager::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
         if (modemCardIface) {
             details->imei = modemCardIface->getImei();
             details->imsi = modemCardIface->getImsi();
-        }*/
+        }
     }
 }
 
@@ -337,51 +338,67 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
     m_disconnectButton->setVisible(details->connectionState == NetworkManager::Device::Activated);
     if (!reset && m_iface) {
-        info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
-        info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
-        info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
-        info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
-        info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
-        info += QString(format).arg(i18nc("interface details", "MAC Address"), details->mac);
-        info += QString(format).arg(i18nc("interface details", "Driver"), details->driver);
-
         NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(m_iface);
-        if (wiface) {
-            NetworkManager::AccessPoint *ap = wiface->findAccessPoint(details->activeAccessPoint);
-            if (ap) {
-                info += QString(format).arg(i18nc("interface details", "Access Point (SSID)"), ap->ssid());
-                info += QString(format).arg(i18nc("interface details", "Access Point (MAC)"), ap->hardwareAddress());
+        NetworkManager::AccessPoint *ap = 0;
+        NetworkManager::ModemDevice *giface = 0;
 
-                if (details->wifiChannelFrequency != ap->frequency()) {
-                    details->wifiChannelFrequency = ap->frequency();
-                    QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
-                    details->wifiBand = bandAndChannel.first;
-                    details->wifiChannel = bandAndChannel.second;
-                }
-                info += QString(format).arg(i18nc("@item:intable wireless band", "Band"), UiUtils::wirelessBandToString(details->wifiBand));
-                info += QString(format).arg(i18nc("@item:intable wireless channel", "Channel"), QString("%1 (%2 MHz)").arg(details->wifiChannel).arg(details->wifiChannelFrequency));
+        if (wiface) {
+            ap = wiface->findAccessPoint(details->activeAccessPoint);
+
+            if (ap && details->wifiChannelFrequency != ap->frequency()) {
+                details->wifiChannelFrequency = ap->frequency();
+                QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
+                details->wifiBand = bandAndChannel.first;
+                details->wifiChannel = bandAndChannel.second;
             }
+        } else {
+            giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
         }
 
-        NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
-
-        if (giface) {
-            info += QString(format).arg(i18nc("interface details", "Operator"), details->registrationInfo.operatorName);
-            info += QString(format).arg(i18nc("interface details", "Signal Quality"), QString("%1 %").arg(details->signalQuality));
-            info += QString(format).arg(i18nc("interface details", "Access Technology"), QString("%1/%2").arg(UiUtils::convertTypeToString(details->modemType), UiUtils::convertAccessTechnologyToString(details->accessTechnology)));
-
-            /* TODO: create another tab to show this stuff
-            info += QString(format).arg(i18nc("interface details", "Frequency Band"), UiUtils::convertBandToString(details->band));
-            info += QString(format).arg(i18nc("interface details", "Allowed Mode"), UiUtils::convertAllowedModeToString(details->allowedMode));
-            info += QString(format).arg(i18nc("interface details", "UDI"), details->udi);
-            info += QString(format).arg(i18nc("interface details", "Device"), details->device);
-            info += QString(format).arg(i18nc("interface details", "Master Device"), details->masterDevice);
-            info += QString(format).arg(i18nc("interface details", "Unlock Required"), details->unlockRequired.isEmpty() ? i18n("No") : QString("%1: %2").arg(i18n("Yes"), details->unlockRequired));*/
-
-            /* TODO: create another tab to show this stuff
-            info += QString(format).arg(i18nc("interface details", "IMEI"), details->imei);
-            info += QString(format).arg(i18nc("interface details", "IMSI"), details->imsi);
-            */
+        foreach (const QString & key, details->keys) {
+            if (key == QLatin1String("interface:type")) {
+                info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
+            } else if (key == QLatin1String("interface:status")) {
+                info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
+            } else if (key == QLatin1String("interface:bitrate")) {
+                info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
+            } else if (key == QLatin1String("interface:name")) {
+                info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
+            } else if (key == QLatin1String("interface:hardwareaddress") && !details->mac.isEmpty()) {
+                info += QString(format).arg(i18nc("interface details", "MAC Address"), details->mac);
+            } else if (key == QLatin1String("interface:driver")) {
+                info += QString(format).arg(i18nc("interface details", "Driver"), details->driver);
+            } else if (key == QLatin1String("ipv4:address")) {
+                info += QString(format).arg(i18nc("interface details", "IPv4 Address"), details->ipv4Address);
+            } else if (key == QLatin1String("ipv4:gateway")) {
+                info += QString(format).arg(i18nc("interface details", "IPv4 Gateway"), details->ipv4Gateway);
+            } else if (key == QLatin1String("wireless:ssid") && ap) {
+                info += QString(format).arg(i18nc("interface details", "Access Point (SSID)"), ap->ssid());
+            } else if (key == QLatin1String("wireless:accesspoint") && ap) {
+                info += QString(format).arg(i18nc("interface details", "Access Point (MAC)"), ap->hardwareAddress());
+            } else if (key == QLatin1String("wireless:band") && ap) {
+                info += QString(format).arg(i18nc("@item:intable wireless band", "Band"), UiUtils::wirelessBandToString(details->wifiBand));
+            } else if (key == QLatin1String("wireless:channel") && ap) {
+                info += QString(format).arg(i18nc("@item:intable wireless channel", "Channel"), QString("%1 (%2 MHz)").arg(details->wifiChannel).arg(details->wifiChannelFrequency));
+            } else if (key == QLatin1String("mobile:operator") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Operator"), details->registrationInfo.operatorName);
+            } else if (key == QLatin1String("mobile:quality") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Signal Quality"), QString("%1 %").arg(details->signalQuality));
+            } else if (key == QLatin1String("mobile:technology") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Access Technology"), QString("%1/%2").arg(UiUtils::convertTypeToString(details->modemType), UiUtils::convertAccessTechnologyToString(details->accessTechnology)));
+            } else if (key == QLatin1String("mobile:band") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Frequency Band"), UiUtils::convertBandToString(details->band));
+            } else if (key == QLatin1String("mobile:mode") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Allowed Mode"), UiUtils::convertAllowedModeToString(details->allowedMode));
+            } else if (key == QLatin1String("mobile:device") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Device Name"), details->device);
+            } else if (key == QLatin1String("mobile:unlock") && giface) {
+                info += QString(format).arg(i18nc("interface details", "Unlock Required"), details->unlockRequired.isEmpty() ? i18nc("Answer to the question: is modem unlock required?", "No") : QString("%1: %2").arg(i18nc("Answer to the question: is modem unlock required?", "Yes"), details->unlockRequired));
+            } else if (key == QLatin1String("mobile:imei") && giface) {
+                info += QString(format).arg(i18nc("interface details", "IMEI"), details->imei);
+            } else if (key == QLatin1String("mobile:imsi") && giface) {
+                info += QString(format).arg(i18nc("interface details", "IMSI"), details->imsi);
+            }
         }
     } else {
         info += QString(format).arg(i18nc("interface details", "Type"), na);
@@ -400,24 +417,6 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     info += QLatin1String("</table></qt>");
     m_info->setText(info);
     update();
-}
-
-QString InterfaceDetailsWidget::currentIpAddress()
-{
-    if (!m_iface)
-        return QString();
-
-    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
-        return i18nc("label of the network interface", "No IP address.");
-    }
-
-    QHostAddress addr;
-    addr.setAddress(ntohl(m_iface->ipV4Address()));
-
-    if (addr.isNull()) {
-        return i18nc("label of the network interface", "IP display error.");
-    }
-    return addr.toString();
 }
 
 int InterfaceDetailsWidget::bitRate()
@@ -582,7 +581,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
         setInterface(0, false);
         emit back();
     } else {
-        details->ipAddress = currentIpAddress();
+        updateIPv4Details();
         details->connectionState = static_cast<NetworkManager::Device::State>(new_state);
         if (m_iface->type() == NetworkManager::Device::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
@@ -703,17 +702,17 @@ QString InterfaceDetailsWidget::getMAC()
             if (m_iface) { // last resort, although using ifaceName is not portable
                 QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(m_iface->interfaceName()));
                 QList<Solid::Device>::iterator it = list.begin();
-            
+
                 if (it != list.end()) {
                     Solid::Device device = *it;
                     Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
-            
+
                     if (interface) {
                         const QMetaObject *meta = interface->metaObject();
-            
+
                         for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
                             QMetaProperty property = meta->property(i);
-            
+
                             if (QString(meta->className()).mid(7) + '.' + property.name() == QString::fromLatin1("NetworkManager::Device.hwAddress")) {
                                 QVariant value = property.read(interface);
                                 return value.toString();
@@ -794,10 +793,41 @@ void InterfaceDetailsWidget::disconnectSignals()
     }
 }
 
-void InterfaceDetailsWidget::updateIpAddress()
+void InterfaceDetailsWidget::updateIPv4Details()
 {
-    details->ipAddress = currentIpAddress();
-    showDetails();
+    if (!m_iface) {
+        details->ipv4Address.clear();
+        details->ipv4Gateway.clear();
+        return;
+    }
+
+    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
+        details->ipv4Address = i18nc("label of the network interface", "No IP address.");
+        details->ipv4Gateway = i18nc("label of the network interface", "No gateway.");
+        return;
+    }
+
+    QHostAddress addr;
+    addr.setAddress(ntohl(m_iface->ipV4Address()));
+
+    if (addr.isNull()) {
+        details->ipv4Address = i18nc("label of the network interface", "IP display error.");
+    } else {
+        details->ipv4Address = addr.toString();
+    }
+
+    NetworkManager::Dhcp4Config *dhcp4Config = m_iface->dhcp4Config();
+    if (dhcp4Config) {
+        details->ipv4Gateway = dhcp4Config->optionValue("routers");
+    } else if (!m_iface->ipV4Config().routes().isEmpty()) {
+        // OBS: NetworkManager does not report routes if connection uses static IP address (tested with NetworkManager-0.9.4.0)
+        QHostAddress addr;
+        addr.setAddress(m_iface->ipV4Config().routes().at(0).route());
+        details->ipv4Gateway = addr.toString();
+    } else {
+        details->ipv4Gateway.clear();
+    }
+    //showDetails();
 }
 
 void InterfaceDetailsWidget::updateBitRate(int bitRate)

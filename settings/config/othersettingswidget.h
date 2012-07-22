@@ -39,6 +39,7 @@ public:
     OtherSettingsWidget(QWidget * parent = 0);
     virtual ~OtherSettingsWidget();
 public Q_SLOTS:
+    void configureDetails();
     void configureNotifications();
 private:
     OtherSettingsWidgetPrivate * d_ptr;
