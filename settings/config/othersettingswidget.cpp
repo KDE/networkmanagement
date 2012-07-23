@@ -41,7 +41,7 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
 {
     Q_D(OtherSettingsWidget);
     d->ui.setupUi(this);
-    d->ui.lblVersion->setText(i18nc("@label:textbox Version text", "<b>Version %1</b>", plasmaNmVersion)); // krazy:exclude=i18ncheckarg
+    d->ui.lblVersion->setText(i18nc("@label:textbox Version text", "&lt;b&gt;Version %1&lt;/b&gt;", plasmaNmVersion));
     d->ui.detailsButton->setIcon(KIcon("view-list-details"));
     d->ui.notificationsButton->setIcon(KIcon("preferences-desktop-notification"));
     connect(d->ui.detailsButton, SIGNAL(clicked()), SLOT(configureDetails()));
