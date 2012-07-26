@@ -28,16 +28,20 @@ Column {
         width: 300
         height: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        PlasmaComponents.TabButton { tab: tab1content; text: i18n("Connections")}
-        PlasmaComponents.TabButton { tab: tab2content; text: i18n("VPN")}
-        PlasmaComponents.TabButton { tab: tab3content; text: i18n("Shared Connections")}
+        PlasmaComponents.TabButton { tab: tabContent; text: i18n("Connections")}
+        PlasmaComponents.TabButton { tab: tabContent; text: i18n("VPN")}
+        PlasmaComponents.TabButton { tab: tabContent; text: i18n("Shared Connections")}
+        
+        onCurrentTabChanged: {
+            console.log("Tab changed!");
+        }
     }
     
     PlasmaComponents.TabGroup {
         height: 170
         width: parent.width - parent.spacing
         Flickable {
-            id: tab1content
+            id: tabContent
             width: parent.width
             height: 170
             ConnectionsListWidget{
@@ -45,18 +49,6 @@ Column {
                 widgetWidth: parent.width
             }
 
-        }
-        PlasmaComponents.Label {
-            id: tab2content
-            text: i18n("VPN Tab")
-            horizontalAlignment: "AlignHCenter"
-            verticalAlignment: "AlignVCenter"
-        }
-        PlasmaComponents.Label {
-            id: tab3content
-            text: i18n("Shared Connections Tab")
-            horizontalAlignment: "AlignHCenter"
-            verticalAlignment: "AlignVCenter"
         }
     }
 } 
