@@ -35,8 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
-ConnectionsListModel::ConnectionsListModel(QObject *parent)
+ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),
+      m_activatables(activatables),
       hiddenInserted(false)
 {
     QHash<int, QByteArray> roles;
@@ -174,10 +175,8 @@ void ConnectionsListModel::insertHiddenItem() {
 
 void ConnectionsListModel::removeHiddenItem() {
     if(hiddenInserted) {
-        beginRemoveRows(QModelIndex(), 0, 0);
-        connections.takeAt(0);
+        removeRow(0);
         hiddenInserted = false;
-        endRemoveRows();
     }
 }
 
@@ -242,6 +241,46 @@ QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) cons
         }
     }
     return QModelIndex();
+}
+
+void ConnectionsListModel::updateConnectionsList(QVariant tabName)
+{
+    foreach (ConnectionItem *item, connections) {
+        removeItem(item);
+    }
+
+    removeHiddenItem();
+
+    QString tab = tabName.toString();
+
+    kDebug() << "Tab is " << tab;
+
+    if(tab == "Connections") {
+        insertHiddenItem();
+    }
+
+    foreach (RemoteActivatable *activatable, m_activatables->activatables()) {
+        if(tab == "Shared Connections") {
+            if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
+                                             activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
+                ConnectionItem *item = new ConnectionItem(activatable);
+                kDebug() << "entered shared";
+                appendRow(item);
+            }
+        } else if(tab == "Connections") {
+            if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
+                ConnectionItem *item = new ConnectionItem(activatable);
+                kDebug() << "entered normal";
+                appendRow(item);
+            }
+        } else if(tab == "VPN") {
+            if(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+                ConnectionItem *item = new ConnectionItem(activatable);
+                kDebug() << "entered vpn";
+                appendRow(item);
+            }
+        }
+    }
 }
 
 void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)

@@ -58,7 +58,7 @@ public:
         WiredNetworkNameRole
     };
 
-    ConnectionsListModel(QObject *parent = 0);
+    ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
@@ -85,9 +85,11 @@ public slots:
     void disconnectFrom(QVariant uuid);
     void connectTo(int index);
     void connectToHiddenNetwork(QVariant ssid);
+    void updateConnectionsList(QVariant tabName);
 
 private:
     QList<ConnectionItem *> connections;
+    RemoteActivatableList* m_activatables;
     bool hiddenInserted;
 };
 

@@ -48,7 +48,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     Plasma::DeclarativeWidget(parent),
     m_activatables(activatableList)
 {
-    listModel = new ConnectionsListModel(parent);
+    listModel = new ConnectionsListModel(m_activatables, parent);
     interfaceListModel = new InterfacesListModel(parent);
 
     this->setInitializationDelayed(true);
