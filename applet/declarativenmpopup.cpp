@@ -151,12 +151,12 @@ void DeclarativeNMPopup::manageConnections()
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
 {
-    listModel->appendRow(connection);
+    listModel->updateConnectionsList();
 }
 
 void DeclarativeNMPopup::connectionRemoved(ConnectionItem *connection)
 {
-    listModel->removeItem(connection);
+    listModel->updateConnectionsList();
 }
 
 void DeclarativeNMPopup::updateWireless(bool checked)
@@ -182,7 +182,7 @@ void DeclarativeNMPopup::managerWirelessEnabledChanged(bool enabled)
     if (enabled) {
         this->engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
     } else {
-        //listModel->removeHiddenItem();
+        listModel->removeHiddenItem();
     }
 }
 
@@ -212,7 +212,7 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
         kDebug() << "no ifaces";
         hasWireless = false;
     } else {
-        listModel->insertHiddenItem();
+        //listModel->insertHiddenItem();
     }
     this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
 }

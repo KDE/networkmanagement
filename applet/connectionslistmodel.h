@@ -58,6 +58,12 @@ public:
         WiredNetworkNameRole
     };
 
+    enum Filter {
+        NormalConnections,
+        VpnConnections,
+        SharedConnections
+    };
+
     ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -80,17 +86,20 @@ public:
 
     QModelIndex indexFromItem(const ConnectionItem *item) const;
 
+    void updateConnectionsList();
+
 public slots:
     void itemChanged();
     void disconnectFrom(QVariant uuid);
     void connectTo(int index);
     void connectToHiddenNetwork(QVariant ssid);
-    void updateConnectionsList(QVariant tabName);
+    void setFilter(QVariant tabName);
 
 private:
     QList<ConnectionItem *> connections;
     RemoteActivatableList* m_activatables;
     bool hiddenInserted;
+    Filter currentFilter;
 };
 
 #endif // CONNECTIONSLISTMODEL_H

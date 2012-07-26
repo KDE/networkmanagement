@@ -166,7 +166,8 @@ void ConnectionsListModel::appendRow(ConnectionItem *item) {
 
 void ConnectionsListModel::insertHiddenItem() {
     if(!hiddenInserted) {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
+        beginInsertRows(QModelIndex(), 0, 0);
+        kDebug() << "adding hidden item";
         connections.insert(0, new ConnectionItem(0, true));
         hiddenInserted = true;
         endInsertRows();
@@ -177,6 +178,7 @@ void ConnectionsListModel::removeHiddenItem() {
     if(hiddenInserted) {
         removeRow(0);
         hiddenInserted = false;
+        kDebug() << "Will remove hidden item";
     }
 }
 
@@ -215,6 +217,7 @@ bool ConnectionsListModel::removeItem(ConnectionItem *act) {
     int row = 0;
     foreach (ConnectionItem *item, connections) {
         if(item->equals(act)) {
+            if(item->hidden()) hiddenInserted = false;
             return removeRow(row);
         }
         row++;
@@ -243,42 +246,55 @@ QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) cons
     return QModelIndex();
 }
 
-void ConnectionsListModel::updateConnectionsList(QVariant tabName)
+void ConnectionsListModel::setFilter(QVariant tabName)
+{
+    if(tabName == "Connections") {
+        currentFilter = NormalConnections;
+    } else if (tabName == "VPN") {
+        currentFilter = VpnConnections;
+    } else if (tabName == "Shared Connections") {
+        currentFilter = SharedConnections;
+    }
+
+    updateConnectionsList();
+}
+
+void ConnectionsListModel::updateConnectionsList()
 {
     foreach (ConnectionItem *item, connections) {
+        kDebug() << "removing connection item";
         removeItem(item);
     }
 
     removeHiddenItem();
 
-    QString tab = tabName.toString();
 
-    kDebug() << "Tab is " << tab;
-
-    if(tab == "Connections") {
+    if(currentFilter == NormalConnections && NetworkManager::isWirelessEnabled()) {
         insertHiddenItem();
     }
 
     foreach (RemoteActivatable *activatable, m_activatables->activatables()) {
-        if(tab == "Shared Connections") {
-            if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
-                                             activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
-                ConnectionItem *item = new ConnectionItem(activatable);
-                kDebug() << "entered shared";
-                appendRow(item);
-            }
-        } else if(tab == "Connections") {
-            if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
-                ConnectionItem *item = new ConnectionItem(activatable);
-                kDebug() << "entered normal";
-                appendRow(item);
-            }
-        } else if(tab == "VPN") {
-            if(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-                ConnectionItem *item = new ConnectionItem(activatable);
-                kDebug() << "entered vpn";
-                appendRow(item);
-            }
+        switch(currentFilter) {
+            case NormalConnections:
+                if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
+                    kDebug() << "adding connection item";
+                }
+                break;
+            case VpnConnections:
+                if(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
+                }
+                break;
+            case SharedConnections:
+                if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
+                                                 activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
+                }
+                break;
         }
     }
 }

@@ -116,6 +116,7 @@ Item {
                 height: 10
                 width: 68
                 
+                visible: signalStrengthValue > 0
                 anchors.verticalCenter: parent.verticalCenter
             }
             
