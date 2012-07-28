@@ -94,6 +94,7 @@ public slots:
     void connectTo(int index);
     void connectToHiddenNetwork(QVariant ssid);
     void setFilter(QVariant tabName);
+    void deactivateConnection(const QString& deviceUni);
 
 private:
     QList<ConnectionItem *> connections;

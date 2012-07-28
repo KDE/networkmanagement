@@ -138,7 +138,17 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid) {
             }
         }
     }
+}
 
+void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
+{
+    if(deviceUni != "") {
+        foreach (ConnectionItem *item, connections) {
+            if (item && item->interfaceConnection() && item->interfaceConnection()->deviceUni() == deviceUni) {
+                item->disconnect();
+            }
+        }
+    }
 }
 
 void ConnectionsListModel::connectTo(int index) {

@@ -81,7 +81,9 @@ Item {
             onBack: {
                 main.state = "State1";
             }    
-            
+            onDisconnectInterfaceRequested: {
+                connectionsListModel.deactivateConnection(deviceUni);
+            }
         }
     }
 
@@ -91,7 +93,10 @@ Item {
         anchors.leftMargin: 10
         spacing: 2
 
-        ConnectionsTabWidget {}
+        ConnectionsTabWidget {
+            id: tabWidget
+            height: 200;
+        }
 
         PlasmaComponents.CheckBox {
             height: 30
@@ -211,6 +216,11 @@ Item {
             PropertyChanges {
                 target: interfaceTitle
                 visible: false
+            }
+            
+            PropertyChanges {
+                target: tabWidget
+                height: 260
             }
         }
     ]

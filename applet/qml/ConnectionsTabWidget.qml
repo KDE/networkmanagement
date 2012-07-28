@@ -38,12 +38,12 @@ Column {
     }
     
     PlasmaComponents.TabGroup {
-        height: 170
+        height: parent.height - 30
         width: parent.width - parent.spacing
         Flickable {
             id: tabContent
             width: parent.width
-            height: 170
+            height: parent.height - 30
             ConnectionsListWidget{
                 widgetHeight: parent.height
                 widgetWidth: parent.width
