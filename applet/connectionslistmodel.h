@@ -88,6 +88,9 @@ public:
 
     void updateConnectionsList();
 
+Q_SIGNALS:
+    void showInterfaceDetails(QString);
+
 public slots:
     void itemChanged();
     void disconnectFrom(QVariant uuid);

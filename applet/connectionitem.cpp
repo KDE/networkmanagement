@@ -197,7 +197,7 @@ void ConnectionItem::connectNetwork() {
         RemoteInterfaceConnection * remote = interfaceConnection();
         if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
                        remote->activationState() == Knm::InterfaceConnection::Activated)) {
-            // Show interface details
+            emit showInterfaceDetails(remote->deviceUni());
         } else {
             QTimer::singleShot(0, m_activatable, SLOT(activate()));
         }

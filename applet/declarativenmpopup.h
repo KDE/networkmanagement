@@ -47,6 +47,7 @@ public Q_SLOTS:
     void updateWireless(bool checked);
     void updateMobile(bool checked);
     void manageConnections();
+    void showInterfaceDetails(const QString & uni);
 
 private Q_SLOTS:
     void readConfig();

@@ -60,6 +60,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     this->engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
     this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
 
+    connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     connect(interfaceListModel, SIGNAL(updateTraffic(NetworkManager::Device *)), this, SLOT(manageUpdateTraffic(NetworkManager::Device *)));
     connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -144,6 +145,7 @@ void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
     if(this->rootObject()) {
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
+        QMetaObject::invokeMethod(this->rootObject(), "detailsWidget");
     }
 }
 
@@ -341,4 +343,13 @@ void DeclarativeNMPopup::updateHasWwan()
     } else {
         this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
     }
+}
+
+void DeclarativeNMPopup::showInterfaceDetails(const QString & uni)
+{
+    DeclarativeInterfaceItem * ifaceItem = m_interfaces.value(uni, 0);
+    if (!ifaceItem) {
+        return;
+    }
+    manageUpdateTraffic(ifaceItem->interface());
 }

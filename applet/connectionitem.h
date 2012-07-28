@@ -56,6 +56,7 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void itemChanged();
+    void showInterfaceDetails(QString);
 
 private:
     RemoteActivatable *m_activatable;

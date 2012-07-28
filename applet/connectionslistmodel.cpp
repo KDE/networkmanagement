@@ -169,6 +169,7 @@ void ConnectionsListModel::appendRow(ConnectionItem *item) {
     beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
 
     connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
+    connect(item, SIGNAL(showInterfaceDetails(QString)), this, SIGNAL(showInterfaceDetails(QString)));
 
     connections.append(item);
     endInsertRows();
