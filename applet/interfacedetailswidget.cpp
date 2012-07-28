@@ -171,10 +171,10 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     // add pushbutton for "back" action
     m_backButton = new Plasma::PushButton(this);
-    m_backButton->setMaximumHeight(22);
-    m_backButton->setMaximumWidth(22);
+    m_backButton->setMaximumHeight(28);
+    m_backButton->setMaximumWidth(28);
     m_backButton->setIcon(KIcon("go-previous"));
-    m_backButton->setToolTip(i18n("Go Back"));
+    //m_backButton->setToolTip(i18n("Go Back"));
     m_backButton->setZValue(100);
 
     connect(m_backButton, SIGNAL(clicked()), this, SIGNAL(back()));
@@ -485,6 +485,8 @@ void InterfaceDetailsWidget::updateWidgets()
     //kDebug() << s;
     //m_traffic->setText(s);
 
+    kDebug() << "update widget";
+
     double _r;
     double _t;
     QString r, t;
@@ -556,7 +558,7 @@ Plasma::DataEngine* InterfaceDetailsWidget::engine()
 
 void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
 {
-    //kDebug() << "Source Updated!!!" << sourceName << data;
+    kDebug() << "Source Updated!!!" << sourceName << data;
     if (sourceName == m_txSource) {
         m_tx = data["value"].toString();
         m_txUnit = data["units"].toString();
@@ -621,6 +623,7 @@ void InterfaceDetailsWidget::setInterfaceItem(InterfaceItem* item, bool disconne
 
 void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool disconnectOld)
 {
+    kDebug() << "entered to set interface";
     m_speedUnit = KNetworkManagerServicePrefs::self()->networkSpeedUnit();
 
     if (m_iface == iface) {
@@ -649,6 +652,8 @@ void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool di
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(interfaceName);
         m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(interfaceName);
         m_rxTotal = m_txTotal = 0;
+
+        kDebug() << "adjusted sources";
 
         /* Usb network interfaces are hotpluggable and Plasma::DataEngine seems to have difficulty
          * to recognise them after the engine is loaded, reloading the engine does the trick.

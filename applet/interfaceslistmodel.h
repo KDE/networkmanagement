@@ -56,8 +56,12 @@ public:
 
     QModelIndex indexFromItem(const DeclarativeInterfaceItem *item) const;
 
+Q_SIGNALS:
+    void updateTraffic(NetworkManager::Device * device);
+
 protected Q_SLOTS:
     void itemChanged();
+    void loadTraffic(int index);
 
 private:
     QList<DeclarativeInterfaceItem *> interfaces;

@@ -25,8 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KToolInvocation>
 #include <KStandardDirs>
 
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative>
 
 #include "activatableitem.h"
 #include "remoteactivatable.h"
@@ -51,6 +50,8 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     listModel = new ConnectionsListModel(m_activatables, parent);
     interfaceListModel = new InterfacesListModel(parent);
 
+    qmlRegisterType<InterfaceDetailsWidget>("InterfaceDetails", 0, 1, "InterfaceDetailsWidget");
+
     this->setInitializationDelayed(true);
     this->engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
     this->engine()->rootContext()->setContextProperty("interfacesListModel", interfaceListModel);
@@ -59,6 +60,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     this->engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
     this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
 
+    connect(interfaceListModel, SIGNAL(updateTraffic(NetworkManager::Device *)), this, SLOT(manageUpdateTraffic(NetworkManager::Device *)));
     connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
@@ -91,6 +93,7 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(this->rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
+
 }
 
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
@@ -132,6 +135,15 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
         //item->disappear();
         updateHasWireless();
         updateHasWwan();
+    }
+}
+
+void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
+{
+    kDebug() << "handle traffic changes";
+    if(this->rootObject()) {
+        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
+        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
     }
 }
 

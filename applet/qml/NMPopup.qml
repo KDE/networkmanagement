@@ -23,6 +23,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.graphicswidgets 0.1 as PlasmaWidgets
 import org.kde.qtextracomponents 0.1
+import InterfaceDetails 0.1
 
 Item {
     id: main
@@ -55,6 +56,7 @@ Item {
         opacity: 0
 
         PlasmaComponents.Label {
+            id: interfaceTitle
             text: i18n("Interfaces")
             font.weight : Font.Bold
             font.pixelSize: theme.defaultFont.pointSize + 6
@@ -62,9 +64,24 @@ Item {
         //WirelessInterfaceItem{}
         //WiredInterfaceItem{}
         //VpnInterfaceItem {}
+        
         InterfacesListWidget {
+            id: interfaceList
             widgetHeight: 250
             widgetWidth: 250
+            onShowTraffic: {
+                main.state = "State2";
+                interfacesListModel.loadTraffic(index);
+            }
+        }
+        InterfaceDetailsWidget {
+            id: traffic
+            objectName: "traffic"
+            visible: false
+            onBack: {
+                main.state = "State1";
+            }    
+            
         }
     }
 
@@ -146,6 +163,54 @@ Item {
             PropertyChanges {
                 target: leftColumn
                 opacity: 1
+            }
+            PropertyChanges {
+                target: traffic
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: interfaceList
+                visible: true
+            }
+            
+            PropertyChanges {
+                target: interfaceTitle
+                visible: true
+            }
+        },
+        State {
+            name: "State2"
+
+            PropertyChanges {
+                target: showConnectionButton
+                text: i18n("Hide Connections")
+            }
+
+            PropertyChanges {
+                target: main
+                minimumWidth: 650
+                minimumHeight: 370
+            }
+
+            PropertyChanges {
+                target: leftColumn
+                opacity: 1
+            }
+            
+            PropertyChanges {
+                target: traffic
+                visible: true
+            }
+            
+            PropertyChanges {
+                target: interfaceList
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: interfaceTitle
+                visible: false
             }
         }
     ]

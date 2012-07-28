@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceslistmodel.h"
 
+#include <KDebug>
+
 InterfacesListModel::InterfacesListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -117,6 +119,15 @@ bool InterfacesListModel::removeItem(DeclarativeInterfaceItem *act)
         row++;
     }
     return false;
+}
+
+void InterfacesListModel::loadTraffic(int index)
+{
+    kDebug() << "load traffic with index " << index;
+    if(index >= 0 && index < interfaces.size()) {
+        emit updateTraffic(interfaces[index]->interface());
+        kDebug() << "emitted update traffic signal";
+    }
 }
 
 bool InterfacesListModel::removeRows(int row, int count, const QModelIndex &parent)

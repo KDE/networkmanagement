@@ -31,6 +31,8 @@ Item {
     property string interfaceTitle;
     property string connectionDescription;
     property bool defaultRoute;
+    
+    signal wirelessInterfaceClicked();
 
     Rectangle {
         anchors.leftMargin: 2
@@ -48,6 +50,8 @@ Item {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
+            
+            onClicked: wirelessInterfaceClicked();
 
             onEntered: shadow.state = "hover"
 

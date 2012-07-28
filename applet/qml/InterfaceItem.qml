@@ -30,6 +30,8 @@ Item {
     property string connection;
     property bool enabledInterface;
     property bool isDefault;
+    
+    signal interfaceClicked(int index);
         
     Component {
         id: wiredInterfaceComponent
@@ -42,6 +44,9 @@ Item {
             connectionDescription: connection
             interfaceTitle: name
             defaultRoute: isDefault;
+            onWiredInterfaceClicked: {
+               interfaceClicked(index);
+           }
         }
     }
     
@@ -55,6 +60,9 @@ Item {
             interfaceTitle: name
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
+            onModemInterfaceClicked: {
+               interfaceClicked(index);
+           }
             //defaultRoute: isDefault;
         }
     }
@@ -70,6 +78,9 @@ Item {
            opacity: enabledInterface ? 1.0 : 0.7
            connectionDescription: connection
            defaultRoute: isDefault;
+           onWirelessInterfaceClicked: {
+               interfaceClicked(index);
+           }
        }
     }
     

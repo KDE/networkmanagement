@@ -28,6 +28,8 @@ Item {
 
     property int widgetHeight;
     property int widgetWidth;
+    
+    signal showTraffic(int index);
 
     height: widgetHeight
     width: widgetWidth
@@ -47,6 +49,10 @@ Item {
             enabledInterface: interfaceEnabled
             connection: interfaceConnection
             isDefault: defaultRoute
+            
+            onInterfaceClicked: {
+                showTraffic(index);
+            }
         }
 
         Rectangle {

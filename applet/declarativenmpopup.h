@@ -56,6 +56,7 @@ private Q_SLOTS:
     void managerWwanEnabledChanged(bool);
     void interfaceRemoved(const QString& uni);
     void interfaceAdded(const QString& uni);
+    void manageUpdateTraffic(NetworkManager::Device *device);
 
     void qmlCreationFinished();
 private:

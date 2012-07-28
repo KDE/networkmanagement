@@ -29,6 +29,8 @@ Item {
     property string interfaceTitle;
     property string connectionDescription;
     
+    signal modemInterfaceClicked();
+    
     width: 240
     height: 50
 
@@ -48,6 +50,8 @@ Item {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
+            
+            onClicked: modemInterfaceClicked()
 
             onEntered: shadow.state = "hover"
 
