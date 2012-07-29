@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceslistmodel.h"
 #include "declarativeinterfaceitem.h"
 
+class InterfaceDetailsWidget;
+
 class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 {
     Q_OBJECT
@@ -65,6 +67,7 @@ private:
     InterfacesListModel *interfaceListModel;
     bool m_hasWirelessInterface;
     RemoteActivatableList* m_activatables;
+    InterfaceDetailsWidget* m_interfaceDetails;
 };
 
 #endif

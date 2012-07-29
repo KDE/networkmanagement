@@ -36,7 +36,7 @@ Item {
     signal enableMobile(bool status)
     signal settingsClicked()
     
-    function detailsWidget() {
+    function showDetailsWidget() {
         main.state = "HideInterfaceList";
     }
 
@@ -79,8 +79,8 @@ Item {
             }
         }
         InterfaceDetailsWidget {
-            id: trafficPlotter
-            objectName: "trafficPlotter"
+            id: interfaceDetails
+            objectName: "interfaceDetails"
             visible: false
             onBack: {
                 main.state = "ShowInterfaceList";
@@ -174,7 +174,7 @@ Item {
                 opacity: 1
             }
             PropertyChanges {
-                target: trafficPlotter
+                target: interfaceDetails
                 visible: false
             }
             
@@ -208,7 +208,7 @@ Item {
             }
             
             PropertyChanges {
-                target: trafficPlotter
+                target: interfaceDetails
                 visible: true
             }
             

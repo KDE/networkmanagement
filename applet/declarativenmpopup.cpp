@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent) :
     Plasma::DeclarativeWidget(parent),
-    m_activatables(activatableList)
+    m_activatables(activatableList),
+    m_interfaceDetails(0)
 {
     listModel = new ConnectionsListModel(m_activatables, parent);
     interfaceListModel = new InterfacesListModel(parent);
@@ -94,7 +95,7 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
-
+    m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
 }
 
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
@@ -143,9 +144,9 @@ void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
 {
     kDebug() << "handle traffic plotter changes";
     if(rootObject()) {
-        rootObject()->findChild<InterfaceDetailsWidget*>("trafficPlotter")->setInterface(device);
-        rootObject()->findChild<InterfaceDetailsWidget*>("trafficPlotter")->setUpdateEnabled(true);
-        QMetaObject::invokeMethod(rootObject(), "detailsWidget");
+        m_interfaceDetails->setInterface(device);
+        m_interfaceDetails->setUpdateEnabled(true);
+        QMetaObject::invokeMethod(rootObject(), "showDetailsWidget");
     }
 }
 
