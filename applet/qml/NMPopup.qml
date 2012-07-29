@@ -37,7 +37,7 @@ Item {
     signal settingsClicked()
     
     function detailsWidget() {
-        main.state = "State2";
+        main.state = "HideInterfaceList";
     }
 
     Component.onCompleted: {
@@ -74,7 +74,7 @@ Item {
             widgetHeight: 250
             widgetWidth: 250
             onShowTraffic: {
-                main.state = "State2";
+                main.state = "HideInterfaceList";
                 interfacesListModel.loadTraffic(index);
             }
         }
@@ -83,7 +83,7 @@ Item {
             objectName: "traffic"
             visible: false
             onBack: {
-                main.state = "State1";
+                main.state = "ShowInterfaceList";
             }    
             onDisconnectInterfaceRequested: {
                 connectionsListModel.deactivateConnection(deviceUni);
@@ -143,10 +143,10 @@ Item {
                 text: i18n("Show Connections")
                 iconSource: "format-list-unordered"
                 onClicked: {
-                    if(parent.parent.parent.state != "State1") {
-                        parent.parent.parent.state = "State1"
+                    if(parent.parent.parent.state != "ShowInterfaceList") {
+                        parent.parent.parent.state = "ShowInterfaceList"
                     } else {
-                        parent.parent.parent.state = "base state"
+                        parent.parent.parent.state = "InitialState"
                         minimumWidth: 320
                         width: 320
                     }
@@ -157,7 +157,7 @@ Item {
 
     states: [
         State {
-            name: "State1"
+            name: "ShowInterfaceList"
 
             PropertyChanges {
                 target: showConnectionButton
@@ -189,7 +189,7 @@ Item {
             }
         },
         State {
-            name: "State2"
+            name: "HideInterfaceList"
 
             PropertyChanges {
                 target: showConnectionButton

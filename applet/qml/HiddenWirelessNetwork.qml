@@ -58,7 +58,7 @@ Item {
             
             onExited: shadow.state = "hidden"
             
-            onClicked: parent.parent.state = "State1"
+            onClicked: parent.parent.state = "EditNetworkName"
         }
         
         
@@ -106,13 +106,13 @@ Item {
                 enterPressed(networkNameEdit.text);
                 networkNameEdit.text = "";
             }
-            hiddenWirelessItem.state = "base state"
+            hiddenWirelessItem.state = "InitialState"
         }
     }
         
     states: [
         State {
-            name: "State1"
+            name: "EditNetworkName"
 
             PropertyChanges {
                 target: networkNameEdit
