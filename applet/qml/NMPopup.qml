@@ -82,6 +82,9 @@ Item {
             id: interfaceDetails
             objectName: "interfaceDetails"
             visible: false
+            onVisibleChanged: {
+                setUpdateEnabled(visible);
+            }
             onBack: {
                 main.state = "ShowInterfaceList";
             }    

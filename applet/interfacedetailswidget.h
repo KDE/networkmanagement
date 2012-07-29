@@ -49,11 +49,11 @@ Q_OBJECT
         virtual ~InterfaceDetailsWidget();
         void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
         void setInterfaceItem(InterfaceItem* item, bool disconnectOld = true);
-        void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
 
     public Q_SLOTS:
+        void setUpdateEnabled(bool enable);
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
         //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
         //void sourceAdded(const QString&);
