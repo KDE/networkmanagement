@@ -165,6 +165,7 @@ void DeclarativeNMPopup::manageConnections()
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
 {
+    Q_UNUSED(connection);
     listModel->updateConnectionsList();
 }
 
