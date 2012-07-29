@@ -339,11 +339,7 @@ void DeclarativeNMPopup::updateHasWwan()
             break;
         }
     }
-    if (hasWwan) {
-        engine()->rootContext()->setContextProperty("mobileVisible", QVariant(true));
-    } else {
-        engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
-    }
+    engine()->rootContext()->setContextProperty("mobileVisible", hasWwan);
 }
 
 void DeclarativeNMPopup::showInterfaceDetails(const QString & uni)
