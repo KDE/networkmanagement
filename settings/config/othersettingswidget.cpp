@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotifyConfigWidget>
 
 #include "knmserviceprefs.h"
+#include "detailkeyseditor.h"
 #include "../../plasma_nm_version.h"
 
 class OtherSettingsWidgetPrivate
@@ -32,6 +33,7 @@ public:
     OtherSettingsWidgetPrivate()
     { }
     Ui_OtherSettings ui;
+    QStringList detailKeys;
 };
 
 OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
@@ -39,14 +41,41 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
 {
     Q_D(OtherSettingsWidget);
     d->ui.setupUi(this);
-    d->ui.lblVersion->setText(i18nc("Version text", "<b>Version %1</b>", plasmaNmVersion));
+    d->ui.lblVersion->setText(i18nc("@label:textbox Version text", "&lt;b&gt;Version %1&lt;/b&gt;", plasmaNmVersion));
+    d->ui.detailsButton->setIcon(KIcon("view-list-details"));
     d->ui.notificationsButton->setIcon(KIcon("preferences-desktop-notification"));
+    connect(d->ui.detailsButton, SIGNAL(clicked()), SLOT(configureDetails()));
     connect(d->ui.notificationsButton, SIGNAL(clicked()), SLOT(configureNotifications()));
 }
 
 OtherSettingsWidget::~OtherSettingsWidget()
 {
     delete d_ptr;
+}
+
+void OtherSettingsWidget::configureDetails()
+{
+    Q_D(OtherSettingsWidget);
+    kDebug();
+
+    KNetworkManagerServicePrefs::self()->readConfig();
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+    d->detailKeys = config.readEntry(QLatin1String("DetailKeys"), QStringList());
+
+    QWeakPointer<KDialog> dialog = new KDialog(this);
+    dialog.data()->setCaption(i18nc("@title:window interface details editor",
+                                "Interface Details Editor"));
+    dialog.data()->setButtons( KDialog::Ok | KDialog::Cancel);
+    DetailKeysEditor detailsEditor(d->detailKeys);
+    dialog.data()->setMainWidget(&detailsEditor);
+    if (dialog.data()->exec() == QDialog::Accepted) {
+        d->detailKeys = detailsEditor.currentDetails();
+        config.writeEntry(QLatin1String("DetailKeys"), d->detailKeys);
+        config.sync();
+    }
+    if (dialog) {
+        dialog.data()->deleteLater();
+    }
 }
 
 void OtherSettingsWidget::configureNotifications()

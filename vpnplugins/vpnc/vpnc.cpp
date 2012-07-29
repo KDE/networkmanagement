@@ -45,8 +45,6 @@ VpncUiPluginPrivate::VpncUiPluginPrivate()
 }
 VpncUiPluginPrivate::~VpncUiPluginPrivate()
 {
-    if (ciscoDecrypt)
-        delete ciscoDecrypt;
 }
 
 void VpncUiPluginPrivate::gotciscoDecryptOutput()
@@ -64,8 +62,6 @@ void VpncUiPluginPrivate::ciscoDecryptFinished(int exitCode, QProcess::ExitStatu
 {
     if (exitCode || exitStatus != QProcess::NormalExit)
         decryptedPasswd.clear();
-    delete ciscoDecrypt;
-    ciscoDecrypt = 0;
 }
 
 void VpncUiPluginPrivate::ciscoDecryptError(QProcess::ProcessError pError)
@@ -142,7 +138,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         }
 
         decrPlugin = new VpncUiPluginPrivate();
-        decrPlugin->ciscoDecrypt = new KProcess(this);
+        decrPlugin->ciscoDecrypt = new KProcess(decrPlugin);
         decrPlugin->ciscoDecrypt->setOutputChannelMode(KProcess::OnlyStdoutChannel);
         decrPlugin->ciscoDecrypt->setReadChannel(QProcess::StandardOutput);
         connect(decrPlugin->ciscoDecrypt, SIGNAL(error(QProcess::ProcessError)), decrPlugin, SLOT(ciscoDecryptError(QProcess::ProcessError)));

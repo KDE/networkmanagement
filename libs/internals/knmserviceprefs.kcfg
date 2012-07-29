@@ -40,6 +40,9 @@
     <entry name="ShowAdvancedSettings" type="Bool">
         <default>false</default>
     </entry>
+    <entry name="DetailKeys" type="StringList">
+      <label>Details</label>
+    </entry>
     <entry name="AskForGsmPin" type="Enum">
       <choices name="AskForGsmPinChoices">
         <choice name="OnModemDetection"/>
@@ -56,9 +59,6 @@
       <entry name="IconTypes$(IconIndex)" type="UInt" key="IconTypes_$(IconIndex)">
           <parameter name="IconIndex" type="Int" max="4"/>
           <default param="0">31</default>
-      </entry>
-      <entry name="ToolTipKeys" type="StringList">
-          <default>interface:type,interface:name,interface:hardwareaddress,interface:driver,interface:status,interface:bitrate,ipv4:address,ipv4:nameservers,ipv4:domains</default>
       </entry>
   </group>
 </kcfg>

@@ -43,7 +43,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="KUrlRequester" name="kurClientCert"/>
+      <widget class="KUrlRequester" name="kurClientCert">
+       <property name="toolTip">
+        <string>If your private key file is in PKCS12 format select it here and in the 'Private Key' field below.</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
@@ -82,7 +86,11 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="KUrlRequester" name="kurPrivateKey"/>
+      <widget class="KUrlRequester" name="kurPrivateKey">
+       <property name="toolTip">
+        <string>If your private key file is in PKCS12 format select it here and in the 'User Certificate' field above.</string>
+       </property>
+      </widget>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_5">

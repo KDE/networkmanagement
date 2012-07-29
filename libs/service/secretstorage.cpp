@@ -387,8 +387,9 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
             KConfigGroup configGroup(config, parts[1]);
             QMap<QString, QString> secrets;
             wallet->readMap(key, secrets);
-            foreach (const QString &secret, secrets) {
-                configGroup.writeEntry(secret, secrets.value(secret));
+            QMap<QString, QString>::ConstIterator it = secrets.constBegin();
+            for ( ; it != secrets.constEnd(); ++it) {
+                configGroup.writeEntry(it.key(), it.value());
             }
             wallet->removeEntry(key);
         }

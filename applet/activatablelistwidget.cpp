@@ -117,6 +117,16 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable)
                     m_moreNetworks++; // number of suppressed networks in m_showMoreItem.
                     return false;
                 }
+
+                if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+                    RemoteWirelessInterfaceConnection * wic = static_cast<RemoteWirelessInterfaceConnection*>(activatable);
+
+                    if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc &&
+                        wic->activationState() != Knm::InterfaceConnection::Activated) {
+                        m_moreNetworks++;
+                        return false;
+                    }
+                }
             }
         }
     } else if (m_filter.testFlag(VPNConnections) && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
