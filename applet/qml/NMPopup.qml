@@ -143,10 +143,10 @@ Item {
                 text: i18n("Show Connections")
                 iconSource: "format-list-unordered"
                 onClicked: {
-                    if(parent.parent.parent.state != "ShowInterfaceList") {
-                        parent.parent.parent.state = "ShowInterfaceList"
+                    if(main.state != "ShowInterfaceList") {
+                        main.state = "ShowInterfaceList"
                     } else {
-                        parent.parent.parent.state = "InitialState"
+                        main.state = "InitialState"
                         minimumWidth: 320
                         width: 320
                     }
