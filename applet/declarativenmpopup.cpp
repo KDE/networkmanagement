@@ -141,10 +141,10 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
 
 void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
 {
-    kDebug() << "handle traffic changes";
+    kDebug() << "handle traffic plotter changes";
     if(this->rootObject()) {
-        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
-        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
+        this->rootObject()->findChild<InterfaceDetailsWidget*>("trafficPlotter")->setInterface(device);
+        this->rootObject()->findChild<InterfaceDetailsWidget*>("trafficPlotter")->setUpdateEnabled(true);
         QMetaObject::invokeMethod(this->rootObject(), "detailsWidget");
     }
 }

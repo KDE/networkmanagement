@@ -123,10 +123,10 @@ bool InterfacesListModel::removeItem(DeclarativeInterfaceItem *act)
 
 void InterfacesListModel::loadTraffic(int index)
 {
-    kDebug() << "load traffic with index " << index;
+    kDebug() << "load traffic plotter with index " << index;
     if(index >= 0 && index < interfaces.size()) {
         emit updateTraffic(interfaces[index]->interface());
-        kDebug() << "emitted update traffic signal";
+        kDebug() << "emitted update traffic plotter signal";
     }
 }
 

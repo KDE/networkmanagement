@@ -79,8 +79,8 @@ Item {
             }
         }
         InterfaceDetailsWidget {
-            id: traffic
-            objectName: "traffic"
+            id: trafficPlotter
+            objectName: "trafficPlotter"
             visible: false
             onBack: {
                 main.state = "ShowInterfaceList";
@@ -174,7 +174,7 @@ Item {
                 opacity: 1
             }
             PropertyChanges {
-                target: traffic
+                target: trafficPlotter
                 visible: false
             }
             
@@ -208,7 +208,7 @@ Item {
             }
             
             PropertyChanges {
-                target: traffic
+                target: trafficPlotter
                 visible: true
             }
             
