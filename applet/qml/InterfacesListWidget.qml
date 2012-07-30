@@ -49,6 +49,7 @@ Item {
             enabledInterface: interfaceEnabled
             connection: interfaceConnection
             isDefault: defaultRoute
+            deviceUni: interfaceDeviceUni
             
             onInterfaceClicked: {
                 showTraffic(index);

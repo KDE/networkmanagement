@@ -48,6 +48,9 @@ public:
     QString status();
     QString protectedIcon();
     QString connectionType();
+    void hoverEnter();
+    void hoverLeft();
+    bool hover();
 
 protected Q_SLOTS:
     void handlePropertiesChanges(int strength);
@@ -61,6 +64,7 @@ Q_SIGNALS:
 private:
     RemoteActivatable *m_activatable;
     bool m_connected;
+    bool m_hoverEnter;
     QString m_status;
     QString m_type;
     bool m_hidden;

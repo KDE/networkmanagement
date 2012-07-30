@@ -28,11 +28,22 @@ Item {
     property string interfaceType;
     property string name;
     property string connection;
+    property string deviceUni;
     property bool enabledInterface;
     property bool isDefault;
     
     signal interfaceClicked(int index);
-        
+    
+    function hoverEnterConnections() {
+        console.log("device uni " + deviceUni);
+        connectionsListModel.hoverEnterConnections(deviceUni);
+    }
+    
+    function hoverLeftConnections() {
+        console.log("device uni " + deviceUni);
+        connectionsListModel.hoverLeftConnections(deviceUni);
+    }
+            
     Component {
         id: wiredInterfaceComponent
 
@@ -46,7 +57,13 @@ Item {
             defaultRoute: isDefault;
             onWiredInterfaceClicked: {
                interfaceClicked(index);
-           }
+            }
+            onHoverEnter: {
+                hoverEnterConnections();
+            }
+            onHoverLeft: {
+                hoverLeftConnections();
+            }
         }
     }
     
@@ -62,6 +79,12 @@ Item {
             connectionDescription: connection
             onModemInterfaceClicked: {
                interfaceClicked(index);
+           }
+           onHoverEnter: {
+               hoverEnterConnections();
+           }
+           onHoverLeft: {
+               hoverLeftConnections();
            }
             //defaultRoute: isDefault;
         }
@@ -80,6 +103,12 @@ Item {
            defaultRoute: isDefault;
            onWirelessInterfaceClicked: {
                interfaceClicked(index);
+           }
+           onHoverEnter: {
+               hoverEnterConnections();
+           }
+           onHoverLeft: {
+               hoverLeftConnections();
            }
        }
     }

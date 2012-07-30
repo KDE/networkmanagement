@@ -56,7 +56,8 @@ static const int m_iconSize = 48;
 ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObject *parent) :
     QObject(parent),
     m_activatable(activatable),
-    m_hidden(hidden)
+    m_hidden(hidden),
+    m_hoverEnter(false)
 {
     m_connected = false;
     connect(m_activatable, SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
@@ -192,7 +193,8 @@ void ConnectionItem::disconnect() {
     }
 }
 
-void ConnectionItem::connectNetwork() {
+void ConnectionItem::connectNetwork()
+{
     if(m_activatable) {
         RemoteInterfaceConnection * remote = interfaceConnection();
         if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
@@ -203,6 +205,23 @@ void ConnectionItem::connectNetwork() {
         }
     }
     QTimer::singleShot(0, this, SLOT(notifyNetworkingState()));
+}
+
+void ConnectionItem::hoverEnter()
+{
+    m_hoverEnter = true;
+    emit itemChanged();
+}
+
+void ConnectionItem::hoverLeft()
+{
+    m_hoverEnter = false;
+    emit itemChanged();
+}
+
+bool ConnectionItem::hover()
+{
+    return m_hoverEnter;
 }
 
 void ConnectionItem::notifyNetworkingState()
@@ -288,7 +307,9 @@ RemoteActivatable * ConnectionItem::activatable() const
 
 QString ConnectionItem::deviceUni()
 {
-    return m_activatable->deviceUni();
+    if(m_activatable)
+        return m_activatable->deviceUni();
+    return QString();
 }
 
 QString ConnectionItem::activatableType()

@@ -55,7 +55,8 @@ public:
         StatusRole,
         ProtectedIconRole,
         HiddenRole,
-        WiredNetworkNameRole
+        WiredNetworkNameRole,
+        HoverEnterRole
     };
 
     enum Filter {
@@ -101,6 +102,8 @@ public slots:
     void connectToHiddenNetwork(QVariant ssid);
     void setFilter(QVariant tabName);
     void deactivateConnection(const QString& deviceUni);
+    void hoverEnterConnections(QString deviceUni);
+    void hoverLeftConnections(QString deviceUni);
 
 private:
     QList<ConnectionItem *> connections;

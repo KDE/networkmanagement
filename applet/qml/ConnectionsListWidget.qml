@@ -41,6 +41,7 @@ Item {
         model: connectionsListModel
         spacing: 3
         delegate: ConnectionItem {
+            id: connectionItem
             width: parent.width - 10
             networkUuid: connectionUuid;
             wiredNetworkName: wiredName;
@@ -51,6 +52,7 @@ Item {
             wirelessNetworkIcon: protectedIcon;
             networkConnected: connectedNetwork;
             status: networkStatus;
+            isHovered: hoverEntered;
             onDisconnectNetwork: {
                 connectionsListModel.disconnectFrom(uuidProperty);
             }

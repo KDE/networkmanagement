@@ -31,6 +31,7 @@ InterfacesListModel::InterfacesListModel(QObject *parent)
     roles[EnabledRole] = "interfaceEnabled";
     roles[ConnectionRole] = "interfaceConnection";
     roles[DefaultRouteRole] = "defaultRoute";
+    roles[DeviceUniRole] = "interfaceDeviceUni";
     setRoleNames(roles);
 }
 
@@ -51,6 +52,8 @@ QVariant InterfacesListModel::data(const QModelIndex &index, int role) const
                 return interfaces.at(index.row())->connection();
             case DefaultRouteRole:
                 return interfaces.at(index.row())->defaultRoute();
+            case DeviceUniRole:
+                return interfaces.at(index.row())->deviceUni();
             default:
                 return QVariant();
         }

@@ -51,6 +51,7 @@ public:
     QString connection();
     QString type();
     QString interfaceTitle();
+    QString deviceUni();
     bool enabled();
     bool defaultRoute();
 

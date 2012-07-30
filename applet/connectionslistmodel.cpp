@@ -58,6 +58,7 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[ProtectedIconRole] = "protectedIcon";
     roles[HiddenRole] = "hiddenNetwork";
     roles[WiredNetworkNameRole] = "wiredName";
+    roles[HoverEnterRole] = "hoverEntered";
     setRoleNames(roles);
 }
 
@@ -104,6 +105,8 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 return connections.at(index.row())->hidden();
             case WiredNetworkNameRole:
                 return connections.at(index.row())->wiredName();
+            case HoverEnterRole:
+                return connections.at(index.row())->hover();
             /**
             case InterfaceCapabilitiesRole:
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
@@ -147,6 +150,31 @@ void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
         foreach (ConnectionItem *item, connections) {
             if (item && item->interfaceConnection() && item->interfaceConnection()->deviceUni() == deviceUni) {
                 item->disconnect();
+            }
+        }
+    }
+}
+
+void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
+{
+    kDebug() << "aaa Device Uni is " << deviceUni;
+    if(deviceUni != "") {
+        foreach (ConnectionItem *item, connections) {
+            RemoteInterfaceConnection *conn = item->interfaceConnection();
+            if(conn && conn->deviceUni() == deviceUni) {
+                item->hoverEnter();
+            }
+        }
+    }
+}
+
+void ConnectionsListModel::hoverLeftConnections(QString deviceUni)
+{
+    if(deviceUni != "") {
+        foreach (ConnectionItem *item, connections) {
+            RemoteInterfaceConnection *conn = item->interfaceConnection();
+            if(conn && conn->deviceUni() == deviceUni) {
+                item->hoverLeft();
             }
         }
     }
@@ -205,12 +233,15 @@ void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
 
 void ConnectionsListModel::itemChanged() {
     ConnectionItem * item = qobject_cast<ConnectionItem *>(sender());
+    kDebug() << "bbbbbb";
     if (!item) {
         return;
     }
+    kDebug() << "bbbbbbb";
     QModelIndex index = indexFromItem(item);
     if(index.isValid()) {
         emit dataChanged(index, index);
+        kDebug() << "bbbbbbbb";
     }
 }
 

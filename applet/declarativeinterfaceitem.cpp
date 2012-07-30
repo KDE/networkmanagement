@@ -284,6 +284,14 @@ QString DeclarativeInterfaceItem::connection()
     return m_connectionName;
 }
 
+QString DeclarativeInterfaceItem::deviceUni()
+{
+    if(interface()) {
+        return interface()->uni();
+    }
+    return QString();
+}
+
 bool DeclarativeInterfaceItem::equals(const DeclarativeInterfaceItem *item)
 {
     if (!item || !item->m_iface) {

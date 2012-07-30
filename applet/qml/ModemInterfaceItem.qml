@@ -30,6 +30,8 @@ Item {
     property string connectionDescription;
     
     signal modemInterfaceClicked();
+    signal hoverEnter();
+    signal hoverLeft();
     
     width: 240
     height: 50
@@ -53,9 +55,15 @@ Item {
             
             onClicked: modemInterfaceClicked()
 
-            onEntered: shadow.state = "hover"
+            onEntered: {
+                shadow.state = "hover";
+                hoverEnter();
+            }
 
-            onExited: shadow.state = "hidden"
+            onExited: {
+                shadow.state = "hidden"
+                hoverLeft();
+            }
         }
 
 

@@ -34,9 +34,18 @@ Item {
     property double signalStrengthValue;
     property bool connected;
     property string protectedNetworkIcon;
+    property bool hoverEnter;
     
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
+    
+    onHoverEnterChanged: {
+        if(hoverEnter) {
+            shadow.state = "hover"
+        } else {
+            shadow.state = "hidden"
+        }
+    }
     
     Rectangle {
         anchors.leftMargin: 2
@@ -55,7 +64,7 @@ Item {
             hoverEnabled: true
             anchors.fill: parent
             
-            onEntered: shadow.state = "hover"
+            onEntered: shadow.state = "hover";
             
             onExited: shadow.state = "hidden"
             

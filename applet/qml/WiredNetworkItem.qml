@@ -32,9 +32,19 @@ Item {
     property string networkName;
     property string wiredStatus;
     property bool connected;
+    property bool hoverEnter;
     
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
+        
+    onHoverEnterChanged: {
+        console.log("bbbbb hoverchanged to " + hoverEnter);
+        if(hoverEnter) {
+            shadow.state = "hover"
+        } else {
+            shadow.state = "hidden"
+        }
+    }
     
     Rectangle {
         anchors.leftMargin: 2
@@ -53,7 +63,7 @@ Item {
             hoverEnabled: true
             anchors.fill: parent
             
-            onEntered: shadow.state = "hover"
+            onEntered: shadow.state = "hover";
             
             onExited: shadow.state = "hidden"
             

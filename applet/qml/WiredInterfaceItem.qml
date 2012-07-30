@@ -33,6 +33,8 @@ Item {
     property bool defaultRoute;
     
     signal wiredInterfaceClicked();
+    signal hoverEnter();
+    signal hoverLeft();
 
     Rectangle {
         anchors.leftMargin: 2
@@ -53,9 +55,15 @@ Item {
             
             onClicked: wiredInterfaceClicked();
 
-            onEntered: shadow.state = "hover"
+            onEntered: {
+                shadow.state = "hover";
+                hoverEnter();
+            }
 
-            onExited: shadow.state = "hidden"
+            onExited: {
+                shadow.state = "hidden"
+                hoverLeft();
+            }
         }
 
 

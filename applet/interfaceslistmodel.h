@@ -35,7 +35,8 @@ public:
         TypeRole,
         EnabledRole,
         ConnectionRole,
-        DefaultRouteRole
+        DefaultRouteRole,
+        DeviceUniRole
     };
 
     InterfacesListModel(QObject *parent=0);

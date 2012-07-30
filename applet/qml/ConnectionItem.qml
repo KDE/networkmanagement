@@ -34,6 +34,7 @@ Item {
     property string wirelessNetworkIcon;
     property string connectionType;
     property bool hidden;
+    property bool isHovered;
     
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
@@ -50,6 +51,7 @@ Item {
             networkName: connectionItem.wiredNetworkName;
             connected: connectionItem.networkConnected;
             wiredStatus: connectionItem.status;
+            hoverEnter: connectionItem.isHovered;
             onDisconnect: {
                 connectionItem.disconnectNetwork(uuid);
             }
@@ -84,6 +86,7 @@ Item {
            protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
            connected: connectionItem.networkConnected;
            wifiStatus: connectionItem.status;
+           hoverEnter: connectionItem.isHovered;
            onDisconnect: {
                console.log("uuid eh: " + uuid);
                connectionItem.disconnectNetwork(uuid);
