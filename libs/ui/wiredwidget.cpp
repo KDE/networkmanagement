@@ -52,7 +52,7 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     Q_D(WiredWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-    d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
+    d->ui.mtu->setSuffix(ki18ncp("@label:textbox", " byte", " bytes"));
     foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Ethernet) {
             QString deviceText = UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames);

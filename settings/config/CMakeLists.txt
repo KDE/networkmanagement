@@ -37,7 +37,7 @@ set(kcm_networkmanagement_tray_SRCS
 kde4_add_ui_files(kcm_networkmanagement_tray_SRCS othersettings.ui othersettings.ui)
 kde4_add_plugin(kcm_networkmanagement_tray ${kcm_networkmanagement_tray_SRCS})
 
-target_link_libraries(kcm_networkmanagement_tray knminternals knmservice ${KDE4_KDEUI_LIBS} ${KDE4_KNOTIFYCONFIG_LIBRARY})
+target_link_libraries(kcm_networkmanagement_tray knminternals knmservice knmui ${KDE4_KDEUI_LIBS} ${KDE4_KNOTIFYCONFIG_LIBRARY})
 
 install(TARGETS kcm_networkmanagement kcm_networkmanagement_tray DESTINATION ${PLUGIN_INSTALL_DIR})
 

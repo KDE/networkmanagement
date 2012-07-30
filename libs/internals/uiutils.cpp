@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wireddevice.h>
 #include <QtNetworkManager/wirelessdevice.h>
 
 // Qt
@@ -87,19 +88,23 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
         return QString("dialog-error");
     }
     QString icon;
-    QString strength = "00";
-    NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
     switch (iface->type()) {
-        case NetworkManager::Device::Ethernet:
+        case NetworkManager::Device::Ethernet: {
             icon = "network-wired";
+
+            NetworkManager::WiredDevice *wiredIface = qobject_cast<NetworkManager::WiredDevice*>(iface);
+            if (wiredIface && wiredIface->carrier()) {
+                icon = "network-wired-activated";
+            }
             break;
-        case NetworkManager::Device::Wifi:
+        }
+        case NetworkManager::Device::Wifi: {
+            QString strength = "00";
+            NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
-                //QString uni = wiface->activeAccessPoint()->signalStrength();
-                //int s =
                 NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
                 if (ap) {
                     int s = ap->signalStrength();
@@ -120,6 +125,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
+        }
         case NetworkManager::Device::Bluetooth:
             icon = "preferences-system-bluetooth";
             break;

@@ -34,8 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QObject *parent) : QObject(parent),
-    m_currentConnection(0),
     m_iface(iface),
+    m_currentConnection(0),
     m_activatables(activatables),
     m_nameMode(mode),
     m_enabled(false),
@@ -55,10 +55,10 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
 
     if (m_iface) {
         if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
-            NetworkManager::WiredDevice* wirediface =
-                            static_cast<NetworkManager::WiredDevice*>(m_iface.data());
             m_type = "wired";
-            //connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+            /*NetworkManager::WiredDevice* wirediface =
+                            static_cast<NetworkManager::WiredDevice*>(m_iface.data());
+            connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));*/
         } else if (m_iface.data()->type() == NetworkManager::Device::Wifi) {
             m_type = "wifi";
         } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {

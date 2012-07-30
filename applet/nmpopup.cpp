@@ -308,38 +308,32 @@ void NMPopup::init()
     QTimer::singleShot(0, this, SLOT(toggleInterfaceList()));
 }
 
-static int compareVersions(const QString & version1, const QString & version2)
-{
-    QStringList sl1 = version1.split('.');
-    QStringList sl2 = version2.split('.');
-
-    if (sl1.size() > 2 && sl2.size() > 2) {
-        int v1[3] = { sl1[0].toInt(), sl1[1].toInt(), sl1[2].toInt() };
-        int v2[3] = { sl2[0].toInt(), sl2[1].toInt(), sl2[2].toInt() };
-
-        if (v1[0] > v2[0]) {
-            return 1;
-        } else if (v1[0] < v2[0]) {
-            return -1;
-        } else if (v1[1] > v2[1]) {
-            return 1;
-        } else if (v1[1] < v2[1]) {
-            return -1;
-        } else if (v1[2] > v2[2]) {
-            return 1;
-        } else if (v1[2] < v2[2]) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-    return 0;
-}
-
 void NMPopup::readConfig()
 {
     kDebug();
     KNetworkManagerServicePrefs::self()->readConfig();
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+
+    if (config.readEntry(QLatin1String("DetailKeys"), QStringList()).isEmpty()) {
+        QStringList keys;
+        keys << "interface:type"
+             << "interface:status"
+             << "ipv4:address"
+             << "interface:bitrate"
+             << "interface:name"
+             << "interface:hardwareaddress"
+             << "interface:driver"
+             << "wireless:ssid"
+             << "wireless:accesspoint"
+             << "wireless:band"
+             << "wireless:channel"
+             << "mobile:operator"
+             << "mobile:quality"
+             << "mobile:technology";
+
+        config.writeEntry(QLatin1String("DetailKeys"), keys);
+        config.sync();
+    }
 
     //m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
     m_wifiCheckBox->setChecked(NetworkManager::isWirelessEnabled());
@@ -369,7 +363,7 @@ void NMPopup::readConfig()
         }
         m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
         m_tab1Layout->addItem(m_warning, 10, 0);
-    } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
+    } else if (NetworkManager::compareVersion(QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
         if (!m_warning) {
             m_warning = new Plasma::Label(this);
         }

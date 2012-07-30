@@ -1,6 +1,6 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
-Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2010-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -49,11 +49,11 @@ Q_OBJECT
         virtual ~InterfaceDetailsWidget();
         void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
         void setInterfaceItem(InterfaceItem* item, bool disconnectOld = true);
-        void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
 
     public Q_SLOTS:
+        void setUpdateEnabled(bool enable);
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
         //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
         //void sourceAdded(const QString&);
@@ -67,7 +67,6 @@ Q_OBJECT
         Plasma::DataEngine* engine();
         void updateWidgets();
         int bitRate();
-        QString currentIpAddress();
         QString getMAC();
         QString connectionStateToString(NetworkManager::Device::State state, const QString &connectionName = QString());
         void getDetails();
@@ -109,7 +108,7 @@ Q_OBJECT
     private Q_SLOTS:
         void emitDisconnectInterfaceRequest();
         void resetInterfaceDetails();
-        void updateIpAddress();
+        void updateIPv4Details();
         void updateBitRate(int bitRate);
         void updateActiveAccessPoint(const QString &ap);
         void modemUpdateEnabled(const bool enabled);

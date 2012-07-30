@@ -45,20 +45,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent) :
     Plasma::DeclarativeWidget(parent),
-    m_activatables(activatableList)
+    m_activatables(activatableList),
+    m_interfaceDetails(0)
 {
     listModel = new ConnectionsListModel(m_activatables, parent);
     interfaceListModel = new InterfacesListModel(parent);
 
     qmlRegisterType<InterfaceDetailsWidget>("InterfaceDetails", 0, 1, "InterfaceDetailsWidget");
 
-    this->setInitializationDelayed(true);
-    this->engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
-    this->engine()->rootContext()->setContextProperty("interfacesListModel", interfaceListModel);
-    this->setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
+    setInitializationDelayed(true);
+    engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
+    engine()->rootContext()->setContextProperty("interfacesListModel", interfaceListModel);
+    setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
 
-    this->engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
-    this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
+    engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
+    engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     connect(interfaceListModel, SIGNAL(updateTraffic(NetworkManager::Device *)), this, SLOT(manageUpdateTraffic(NetworkManager::Device *)));
@@ -91,19 +92,26 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
 
 void DeclarativeNMPopup::qmlCreationFinished()
 {
+<<<<<<< HEAD
     connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(this->rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
     connect(this->rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
 
+=======
+    connect(rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
+    connect(rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
+    connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
+    m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
+>>>>>>> bf1eef9dc66fb120c2f36ccfd7ad3024d956a06f
 }
 
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wwan enable state" << enabled;
-    this->engine()->rootContext()->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
+    engine()->rootContext()->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
     if (enabled) {
-        this->engine()->rootContext()->setContextProperty("mobileEnabled", enabled);
+        engine()->rootContext()->setContextProperty("mobileEnabled", enabled);
     }
 }
 
@@ -142,19 +150,27 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
 
 void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
 {
+<<<<<<< HEAD
     kDebug() << "handle traffic changes";
     if(this->rootObject()) {
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
         QMetaObject::invokeMethod(this->rootObject(), "detailsWidget");
         listModel->setDeviceToFilter(device);
+=======
+    kDebug() << "handle traffic plotter changes";
+    if(rootObject()) {
+        m_interfaceDetails->setInterface(device);
+        m_interfaceDetails->setUpdateEnabled(true);
+        QMetaObject::invokeMethod(rootObject(), "showDetailsWidget");
+>>>>>>> bf1eef9dc66fb120c2f36ccfd7ad3024d956a06f
     }
 }
 
 void DeclarativeNMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wwan enable switch state changed" << enabled;
-    this->engine()->rootContext()->setContextProperty("mobileVisible", enabled);
+    engine()->rootContext()->setContextProperty("mobileVisible", enabled);
 }
 
 void DeclarativeNMPopup::manageConnections()
@@ -172,6 +188,7 @@ void DeclarativeNMPopup::manageSelection()
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
 {
+    Q_UNUSED(connection);
     listModel->updateConnectionsList();
 }
 
@@ -199,9 +216,9 @@ void DeclarativeNMPopup::managerWirelessEnabledChanged(bool enabled)
     kDebug() << "NM daemon changed wireless enable state" << enabled;
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
-    this->engine()->rootContext()->setContextProperty("wirelessChecked", enabled);
+    engine()->rootContext()->setContextProperty("wirelessChecked", enabled);
     if (enabled) {
-        this->engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+        engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
     } else {
         listModel->removeHiddenItem();
     }
@@ -235,14 +252,14 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     } else {
         //listModel->insertHiddenItem();
     }
-    this->engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
+    engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
 }
 
 
 void DeclarativeNMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
-    this->engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+    engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
     //if(!enabled) listModel->removeHiddenItem();
 }
 
@@ -252,21 +269,21 @@ void DeclarativeNMPopup::readConfig()
     KNetworkManagerServicePrefs::self()->readConfig();
 
     //m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
-    this->engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
+    engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
 
     /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
      * So we always enable the wireless checkbox for versions below 4.6.2. */
 #if KDE_IS_VERSION(4,6,2)
-    this->engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessHardwareEnabled());
+    engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessHardwareEnabled());
 #else
-    this->engine()->rootContext()->setContextProperty("wirelessEnabled", QVariant(true));
+    engine()->rootContext()->setContextProperty("wirelessEnabled", QVariant(true));
 #endif
 
     /*m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
                                  NetworkManager::isWirelessEnabled());*/
 
-    this->engine()->rootContext()->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
-    this->engine()->rootContext()->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
+    engine()->rootContext()->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
+    engine()->rootContext()->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
     /**
     m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
     m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
@@ -345,11 +362,7 @@ void DeclarativeNMPopup::updateHasWwan()
             break;
         }
     }
-    if (hasWwan) {
-        this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(true));
-    } else {
-        this->engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
-    }
+    engine()->rootContext()->setContextProperty("mobileVisible", hasWwan);
 }
 
 void DeclarativeNMPopup::showInterfaceDetails(const QString & uni)

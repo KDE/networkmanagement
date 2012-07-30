@@ -37,8 +37,8 @@ Item {
     signal settingsClicked()
     signal noDeviceSelected()
     
-    function detailsWidget() {
-        main.state = "State2";
+    function showDetailsWidget() {
+        main.state = "HideInterfaceList";
     }
 
     Component.onCompleted: {
@@ -75,16 +75,19 @@ Item {
             widgetHeight: 250
             widgetWidth: 250
             onShowTraffic: {
-                main.state = "State2";
+                main.state = "HideInterfaceList";
                 interfacesListModel.loadTraffic(index);
             }
         }
         InterfaceDetailsWidget {
-            id: traffic
-            objectName: "traffic"
+            id: interfaceDetails
+            objectName: "interfaceDetails"
             visible: false
+            onVisibleChanged: {
+                setUpdateEnabled(visible);
+            }
             onBack: {
-                main.state = "State1";
+                main.state = "ShowInterfaceList";
                 noDeviceSelected();
             }    
             onDisconnectInterfaceRequested: {
@@ -145,10 +148,10 @@ Item {
                 text: i18n("Show Connections")
                 iconSource: "format-list-unordered"
                 onClicked: {
-                    if(parent.parent.parent.state != "State1") {
-                        parent.parent.parent.state = "State1"
+                    if(main.state != "ShowInterfaceList") {
+                        main.state = "ShowInterfaceList"
                     } else {
-                        parent.parent.parent.state = "base state"
+                        main.state = "InitialState"
                         minimumWidth: 320
                         width: 320
                     }
@@ -159,7 +162,7 @@ Item {
 
     states: [
         State {
-            name: "State1"
+            name: "ShowInterfaceList"
 
             PropertyChanges {
                 target: showConnectionButton
@@ -176,7 +179,7 @@ Item {
                 opacity: 1
             }
             PropertyChanges {
-                target: traffic
+                target: interfaceDetails
                 visible: false
             }
             
@@ -191,7 +194,7 @@ Item {
             }
         },
         State {
-            name: "State2"
+            name: "HideInterfaceList"
 
             PropertyChanges {
                 target: showConnectionButton
@@ -210,7 +213,7 @@ Item {
             }
             
             PropertyChanges {
-                target: traffic
+                target: interfaceDetails
                 visible: true
             }
             

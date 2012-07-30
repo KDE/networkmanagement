@@ -60,7 +60,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->ui.ssid->setText(d->proposedSsid);
 
-    d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
+    d->ui.mtu->setSuffix(ki18ncp("@label:textbox", " byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
     foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi) {
