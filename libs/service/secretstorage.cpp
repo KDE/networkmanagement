@@ -163,6 +163,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                         if (setting8021x) {
                             if (settingSecurity->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep ||
                                 settingSecurity->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap) {
+                                kDebug() << "Enabling workaround for DynamicWep and WpaEap";
                                 setting8021x->setEnabled(true); // needed for needSecrets() below, otherwise needSecrets() returns an empty list.
                             }
                         }
@@ -182,6 +183,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                                 setting->secretsFromMap(map);
                             }
                             QStringList needSecretsList = setting->needSecrets();
+                            kDebug() << "Needed secrets" << needSecretsList;
                             if ((pair.second & RequestNew) || (!needSecretsList.isEmpty() && (pair.second & AllowInteraction))) {
                                 askUser(con, pair.first, needSecretsList);
                             } else {
