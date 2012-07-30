@@ -92,18 +92,11 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
 
 void DeclarativeNMPopup::qmlCreationFinished()
 {
-<<<<<<< HEAD
-    connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
-    connect(this->rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
-    connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
-    connect(this->rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
-
-=======
     connect(rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
     m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
->>>>>>> bf1eef9dc66fb120c2f36ccfd7ad3024d956a06f
+    connect(rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
 }
 
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
@@ -150,20 +143,12 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
 
 void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
 {
-<<<<<<< HEAD
-    kDebug() << "handle traffic changes";
-    if(this->rootObject()) {
-        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
-        this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
-        QMetaObject::invokeMethod(this->rootObject(), "detailsWidget");
-        listModel->setDeviceToFilter(device);
-=======
     kDebug() << "handle traffic plotter changes";
     if(rootObject()) {
         m_interfaceDetails->setInterface(device);
         m_interfaceDetails->setUpdateEnabled(true);
         QMetaObject::invokeMethod(rootObject(), "showDetailsWidget");
->>>>>>> bf1eef9dc66fb120c2f36ccfd7ad3024d956a06f
+        listModel->setDeviceToFilter(device);
     }
 }
 
