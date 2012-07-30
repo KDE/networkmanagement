@@ -35,6 +35,7 @@ Item {
     signal enableWireless(bool status)
     signal enableMobile(bool status)
     signal settingsClicked()
+    signal noDeviceSelected()
     
     function detailsWidget() {
         main.state = "State2";
@@ -84,6 +85,7 @@ Item {
             visible: false
             onBack: {
                 main.state = "State1";
+                noDeviceSelected();
             }    
             onDisconnectInterfaceRequested: {
                 connectionsListModel.deactivateConnection(deviceUni);

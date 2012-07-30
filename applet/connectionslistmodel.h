@@ -61,7 +61,8 @@ public:
     enum Filter {
         NormalConnections,
         VpnConnections,
-        SharedConnections
+        SharedConnections,
+        DeviceConnections
     };
 
     ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
@@ -88,6 +89,8 @@ public:
 
     void updateConnectionsList();
 
+    void setDeviceToFilter(NetworkManager::Device* device, const bool vpn = false);
+
 Q_SIGNALS:
     void showInterfaceDetails(QString);
 
@@ -101,6 +104,7 @@ public slots:
 
 private:
     QList<ConnectionItem *> connections;
+    NetworkManager::Device* m_device;
     RemoteActivatableList* m_activatables;
     bool hiddenInserted;
     Filter currentFilter;

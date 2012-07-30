@@ -94,6 +94,7 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(this->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(this->rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(this->rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
+    connect(this->rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
 
 }
 
@@ -146,6 +147,7 @@ void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setInterface(device);
         this->rootObject()->findChild<InterfaceDetailsWidget*>("traffic")->setUpdateEnabled(true);
         QMetaObject::invokeMethod(this->rootObject(), "detailsWidget");
+        listModel->setDeviceToFilter(device);
     }
 }
 
@@ -161,6 +163,11 @@ void DeclarativeNMPopup::manageConnections()
     QStringList args;
     args << "--icon" << "networkmanager" << "kcm_networkmanagement" << "kcm_networkmanagement_tray";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+void DeclarativeNMPopup::manageSelection()
+{
+    listModel->setDeviceToFilter(0);
 }
 
 void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)

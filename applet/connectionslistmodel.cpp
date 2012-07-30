@@ -38,7 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),
       m_activatables(activatables),
-      hiddenInserted(false)
+      hiddenInserted(false),
+      m_device(0)
 {
     QHash<int, QByteArray> roles;
     roles[DeviceUniRole] = "deviceUni";
@@ -270,40 +271,94 @@ void ConnectionsListModel::setFilter(QVariant tabName)
     updateConnectionsList();
 }
 
+void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, const bool vpn)
+{
+    m_device = device;
+
+    if(!device) {
+        kDebug() << "No filter selected";
+    }
+
+    // VpnInterfaceItems do not have NetworkManager::Device associated to them.
+    /**
+    if (m_device || vpn) {
+        currentFilter = DeviceConnections;
+    } else {
+        currentFilter = DeviceConnections;
+    }
+    **/
+    //m_vpn = vpn;
+    updateConnectionsList();
+}
+
 void ConnectionsListModel::updateConnectionsList()
 {
+    int i = 0;
     foreach (ConnectionItem *item, connections) {
-        kDebug() << "removing connection item";
         removeItem(item);
+        kDebug() << "removed " << i;
+        i++;
     }
 
     removeHiddenItem();
 
 
-    if(currentFilter == NormalConnections && NetworkManager::isWirelessEnabled()) {
-        insertHiddenItem();
+    if(m_device) {
+        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled() && m_device->type() == NetworkManager::Device::Wifi)) {
+            insertHiddenItem();
+        }
+    } else {
+        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled())) {
+            insertHiddenItem();
+        }
     }
 
     foreach (RemoteActivatable *activatable, m_activatables->activatables()) {
         switch(currentFilter) {
             case NormalConnections:
                 if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
-                    ConnectionItem *item = new ConnectionItem(activatable);
-                    appendRow(item);
-                    kDebug() << "adding connection item";
+                    if(m_device) {
+                        if(activatable->deviceUni() == m_device->uni()) {
+                            ConnectionItem *item = new ConnectionItem(activatable);
+                            appendRow(item);
+                            kDebug() << "adding connection item";
+                        }
+                    } else {
+                        ConnectionItem *item = new ConnectionItem(activatable);
+                        appendRow(item);
+                        kDebug() << "adding connection item1";
+                    }
                 }
                 break;
             case VpnConnections:
                 if(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-                    ConnectionItem *item = new ConnectionItem(activatable);
-                    appendRow(item);
+                    if(m_device) {
+                        if(activatable->deviceUni() == m_device->uni()) {
+                            ConnectionItem *item = new ConnectionItem(activatable);
+                            appendRow(item);
+                            kDebug() << "adding connection item";
+                        }
+                    } else {
+                        ConnectionItem *item = new ConnectionItem(activatable);
+                        appendRow(item);
+                        kDebug() << "adding connection item";
+                    }
                 }
                 break;
             case SharedConnections:
                 if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
                                                  activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
-                    ConnectionItem *item = new ConnectionItem(activatable);
-                    appendRow(item);
+                    if(m_device) {
+                        if(activatable->deviceUni() == m_device->uni()) {
+                            ConnectionItem *item = new ConnectionItem(activatable);
+                            appendRow(item);
+                            kDebug() << "adding connection item";
+                        }
+                    } else {
+                        ConnectionItem *item = new ConnectionItem(activatable);
+                        appendRow(item);
+                        kDebug() << "adding connection item";
+                    }
                 }
                 break;
         }

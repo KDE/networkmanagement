@@ -48,6 +48,7 @@ public Q_SLOTS:
     void updateMobile(bool checked);
     void manageConnections();
     void showInterfaceDetails(const QString & uni);
+    void manageSelection();
 
 private Q_SLOTS:
     void readConfig();
