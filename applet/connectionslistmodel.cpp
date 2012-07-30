@@ -157,7 +157,6 @@ void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
 
 void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
 {
-    kDebug() << "aaa Device Uni is " << deviceUni;
     if(deviceUni != "") {
         foreach (ConnectionItem *item, connections) {
             RemoteInterfaceConnection *conn = item->interfaceConnection();
@@ -233,15 +232,13 @@ void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
 
 void ConnectionsListModel::itemChanged() {
     ConnectionItem * item = qobject_cast<ConnectionItem *>(sender());
-    kDebug() << "bbbbbb";
+
     if (!item) {
         return;
     }
-    kDebug() << "bbbbbbb";
     QModelIndex index = indexFromItem(item);
     if(index.isValid()) {
         emit dataChanged(index, index);
-        kDebug() << "bbbbbbbb";
     }
 }
 

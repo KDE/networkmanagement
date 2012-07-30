@@ -38,7 +38,6 @@ Item {
     signal connectionClicked(int index)
         
     onHoverEnterChanged: {
-        console.log("bbbbb hoverchanged to " + hoverEnter);
         if(hoverEnter) {
             shadow.state = "hover"
         } else {
