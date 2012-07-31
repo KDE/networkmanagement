@@ -62,7 +62,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
-    connect(interfaceListModel, SIGNAL(updateTraffic(NetworkManager::Device *)), this, SLOT(manageUpdateTraffic(NetworkManager::Device *)));
+    connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem *)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem *)));
     connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
@@ -84,6 +84,8 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
             SLOT(interfaceRemoved(QString)));
 
     readConfig();
+    
+    addVpnInterface();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
@@ -141,14 +143,14 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
     }
 }
 
-void DeclarativeNMPopup::manageUpdateTraffic(NetworkManager::Device *device)
+void DeclarativeNMPopup::manageUpdateTraffic(DeclarativeInterfaceItem *device)
 {
     kDebug() << "handle traffic plotter changes";
     if(rootObject()) {
-        m_interfaceDetails->setInterface(device);
+        m_interfaceDetails->setInterface(device->interface());
         m_interfaceDetails->setUpdateEnabled(true);
         QMetaObject::invokeMethod(rootObject(), "showDetailsWidget");
-        listModel->setDeviceToFilter(device);
+        listModel->setDeviceToFilter(device->interface(), device->type() == "vpn");
     }
 }
 
@@ -156,6 +158,12 @@ void DeclarativeNMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wwan enable switch state changed" << enabled;
     engine()->rootContext()->setContextProperty("mobileVisible", enabled);
+}
+
+void DeclarativeNMPopup::addVpnInterface()
+{
+    m_vpnItem = new DeclarativeInterfaceItem(0, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
+    interfaceListModel->appendRow(m_vpnItem);
 }
 
 void DeclarativeNMPopup::manageConnections()
@@ -187,6 +195,11 @@ void DeclarativeNMPopup::updateWireless(bool checked)
     if (NetworkManager::isWirelessEnabled() != checked) {
         NetworkManager::setWirelessEnabled(checked);
     }
+}
+
+DeclarativeInterfaceItem* DeclarativeNMPopup::vpnItem() 
+{
+    return m_vpnItem;
 }
 
 void DeclarativeNMPopup::updateMobile(bool checked)
@@ -378,5 +391,5 @@ void DeclarativeNMPopup::showInterfaceDetails(const QString & uni)
     if (!ifaceItem) {
         return;
     }
-    manageUpdateTraffic(ifaceItem->interface());
+    manageUpdateTraffic(ifaceItem);
 }

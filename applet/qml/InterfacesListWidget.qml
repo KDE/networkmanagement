@@ -50,6 +50,7 @@ Item {
             connection: interfaceConnection
             isDefault: defaultRoute
             deviceUni: interfaceDeviceUni
+            visibleInterface: interfaceVisible
             
             onInterfaceClicked: {
                 showTraffic(index);

@@ -39,13 +39,11 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
     m_activatables(activatables),
     m_nameMode(mode),
     m_enabled(false),
+    m_visible(false),
     m_hasDefaultRoute(false),
     m_starting(true)
 {
-    connect(m_activatables, SIGNAL(disappeared()), this, SLOT(serviceDisappeared()));
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
-
+    
     if (m_iface) {
         connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
@@ -53,6 +51,11 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
 
     setNameDisplayMode(mode);
 
+    connect(m_activatables, SIGNAL(disappeared()), this, SLOT(serviceDisappeared()));
+    connect(m_activatables, SIGNAL(appeared()), this, SLOT(serviceAppeared()));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
+    
     if (m_iface) {
         if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
             m_type = "wired";
@@ -74,16 +77,31 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
         } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
             m_type = "modem";
         }
-    }
-
-
-
-    m_starting = false;
+        m_starting = false;
+    } else {
+        m_type = "vpn";
+        serviceAppeared();
+        setConnectionInfo();
+    }    
 }
 
 void DeclarativeInterfaceItem::serviceDisappeared()
 {
-    m_currentConnection = 0;
+    if(m_type == "vpn") {
+        m_vpnActivatables.clear();
+        currentConnectionChanged();
+    } else {
+        m_currentConnection = 0;
+    }
+}
+
+void DeclarativeInterfaceItem::serviceAppeared()
+{
+    if(m_type == "vpn") {
+        foreach (RemoteActivatable* remote, m_activatables->activatables()) {
+            activatableAdded(remote);
+        }
+    }
 }
 
 void DeclarativeInterfaceItem::setEnabled(bool enable)
@@ -96,15 +114,31 @@ bool DeclarativeInterfaceItem::enabled()
     return m_enabled;
 }
 
+bool DeclarativeInterfaceItem::isVisible()
+{
+    return m_visible;
+}
+
 void DeclarativeInterfaceItem::activatableAdded(RemoteActivatable * activatable)
 {
-    if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface.data())) {
-        updateCurrentConnection(qobject_cast<RemoteInterfaceConnection*>(activatable));
+    if(m_type == "vpn") {
+        if (accept(activatable)) {
+            m_vpnActivatables << activatable;
+            RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+            if (remoteconnection) {
+                connect(remoteconnection, SIGNAL(changed()), SLOT(currentConnectionChanged()));
+            }
+            currentConnectionChanged();
+        }
+    } else {
+        if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface.data())) {
+            updateCurrentConnection(qobject_cast<RemoteInterfaceConnection*>(activatable));
 
-        /* Sometimes the activatableAdded signal arrives after the stateChanged
-           signal, so update the interface state here but do not search for current connection
-           since it is already known. */
-        stateChanged(m_iface.data()->state(), false);
+            /* Sometimes the activatableAdded signal arrives after the stateChanged
+            signal, so update the interface state here but do not search for current connection
+            since it is already known. */
+            stateChanged(m_iface.data()->state(), false);
+        }
     }
 }
 
@@ -137,8 +171,15 @@ void DeclarativeInterfaceItem::handleConnectionStateChange(NetworkManager::Devic
 
 void DeclarativeInterfaceItem::activatableRemoved(RemoteActivatable * activatable)
 {
-    if (activatable == m_currentConnection) {
-        m_currentConnection = 0;
+    if(m_type != "vpn") {
+        if (activatable == m_currentConnection) {
+            m_currentConnection = 0;
+        }
+    } else {
+        if (m_vpnActivatables.contains(activatable)) {
+            m_vpnActivatables.removeAll(activatable);
+            currentConnectionChanged();
+        }
     }
 }
 
@@ -174,9 +215,37 @@ bool DeclarativeInterfaceItem::defaultRoute()
 
 void DeclarativeInterfaceItem::setConnectionInfo()
 {
-    if (m_iface) {
-        currentConnectionChanged();
-        stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+    if(m_type == "vpn") {
+        bool showDisconnect = false;
+        if (m_currentConnection) {
+            m_interfaceTitle = m_currentConnection->connectionName();
+            if (m_currentConnection->activationState() == Knm::InterfaceConnection::Activated) {
+                m_connectionName = "Connected";
+                showDisconnect = true;
+            } else if (m_currentConnection->activationState() == Knm::InterfaceConnection::Activating) {
+                m_connectionName = "Connecting...";
+                showDisconnect = true;
+            } else {
+                m_connectionName = "Impossible!";
+            }
+        } else {
+            m_interfaceTitle = "Virtual Private Network";
+            m_connectionName = "Not Connected...";
+        }
+        if (!m_vpnActivatables.isEmpty()) {
+            //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
+            m_visible = true;
+        } else {
+            //kDebug() << "hidding VPN widget:" << m_vpnActivatables.count();
+            m_visible = false;
+        }
+        m_enabled = showDisconnect;
+        emit itemChanged();
+    } else {
+        if (m_iface) {
+            currentConnectionChanged();
+            stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+        }
     }
 }
 
@@ -240,6 +309,14 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
     emit itemChanged();
 }
 
+bool DeclarativeInterfaceItem::accept(RemoteActivatable * activatable) const
+{
+    if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+        return true;
+    }
+    return false;
+}
+
 NetworkManager::Device* DeclarativeInterfaceItem::interface()
 {
     return m_iface.data();
@@ -247,12 +324,35 @@ NetworkManager::Device* DeclarativeInterfaceItem::interface()
 
 void DeclarativeInterfaceItem::currentConnectionChanged()
 {
-    updateCurrentConnection(m_activatables->connectionForInterface(m_iface.data()));
+    if(m_type == "vpn") {
+        int vpns = 0;
+        foreach (RemoteActivatable* activatable, m_activatables->activatables()) {
+            if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+                RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+                if (remoteconnection) {
+                    if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
+                                || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                        vpns++;
+                        if (m_currentConnection != remoteconnection) {
+                            m_currentConnection = remoteconnection;
+                        }
+                    }
+                }
+            }
+        }
+        if (!vpns) {
+            m_currentConnection = 0;
+        }
+        setConnectionInfo();
+    } else {
+        updateCurrentConnection(m_activatables->connectionForInterface(m_iface.data()));
+    }
 }
 
 void DeclarativeInterfaceItem::activeConnectionsChanged()
 {
-    setConnectionInfo();
+    if(m_type != "vpn") 
+        setConnectionInfo();
 }
 
 QWeakPointer<NetworkManager::Device> DeclarativeInterfaceItem::iface()
@@ -269,7 +369,7 @@ QString DeclarativeInterfaceItem::connectionName()
     return QString();
 }
 
-QString DeclarativeInterfaceItem::type()
+QString DeclarativeInterfaceItem::type() const
 {
     return m_type;
 }
@@ -294,6 +394,10 @@ QString DeclarativeInterfaceItem::deviceUni()
 
 bool DeclarativeInterfaceItem::equals(const DeclarativeInterfaceItem *item)
 {
+    if(item) {
+        if(item->type() == "vpn" && m_type == item->type())
+            return true;
+    }
     if (!item || !item->m_iface) {
         return false;
     }

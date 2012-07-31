@@ -39,6 +39,8 @@ public:
     void connectionRemoved(ConnectionItem *connection);
     void updateHasWireless(bool checked = true);
     void updateHasWwan();
+    void addVpnInterface();
+    DeclarativeInterfaceItem * vpnItem();
 
     QHash<QString, DeclarativeInterfaceItem*> m_interfaces;
 
@@ -60,12 +62,13 @@ private Q_SLOTS:
     void managerWwanEnabledChanged(bool);
     void interfaceRemoved(const QString& uni);
     void interfaceAdded(const QString& uni);
-    void manageUpdateTraffic(NetworkManager::Device *device);
+    void manageUpdateTraffic(DeclarativeInterfaceItem *device);
 
     void qmlCreationFinished();
 private:
     ConnectionsListModel *listModel;
     InterfacesListModel *interfaceListModel;
+    DeclarativeInterfaceItem *m_vpnItem;
     bool m_hasWirelessInterface;
     RemoteActivatableList* m_activatables;
     InterfaceDetailsWidget* m_interfaceDetails;

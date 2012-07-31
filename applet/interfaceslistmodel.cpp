@@ -32,6 +32,7 @@ InterfacesListModel::InterfacesListModel(QObject *parent)
     roles[ConnectionRole] = "interfaceConnection";
     roles[DefaultRouteRole] = "defaultRoute";
     roles[DeviceUniRole] = "interfaceDeviceUni";
+    roles[VisibleRole] = "interfaceVisible";
     setRoleNames(roles);
 }
 
@@ -54,6 +55,8 @@ QVariant InterfacesListModel::data(const QModelIndex &index, int role) const
                 return interfaces.at(index.row())->defaultRoute();
             case DeviceUniRole:
                 return interfaces.at(index.row())->deviceUni();
+            case VisibleRole:
+                return interfaces.at(index.row())->isVisible();
             default:
                 return QVariant();
         }
@@ -87,6 +90,7 @@ void InterfacesListModel::appendRow(DeclarativeInterfaceItem *item)
     connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
 
     interfaces.append(item);
+    
     endInsertRows();
 }
 
@@ -128,7 +132,7 @@ void InterfacesListModel::loadTraffic(int index)
 {
     kDebug() << "load traffic plotter with index " << index;
     if(index >= 0 && index < interfaces.size()) {
-        emit updateTraffic(interfaces[index]->interface());
+        emit updateTraffic(interfaces[index]);
         kDebug() << "emitted update traffic plotter signal";
     }
 }

@@ -53,6 +53,7 @@ Item {
             networkConnected: connectedNetwork;
             status: networkStatus;
             isHovered: hoverEntered;
+            iconNetwork: netIcon;
             onDisconnectNetwork: {
                 connectionsListModel.disconnectFrom(uuidProperty);
             }

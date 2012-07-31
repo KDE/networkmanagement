@@ -36,7 +36,8 @@ public:
         EnabledRole,
         ConnectionRole,
         DefaultRouteRole,
-        DeviceUniRole
+        DeviceUniRole,
+        VisibleRole
     };
 
     InterfacesListModel(QObject *parent=0);
@@ -58,7 +59,7 @@ public:
     QModelIndex indexFromItem(const DeclarativeInterfaceItem *item) const;
 
 Q_SIGNALS:
-    void updateTraffic(NetworkManager::Device * device);
+    void updateTraffic(DeclarativeInterfaceItem * device);
 
 protected Q_SLOTS:
     void itemChanged();

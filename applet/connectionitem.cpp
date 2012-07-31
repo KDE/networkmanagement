@@ -82,6 +82,8 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
             m_type = "wireless";
         } else if (m_activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
             m_type = "wired";
+        } else if (m_activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            m_type = "vpn";
         }
     }
 
@@ -143,10 +145,8 @@ QString ConnectionItem::ssid()
 
 QString ConnectionItem::wiredName()
 {
-    kDebug() << "getting network name";
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
-        kDebug() << "getting network name " + remoteconnection->connectionName();
         return remoteconnection->connectionName();
     }
     return "";
@@ -180,7 +180,15 @@ QString ConnectionItem::connectionUuid()
     }
 
     return QString();
+}
 
+QString ConnectionItem::connectionIcon()
+{
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        return remoteconnection->iconName();
+    }
+    return QString();
 }
 
 void ConnectionItem::disconnect() {

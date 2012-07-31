@@ -56,7 +56,8 @@ public:
         ProtectedIconRole,
         HiddenRole,
         WiredNetworkNameRole,
-        HoverEnterRole
+        HoverEnterRole,
+        NetworkIconRole
     };
 
     enum Filter {
@@ -104,12 +105,15 @@ public slots:
     void deactivateConnection(const QString& deviceUni);
     void hoverEnterConnections(QString deviceUni);
     void hoverLeftConnections(QString deviceUni);
+    void hoverEnterVpn();
+    void hoverLeftVpn();
 
 private:
     QList<ConnectionItem *> connections;
     NetworkManager::Device* m_device;
     RemoteActivatableList* m_activatables;
     bool hiddenInserted;
+    bool m_vpn;
     Filter currentFilter;
 };
 

@@ -24,51 +24,55 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: vpnInterfaceItem
-    width: 240
-    height: 50
+    id: wirelessItem
+    width: 300
+    height: 30
     
-    property string interfaceTitle;
-    property string connectionDescription;
-    property bool defaultRoute;
+    property string uuid;
+    property string networkName;
+    property string wiredStatus;
+    property bool connected;
+    property bool hoverEnter;
+    property string networkIcon;
     
-    signal vpnInterfaceClicked();
-    signal hoverEnter();
-    signal hoverLeft();
-
+    signal disconnect(string uuidProperty)
+    signal connectionClicked(int index)
+        
+    onHoverEnterChanged: {
+        if(hoverEnter) {
+            shadow.state = "hover"
+        } else {
+            shadow.state = "hidden"
+        }
+    }
+    
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         color: "#00000000"
-
+        
         ButtonShadow {
             id: shadow
             anchors.fill: parent
             state: "hidden"
         }
-
+        
         MouseArea {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-
-            onClicked: vpnInterfaceClicked();
-
-            onEntered: {
-                shadow.state = "hover";
-                hoverEnter();
-            }
-
-            onExited: {
-                shadow.state = "hidden"
-                hoverLeft();
-            }
+            
+            onEntered: shadow.state = "hover";
+            
+            onExited: shadow.state = "hidden"
+            
+            onClicked: connectionClicked(index);
         }
-
-
+        
+        
     }
-
+    
     Row {
         width: parent.width
         height: parent.height
@@ -79,33 +83,57 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
-
+        
         Row {
             id: row2
             height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
-
+            
             QIconItem {
                 id: connectionIcon
 
-                icon: QIcon("secure-card")
-                width: 48
-                height: 48
+                icon: QIcon(networkIcon)
+                width: 16
+                height: 16
                 visible: true
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Column {
-                spacing: 10
-                PlasmaComponents.Label {
-                    text: interfaceTitle
-                    font.weight: Font.Bold
+            PlasmaComponents.Label {
+                text: networkName
+                font.weight: {
+                    if(wiredStatus == "connected") Font.Bold 
+                    else Font.Normal
                 }
-                PlasmaComponents.Label {
-                    text: connectionDescription
+                font.italic: {
+                    if(wiredStatus == "connecting") true 
+                    else false
                 }
+            }
+        }
+     
+        Row {
+            id: row3
+            height: parent.heght - 20
+            anchors.right: parent.right
+            spacing: 10
+            anchors.verticalCenter: parent.verticalCenter
+
+            DisconnectButton {
+                anchors.verticalCenter: parent.verticalCenter
+                onHoverButton: {
+                    shadow.state = "hover"
+                }
+                
+                onDisconnectClicked: {
+                    disconnect(uuid);
+                }
+                
+                status: connected
             }
         }
     }
 }
+ 
+ 

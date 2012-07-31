@@ -49,10 +49,11 @@ public:
     bool equals(const DeclarativeInterfaceItem *item);
     QString connectionName();
     QString connection();
-    QString type();
+    QString type() const;
     QString interfaceTitle();
     QString deviceUni();
     bool enabled();
+    bool isVisible();
     bool defaultRoute();
 
     QWeakPointer<NetworkManager::Device> m_iface;
@@ -65,6 +66,7 @@ public Q_SLOTS:
     void activeConnectionsChanged();
     void currentConnectionChanged();
     void serviceDisappeared();
+    void serviceAppeared();
     void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);
     void updateCurrentConnection(RemoteInterfaceConnection *);
@@ -77,12 +79,14 @@ public Q_SLOTS:
 private:
     void setNameDisplayMode(NameDisplayMode mode);
     void setEnabled(bool enabled);
+    bool accept(RemoteActivatable* activatable) const;
+
+    QList<RemoteActivatable*> m_vpnActivatables;
 
     RemoteInterfaceConnection* m_currentConnection;
     RemoteActivatableList* m_activatables;
 
     NameDisplayMode m_nameMode;
-    bool m_enabled;
     NetworkManager::Device::State m_state;
     QString m_interfaceName;
     QString m_connectionName;
@@ -91,6 +95,8 @@ private:
     bool m_disconnect;
     bool m_hasDefaultRoute;
     bool m_starting;
+    bool m_visible;
+    bool m_enabled;
 };
 
 #endif

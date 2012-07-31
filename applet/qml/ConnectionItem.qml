@@ -29,6 +29,7 @@ Item {
     property string wiredNetworkName;
     property string wirelessNetworkName;
     property string status;
+    property string iconNetwork;
     property double wirelessSignalStrength;
     property bool networkConnected;
     property string wirelessNetworkIcon;
@@ -88,7 +89,6 @@ Item {
            wifiStatus: connectionItem.status;
            hoverEnter: connectionItem.isHovered;
            onDisconnect: {
-               console.log("uuid eh: " + uuid);
                connectionItem.disconnectNetwork(uuid);
            }
            onConnectionClicked: {
@@ -97,8 +97,29 @@ Item {
        }
     }
     
+    Component {
+        id: vpnNetworkItemComponent
+
+        VpnNetworkItem {
+            id: vpnItem
+
+            width: connectionItem.width;
+            uuid: connectionItem.networkUuid;
+            networkName: connectionItem.wiredNetworkName;
+            connected: connectionItem.networkConnected;
+            wiredStatus: connectionItem.status;
+            hoverEnter: connectionItem.isHovered;
+            networkIcon: connectionItem.iconNetwork;
+            onDisconnect: {
+                connectionItem.disconnectNetwork(uuid);
+            }
+            onConnectionClicked: {
+                connectionItem.connectNetwork(index);
+            }
+        }
+    }
+    
     Component.onCompleted: {
-        console.log("connection type is: " + connectionType);
         if (connectionType == "wireless") {
             if(hidden) {
                 hiddenWirelessNetworkComponent.createObject(connectionItem);
@@ -107,6 +128,8 @@ Item {
             }
         } else if (connectionType == "wired") {
             wiredNetworkItemComponent.createObject(connectionItem);
+        } else if (connectionType == "vpn") {
+            vpnNetworkItemComponent.createObject(connectionItem);
         }
     }
 }

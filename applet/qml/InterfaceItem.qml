@@ -31,17 +31,24 @@ Item {
     property string deviceUni;
     property bool enabledInterface;
     property bool isDefault;
+    property bool visibleInterface;
     
     signal interfaceClicked(int index);
     
     function hoverEnterConnections() {
-        console.log("device uni " + deviceUni);
         connectionsListModel.hoverEnterConnections(deviceUni);
     }
     
     function hoverLeftConnections() {
-        console.log("device uni " + deviceUni);
         connectionsListModel.hoverLeftConnections(deviceUni);
+    }
+    
+    function hoverEnterVpn() {
+        connectionsListModel.hoverEnterVpn();
+    }
+    
+    function hoverLeftVpn() {
+        connectionsListModel.hoverLeftVpn();
     }
             
     Component {
@@ -113,6 +120,31 @@ Item {
        }
     }
     
+    Component {
+       id: vpnInterfaceComponent
+
+       VpnInterfaceItem {
+           id: vpnItem
+           
+           visible: visibleInterface
+           width: interfaceItem.width;
+           
+           connectionDescription: connection
+           interfaceTitle: name
+           defaultRoute: isDefault;
+           
+           onVpnInterfaceClicked: {
+              interfaceClicked(index);
+           }
+           onHoverEnter: {
+               hoverEnterVpn();
+           }
+           onHoverLeft: {
+               hoverLeftVpn();
+           }
+       }
+    }
+    
     Component.onCompleted: {
         if (interfaceType == "wifi") {
             wirelessInterfaceComponent.createObject(interfaceItem);
@@ -120,6 +152,8 @@ Item {
             wiredInterfaceComponent.createObject(interfaceItem);
         } else if (interfaceType == "modem") {
             modemInterfaceComponent.createObject(interfaceItem);
+        } else if (interfaceType == "vpn") {
+            vpnInterfaceComponent.createObject(interfaceItem);
         }
     }
 }

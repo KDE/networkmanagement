@@ -39,6 +39,7 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     : QAbstractListModel(parent),
       m_activatables(activatables),
       hiddenInserted(false),
+      m_vpn(false),
       m_device(0)
 {
     QHash<int, QByteArray> roles;
@@ -59,6 +60,7 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[HiddenRole] = "hiddenNetwork";
     roles[WiredNetworkNameRole] = "wiredName";
     roles[HoverEnterRole] = "hoverEntered";
+    roles[NetworkIconRole] = "netIcon";
     setRoleNames(roles);
 }
 
@@ -107,6 +109,8 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 return connections.at(index.row())->wiredName();
             case HoverEnterRole:
                 return connections.at(index.row())->hover();
+            case NetworkIconRole:
+                return connections.at(index.row())->connectionIcon();
             /**
             case InterfaceCapabilitiesRole:
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
@@ -175,6 +179,26 @@ void ConnectionsListModel::hoverLeftConnections(QString deviceUni)
             if(conn && conn->deviceUni() == deviceUni) {
                 item->hoverLeft();
             }
+        }
+    }
+}
+
+void ConnectionsListModel::hoverEnterVpn()
+{
+    foreach (ConnectionItem *item, connections) {
+        RemoteInterfaceConnection *conn = item->interfaceConnection();
+        if(conn && conn->connectionType() == Knm::Connection::Vpn) {
+            item->hoverEnter();
+        }
+    }
+}
+
+void ConnectionsListModel::hoverLeftVpn()
+{
+    foreach (ConnectionItem *item, connections) {
+        RemoteInterfaceConnection *conn = item->interfaceConnection();
+        if(conn && conn->connectionType() == Knm::Connection::Vpn) {
+            item->hoverLeft();
         }
     }
 }
@@ -303,10 +327,6 @@ void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, con
 {
     m_device = device;
 
-    if(!device) {
-        kDebug() << "No filter selected";
-    }
-
     // VpnInterfaceItems do not have NetworkManager::Device associated to them.
     /**
     if (m_device || vpn) {
@@ -315,7 +335,7 @@ void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, con
         currentFilter = DeviceConnections;
     }
     **/
-    //m_vpn = vpn;
+    m_vpn = vpn;
     updateConnectionsList();
 }
 
@@ -324,7 +344,6 @@ void ConnectionsListModel::updateConnectionsList()
     int i = 0;
     foreach (ConnectionItem *item, connections) {
         removeItem(item);
-        kDebug() << "removed " << i;
         i++;
     }
 
@@ -332,11 +351,11 @@ void ConnectionsListModel::updateConnectionsList()
 
 
     if(m_device) {
-        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled() && m_device->type() == NetworkManager::Device::Wifi)) {
+        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled() && m_device->type() == NetworkManager::Device::Wifi) && !m_vpn) {
             insertHiddenItem();
         }
     } else {
-        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled())) {
+        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled()) && !m_vpn) {
             insertHiddenItem();
         }
     }
@@ -344,17 +363,15 @@ void ConnectionsListModel::updateConnectionsList()
     foreach (RemoteActivatable *activatable, m_activatables->activatables()) {
         switch(currentFilter) {
             case NormalConnections:
-                if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
+                if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) && !m_vpn) {
                     if(m_device) {
                         if(activatable->deviceUni() == m_device->uni()) {
                             ConnectionItem *item = new ConnectionItem(activatable);
                             appendRow(item);
-                            kDebug() << "adding connection item";
                         }
                     } else {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
-                        kDebug() << "adding connection item1";
                     }
                 }
                 break;
@@ -364,28 +381,24 @@ void ConnectionsListModel::updateConnectionsList()
                         if(activatable->deviceUni() == m_device->uni()) {
                             ConnectionItem *item = new ConnectionItem(activatable);
                             appendRow(item);
-                            kDebug() << "adding connection item";
                         }
                     } else {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
-                        kDebug() << "adding connection item";
                     }
                 }
                 break;
             case SharedConnections:
                 if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
-                                                 activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
+                                                 activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled()) && !m_vpn) {
                     if(m_device) {
                         if(activatable->deviceUni() == m_device->uni()) {
                             ConnectionItem *item = new ConnectionItem(activatable);
                             appendRow(item);
-                            kDebug() << "adding connection item";
                         }
                     } else {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
-                        kDebug() << "adding connection item";
                     }
                 }
                 break;

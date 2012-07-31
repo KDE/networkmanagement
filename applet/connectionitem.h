@@ -48,6 +48,7 @@ public:
     QString status();
     QString protectedIcon();
     QString connectionType();
+    QString connectionIcon();
     void hoverEnter();
     void hoverLeft();
     bool hover();
