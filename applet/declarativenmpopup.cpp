@@ -99,6 +99,13 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
     m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
     connect(rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
+    connect(rootObject(), SIGNAL(adjustSize(int, int)), this, SLOT(changeSize(int, int)));
+}
+
+void DeclarativeNMPopup::changeSize(int width, int height)
+{
+    setMaximumWidth(width);
+    setMaximumHeight(height);
 }
 
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)

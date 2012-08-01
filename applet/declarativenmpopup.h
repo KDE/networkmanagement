@@ -53,6 +53,7 @@ public Q_SLOTS:
     void manageConnections();
     void showInterfaceDetails(const QString & uni);
     void manageSelection();
+    void changeSize(int w, int h);
 
 private Q_SLOTS:
     void readConfig();

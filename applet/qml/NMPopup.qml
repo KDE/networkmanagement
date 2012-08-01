@@ -36,6 +36,7 @@ Item {
     signal enableMobile(bool status)
     signal settingsClicked()
     signal noDeviceSelected()
+    signal adjustSize(int width, int height)
     
     function showDetailsWidget() {
         main.state = "HideInterfaceList";
@@ -50,6 +51,13 @@ Item {
     }
 
 
+    onMinimumWidthChanged: {
+        adjustSize(minimumWidth, minimumHeight)
+    }
+    
+    onMinimumHeightChanged: {
+        adjustSize(minimumWidth, minimumHeight)
+    }
 
     Column {
         id: leftColumn
@@ -153,7 +161,9 @@ Item {
                     } else {
                         main.state = "InitialState"
                         minimumWidth: 320
+                        minimumHeight: 290
                         width: 320
+                        adjustSize(320, 290)
                     }
                 }
             }
@@ -172,6 +182,8 @@ Item {
             PropertyChanges {
                 target: main
                 minimumWidth: 600
+                minimumHeight: 290
+//                adjustSize(600, 290)
             }
 
             PropertyChanges {
@@ -205,6 +217,7 @@ Item {
                 target: main
                 minimumWidth: 650
                 minimumHeight: 370
+//                adjustSize(650, 370)
             }
 
             PropertyChanges {
