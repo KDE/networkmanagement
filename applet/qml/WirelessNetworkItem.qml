@@ -47,6 +47,10 @@ Item {
         }
     }
     
+    onSignalStrengthValueChanged: {
+        console.log("signal strength is: " + signalStrengthValue);
+    }
+    
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
@@ -87,10 +91,8 @@ Item {
         
         Row {
             id: row2
-            height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
-            
             WirelessNetworkIcon {
                 status: wifiStatus
             }
@@ -120,9 +122,9 @@ Item {
                 
                 orientation: Qt.Horizontal
                 minimumValue: 0
-                maximumValue: 120
+                maximumValue: 110
                 value: signalStrengthValue
-                height: 10
+                height: 12
                 width: 68
                 
                 visible: signalStrengthValue > 0
