@@ -128,6 +128,7 @@ Item {
            
            visible: visibleInterface
            width: interfaceItem.width;
+           opacity: enabledInterface ? 1.0 : 0.7
            
            connectionDescription: connection
            interfaceTitle: name
