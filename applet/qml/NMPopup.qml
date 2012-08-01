@@ -80,8 +80,8 @@ Item {
         
         InterfacesListWidget {
             id: interfaceList
-            widgetHeight: 250
-            widgetWidth: 250
+            widgetHeight: 230
+            widgetWidth: 260
             onShowTraffic: {
                 main.state = "HideInterfaceList";
                 interfacesListModel.loadTraffic(index);

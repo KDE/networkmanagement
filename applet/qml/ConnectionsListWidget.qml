@@ -42,7 +42,7 @@ Item {
         spacing: 3
         delegate: ConnectionItem {
             id: connectionItem
-            width: parent.width - 10
+            width: parent.width - 20
             networkUuid: connectionUuid;
             wiredNetworkName: wiredName;
             connectionType: networkType;

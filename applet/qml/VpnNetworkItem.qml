@@ -24,7 +24,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: wirelessItem
+    id: vpnItem
     width: 300
     height: 30
     
