@@ -37,10 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),
+      m_device(0),
       m_activatables(activatables),
       hiddenInserted(false),
-      m_vpn(false),
-      m_device(0)
+      m_vpn(false)
 {
     QHash<int, QByteArray> roles;
     roles[DeviceUniRole] = "deviceUni";

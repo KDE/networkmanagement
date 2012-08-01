@@ -63,8 +63,7 @@ public:
     enum Filter {
         NormalConnections,
         VpnConnections,
-        SharedConnections,
-        DeviceConnections
+        SharedConnections
     };
 
     ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);

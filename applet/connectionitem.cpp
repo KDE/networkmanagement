@@ -56,8 +56,8 @@ static const int m_iconSize = 48;
 ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObject *parent) :
     QObject(parent),
     m_activatable(activatable),
-    m_hidden(hidden),
-    m_hoverEnter(false)
+    m_hoverEnter(false),
+    m_hidden(hidden)
 {
     m_connected = false;
     connect(m_activatable, SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));

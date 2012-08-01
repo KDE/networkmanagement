@@ -87,16 +87,16 @@ private:
     RemoteActivatableList* m_activatables;
 
     NameDisplayMode m_nameMode;
+    bool m_enabled;
     NetworkManager::Device::State m_state;
     QString m_interfaceName;
     QString m_connectionName;
     QString m_interfaceTitle;
     QString m_type;
     bool m_disconnect;
+    bool m_visible;
     bool m_hasDefaultRoute;
     bool m_starting;
-    bool m_visible;
-    bool m_enabled;
 };
 
 #endif
