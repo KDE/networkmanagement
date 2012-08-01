@@ -47,10 +47,6 @@ Item {
         }
     }
     
-    onSignalStrengthValueChanged: {
-        console.log("signal strength is: " + signalStrengthValue);
-    }
-    
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
@@ -112,7 +108,6 @@ Item {
      
         Row {
             id: row3
-            height: parent.heght - 20
             anchors.right: parent.right
             spacing: 10
             anchors.verticalCenter: parent.verticalCenter
@@ -156,14 +151,4 @@ Item {
 
         }
     }
-
-
-/**
-    MouseArea {
-        id: wirelessWidgetArea
-        hoverEnabled: true
-        anchors.fill: parent
-    }
-    
-    **/
 }
