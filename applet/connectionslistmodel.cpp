@@ -341,10 +341,8 @@ void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, con
 
 void ConnectionsListModel::updateConnectionsList()
 {
-    int i = 0;
     foreach (ConnectionItem *item, connections) {
         removeItem(item);
-        i++;
     }
 
     removeHiddenItem();
