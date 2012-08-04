@@ -218,7 +218,8 @@ int ConnectionsListModel::rowCount(const QModelIndex &parent) const {
 }
 
 void ConnectionsListModel::appendRow(ConnectionItem *item) {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
+    const int start = rowCount();
+    beginInsertRows(QModelIndex(), start, start);
 
     connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
     connect(item, SIGNAL(showInterfaceDetails(QString)), this, SIGNAL(showInterfaceDetails(QString)));
