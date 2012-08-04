@@ -29,6 +29,7 @@ Item {
     id: main
     property int minimumWidth: 320
     property int minimumHeight: 290
+    property string previousState;
 
     property int iconSize: 22
         
@@ -39,6 +40,7 @@ Item {
     signal adjustSize(int width, int height)
     
     function showDetailsWidget() {
+        previousState = main.state;
         main.state = "HideInterfaceList";
     }
 
@@ -83,7 +85,6 @@ Item {
             widgetHeight: 230
             widgetWidth: 260
             onShowTraffic: {
-                main.state = "HideInterfaceList";
                 interfacesListModel.loadTraffic(index);
             }
         }
@@ -95,7 +96,8 @@ Item {
                 setUpdateEnabled(visible);
             }
             onBack: {
-                main.state = "ShowInterfaceList";
+                console.log("previousState1 is: " + previousState);
+                main.state = previousState;
                 noDeviceSelected();
             }    
             onDisconnectInterfaceRequested: {
@@ -156,7 +158,7 @@ Item {
                 text: i18n("Show Connections")
                 iconSource: "format-list-unordered"
                 onClicked: {
-                    if(main.state != "ShowInterfaceList") {
+                    if(main.state != "ShowInterfaceList" && main.state != "HideInterfaceList") {
                         main.state = "ShowInterfaceList"
                     } else {
                         main.state = "InitialState"
