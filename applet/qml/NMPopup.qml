@@ -162,6 +162,7 @@ Item {
                         main.state = "ShowInterfaceList"
                     } else {
                         main.state = "InitialState"
+                        noDeviceSelected();
                         minimumWidth: 320
                         minimumHeight: 290
                         width: 320
