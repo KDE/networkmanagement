@@ -45,7 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <wirelesssecurityidentifier.h>
 
 #include "activatableitem.h"
-//#include "wirelessinterfaceconnectionitem.h"
 #include "wirelessnetworkitem.h"
 
 #include "../libs/service/events.h"
@@ -60,39 +59,46 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     m_hidden(hidden)
 {
     m_connected = false;
-    connect(m_activatable, SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
-    connect(m_activatable, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
-            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
-
-    RemoteInterfaceConnection * remote = interfaceConnection();
-    if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
-                   remote->activationState() == Knm::InterfaceConnection::Activated)) {
-        m_connected = true;
-        if(remote->activationState() == Knm::InterfaceConnection::Activated) {
-            m_status = "connected";
-        } else {
-            m_status = "connecting";
-        }
-
-    }
 
     if(m_activatable) {
-        if(m_activatable->activatableType() == Knm::Activatable::WirelessNetwork ||
-                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+        RemoteInterfaceConnection * remote = interfaceConnection();
+
+        if (remote) {
+            connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
+    
+            if (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                remote->activationState() == Knm::InterfaceConnection::Activated) {
+                m_connected = true;
+                if(remote->activationState() == Knm::InterfaceConnection::Activated) {
+                    m_status = "connected";
+                } else {
+                    m_status = "connecting";
+                }
+            }
+        }
+
+        switch (m_activatable->activatableType()) {
+        case Knm::Activatable::WirelessNetwork:
+            connect(qobject_cast<RemoteWirelessNetwork *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
             m_type = "wireless";
-        } else if (m_activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
+            break;
+        case Knm::Activatable::WirelessInterfaceConnection:
+            connect(qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
+            m_type = "wireless";
+            break;
+        case Knm::Activatable::InterfaceConnection:
             m_type = "wired";
-        } else if (m_activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            break;
+        case Knm::Activatable::VpnInterfaceConnection:
             m_type = "vpn";
+            break;
         }
     }
 
     if(hidden) {
         m_type = "wireless";
     }
-
-    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
-                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
 }
 
 QString ConnectionItem::protectedIcon()
@@ -302,10 +308,7 @@ void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::Activation
 
 RemoteInterfaceConnection* ConnectionItem::interfaceConnection() const
 {
-    if(m_activatable) {
-        return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
-    }
-    return 0;
+    return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
 }
 
 RemoteActivatable * ConnectionItem::activatable() const
