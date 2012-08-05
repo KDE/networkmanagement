@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "declarativenmpopup.h"
 
 #include <KDebug>
-
 #include <KToolInvocation>
 #include <KStandardDirs>
 #include <Plasma/Separator>
@@ -97,10 +96,10 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
 
 void DeclarativeNMPopup::qmlCreationFinished()
 {
+    m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
     connect(rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
     connect(rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
-    m_interfaceDetails = rootObject()->findChild<InterfaceDetailsWidget*>("interfaceDetails");
     connect(rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
     connect(rootObject(), SIGNAL(adjustSize(int, int)), this, SLOT(changeSize(int, int)));
 }

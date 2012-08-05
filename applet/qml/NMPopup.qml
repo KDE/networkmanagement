@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright 2012 Lamarque V. Souza <lamarque@kde.org>                   *
+ *   Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
