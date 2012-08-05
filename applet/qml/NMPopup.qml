@@ -171,7 +171,7 @@ Item {
                 }
                 PlasmaComponents.ToolButton {
                     id: showConnectionButton
-                    text: i18n("Show Connections")
+                    text: i18n("Show Interfaces")
                     iconSource: "format-list-unordered"
                     onClicked: {
                         if(main.state != "ShowInterfaceList" && main.state != "HideInterfaceList") {
@@ -218,7 +218,7 @@ Item {
 
             PropertyChanges {
                 target: showConnectionButton
-                text: i18n("Hide Connections")
+                text: i18n("Hide Interfaces")
             }
 
             PropertyChanges {
@@ -258,7 +258,7 @@ Item {
 
             PropertyChanges {
                 target: showConnectionButton
-                text: i18n("Hide Connections")
+                text: i18n("Hide Interfaces")
             }
 
             PropertyChanges {
