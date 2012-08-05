@@ -39,7 +39,7 @@ Item {
         height: parent.height
         clip: true
         model: connectionsListModel
-        spacing: 3
+        spacing: 4
         delegate: ConnectionItem {
             id: connectionItem
             width: parent.width - 20

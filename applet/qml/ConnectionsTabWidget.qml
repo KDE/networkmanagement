@@ -23,6 +23,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Column {
+    spacing: 8
                 
     PlasmaComponents.TabBar {
         width: 300
