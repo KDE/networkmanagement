@@ -56,11 +56,7 @@ class NetworkManagerApplet::Private
 public:
     Private(): m_popup(0) { }
 
-#ifdef USE_QML
     DeclarativeNMPopup * m_popup;
-#else
-    NMPopup * m_popup;
-#endif
     QList<QAction*> actions;
 };
 
@@ -307,12 +303,7 @@ void NetworkManagerApplet::init()
 
 
 
-#ifdef USE_QML
     d->m_popup = new DeclarativeNMPopup(m_activatables, this);
-#else
-    d->m_popup = new NMPopup(m_activatables, this);
-#endif
-    kError() << "entrou";
     connect(d->m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
 
     QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
@@ -334,10 +325,8 @@ void NetworkManagerApplet::init()
     }
 }
 
-#ifdef USE_QML
 void NetworkManagerApplet::qmlCreationFinished()
 {
-    kDebug() << "Lamarque2" << d->m_popup->rootObject();
     connect(d->m_popup->rootObject(), SIGNAL(enableWireless(bool)), d->m_popup, SLOT(updateWireless(bool)));
     connect(d->m_popup->rootObject(), SIGNAL(enableWireless(bool)), this, SLOT(updateWireless(bool)));
 }
@@ -346,8 +335,6 @@ void NetworkManagerApplet::updateWireless(bool checked)
 {
     d->m_popup->updateWireless(checked);
 }
-
-#endif
 
 void NetworkManagerApplet::finishInitialization()
 {
@@ -1125,7 +1112,6 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
         m_activeVpnConnections.remove(ic->connectionUuid());
         kDebug() << "activatable removed" << m_activeVpnConnections.count();
     }
-#ifdef USE_QML
     RemoteWirelessNetwork *rwic;
     RemoteWirelessInterfaceConnection *rwic2;
     rwic = qobject_cast<RemoteWirelessNetwork *>(activatable);
@@ -1139,7 +1125,6 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
             kDebug() << "removed network any";
         }
     }
-#endif
 }
 
 void NetworkManagerApplet::activatablesDisappeared()

@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PLASMA_NETWORKMANAGER_APPLET_H
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
-#define USE_QML
-
 class QAction;
 class KCModuleProxy;
 
@@ -131,11 +129,8 @@ private Q_SLOTS:
     void resetActiveSystrayInterface();
     void _k_destroyed(QObject *);
     void setupAccessPointSignals(const QString &);
-
-#ifdef USE_QML
     void qmlCreationFinished();
     void updateWireless(bool checked);
-#endif
 private:
     SystrayOverlayOptions m_systrayOverlayOption;
 
