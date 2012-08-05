@@ -290,7 +290,7 @@ void DeclarativeNMPopup::readConfig()
     /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
      * So we always enable the wireless checkbox for versions below 4.6.2. */
 #if KDE_IS_VERSION(4,6,2)
-    engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessHardwareEnabled());
+    engine()->rootContext()->setContextProperty("wirelessEnabled", NetworkManager::isWirelessHardwareEnabled());
 #else
     engine()->rootContext()->setContextProperty("wirelessEnabled", QVariant(true));
 #endif
