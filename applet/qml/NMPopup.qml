@@ -29,24 +29,34 @@ import Separator 0.1
 
 Item {
     id: main
-    property int minimumWidth: 320
-    property int minimumHeight: 290
+
+    property int minimumWidth: Math.max(320, mainRow.width + 2*4)
+    property int minimumHeight: Math.max(290, mainRow.height + 2*4)
     property string previousState;
 
     property int iconSize: 22
-        
+
     signal enableWireless(bool status)
     signal enableMobile(bool status)
     signal settingsClicked()
     signal noDeviceSelected()
     signal adjustSize(int width, int height)
-    
-    function showDetailsWidget() {
-        previousState = main.state;
-        main.state = "HideInterfaceList";
-    }
 
     Component.onCompleted: {
+        main.state = "InitialState";
+    }
+
+    onMinimumWidthChanged: {
+        adjustSize(minimumWidth, minimumHeight)
+    }
+
+    onMinimumHeightChanged: {
+        adjustSize(minimumWidth, minimumHeight)
+    }
+
+    function showDetailsWidget() {
+        previousState = main.state;
+        main.state = "ShowInterfaceDetails";
     }
 
     PlasmaCore.Svg {
@@ -54,39 +64,34 @@ Item {
         imagePath: "widgets/configuration-icons"
     }
 
-
-    onMinimumWidthChanged: {
-        adjustSize(minimumWidth, minimumHeight)
-    }
-    
-    onMinimumHeightChanged: {
-        adjustSize(minimumWidth, minimumHeight)
-    }
-
     Row {
+        id: mainRow
+        
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 8
+        anchors.bottomMargin: 4
+        spacing: 4
 
         Column {
             id: leftColumn
             anchors.top: parent.top
-            anchors.topMargin: 5
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            spacing: 10
-            opacity: 0
-    
+            anchors.topMargin: 4
+            anchors.leftMargin: 8
+            spacing: 4
+            visible: false
+
             PlasmaComponents.Label {
                 id: interfaceTitle
+                visible: false
                 text: i18n("Interfaces")
-                font.weight : Font.Bold
+                font.weight: Font.Bold
                 font.pixelSize: theme.defaultFont.pointSize + 6
             }
-            //WirelessInterfaceItem{}
-            //WiredInterfaceItem{}
-            //VpnInterfaceItem {}
-            
+
             InterfacesListWidget {
                 id: interfaceList
+                visible: false
                 widgetHeight: 230
                 widgetWidth: 260
                 onShowTraffic: {
@@ -95,94 +100,101 @@ Item {
             }
             InterfaceDetailsWidget {
                 id: interfaceDetails
-                objectName: "interfaceDetails"
                 visible: false
+                objectName: "interfaceDetails"
                 onVisibleChanged: {
                     setUpdateEnabled(visible);
                 }
                 onBack: {
-                    console.log("previousState1 is: " + previousState);
+                    console.log("previousState is: " + previousState);
                     main.state = previousState;
                     noDeviceSelected();
-                }    
+                }
                 onDisconnectInterfaceRequested: {
                     connectionsListModel.deactivateConnection(deviceUni);
                 }
             }
         }
-    
+
         Column {
             id: separator
             visible: false
             width: 8
             height: leftColumn.height
+
             Separator {
                 orientation: Qt.Vertical
                 height: parent.height - 2*4
             }
         }
-    
+
         Column {
+            id: rightColumn
+
+            height: Math.max(tabWidget.height + controls.height + 12, leftColumn.height)
             anchors.right: parent.right
-            anchors.rightMargin: 10
-            anchors.leftMargin: 10
-            spacing: 2
-    
+            spacing: 8
+
             ConnectionsTabWidget {
                 id: tabWidget
-                height: 200;
+                height: 200
+                anchors.horizontalCenter: parent.horizontalCenter
             }
-    
-            PlasmaComponents.CheckBox {
-                height: 30
-                text: i18n("Enable Wireless")
-    
-                visible: wirelessVisible
-                
-                onCheckedChanged: {
-                    enableWireless(checked)
-                }
-                checked: wirelessChecked
-                enabled: wirelessEnabled
-                
-            }
-    
-            PlasmaComponents.CheckBox {
-                height: 30
-                text: i18n("Enable Mobile Broadband")
-                
-                visible: mobileVisible
-                checked: mobileChecked
-                enabled: mobileEnabled
-                
-                onCheckedChanged: {
-                    enableMobile(checked)
-                }
-            }
-    
-            Row {
-                spacing: 10
-                PlasmaComponents.ToolButton {
-                    text: i18n("Settings...")
-                    iconSource: "configure"
-                    onClicked: {
-                        settingsClicked();
+
+            Column {
+	        id: controls
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: parent.width
+                spacing: 4
+
+                PlasmaComponents.CheckBox {
+                    text: i18n("Enable Wireless")
+
+                    visible: wirelessVisible
+                    checked: wirelessChecked
+                    enabled: wirelessEnabled
+
+                    onCheckedChanged: {
+                        enableWireless(checked)
                     }
                 }
-                PlasmaComponents.ToolButton {
-                    id: showConnectionButton
-                    text: i18n("Show Interfaces")
-                    iconSource: "format-list-unordered"
-                    onClicked: {
-                        if(main.state != "ShowInterfaceList" && main.state != "HideInterfaceList") {
-                            main.state = "ShowInterfaceList"
-                        } else {
-                            main.state = "InitialState"
-                            noDeviceSelected();
-                            minimumWidth: 320
-                            minimumHeight: 290
-                            width: 320
-                            adjustSize(320, 290)
+
+                PlasmaComponents.CheckBox {
+                    text: i18n("Enable Mobile Broadband")
+
+                    visible: mobileVisible
+                    checked: mobileChecked
+                    enabled: mobileEnabled
+
+                    onCheckedChanged: {
+                        enableMobile(checked)
+                    }
+                }
+
+                Row {
+                    width: parent.width
+
+                    PlasmaComponents.ToolButton {
+                        text: i18n("Settings...")
+                        iconSource: "configure"
+                        anchors.verticalCenter: parent.verticalCenter
+                        onClicked: {
+                            settingsClicked();
+                        }
+                    }
+                    PlasmaComponents.ToolButton {
+                        id: showConnectionButton
+                        text: i18n("Show Interfaces")
+                        iconSource: "format-list-unordered"
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        onClicked: {
+                            if(main.state != "ShowInterfaceList" && main.state != "ShowInterfaceDetails") {
+                                main.state = "ShowInterfaceList"
+                            } else {
+                                main.state = "InitialState"
+                            }
                         }
                     }
                 }
@@ -194,6 +206,10 @@ Item {
         State {
             name: "InitialState"
 
+            PropertyChanges {
+                target: leftColumn
+                visible: false
+            }
             PropertyChanges {
                 target: interfaceDetails
                 visible: false
@@ -222,28 +238,19 @@ Item {
             }
 
             PropertyChanges {
-                target: main
-                minimumWidth: 600
-                minimumHeight: 290
-//                adjustSize(600, 290)
-            }
-
-            PropertyChanges {
                 target: leftColumn
-                opacity: 1
+                visible: true
             }
             PropertyChanges {
                 target: interfaceDetails
                 visible: false
             }
-            
-            PropertyChanges {
-                target: interfaceList
-                visible: true
-            }
-            
             PropertyChanges {
                 target: interfaceTitle
+                visible: true
+            }
+            PropertyChanges {
+                target: interfaceList
                 visible: true
             }
 
@@ -254,7 +261,7 @@ Item {
         },
 
         State {
-            name: "HideInterfaceList"
+            name: "ShowInterfaceDetails"
 
             PropertyChanges {
                 target: showConnectionButton
@@ -262,35 +269,20 @@ Item {
             }
 
             PropertyChanges {
-                target: main
-                minimumWidth: 650
-                minimumHeight: 370
-//                adjustSize(650, 370)
-            }
-
-            PropertyChanges {
                 target: leftColumn
-                opacity: 1
+                visible: true
             }
-            
             PropertyChanges {
                 target: interfaceDetails
                 visible: true
             }
-            
-            PropertyChanges {
-                target: interfaceList
-                visible: false
-            }
-            
             PropertyChanges {
                 target: interfaceTitle
                 visible: false
             }
-            
             PropertyChanges {
-                target: tabWidget
-                height: 260
+                target: interfaceList
+                visible: false
             }
 
             PropertyChanges {
@@ -299,5 +291,4 @@ Item {
             }
         }
     ]
-
 }
