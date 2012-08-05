@@ -186,18 +186,6 @@ void DeclarativeNMPopup::manageSelection()
     listModel->setDeviceToFilter(0);
 }
 
-void DeclarativeNMPopup::connectionAdded(ConnectionItem *connection)
-{
-    Q_UNUSED(connection);
-    listModel->updateConnectionsList();
-}
-
-void DeclarativeNMPopup::connectionRemoved(ConnectionItem *connection)
-{
-    Q_UNUSED(connection);
-    listModel->updateConnectionsList();
-}
-
 void DeclarativeNMPopup::updateWireless(bool checked)
 {
     if (NetworkManager::isWirelessEnabled() != checked) {

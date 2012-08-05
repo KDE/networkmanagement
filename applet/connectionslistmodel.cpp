@@ -62,7 +62,23 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[HoverEnterRole] = "hoverEntered";
     roles[NetworkIconRole] = "netIcon";
     setRoleNames(roles);
+
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
 }
+
+void ConnectionsListModel::activatableAdded(RemoteActivatable *activatable)
+{
+    Q_UNUSED(activatable);
+    updateConnectionsList();
+}
+
+void ConnectionsListModel::activatableRemoved(RemoteActivatable *activatable)
+{
+    Q_UNUSED(activatable);
+    updateConnectionsList();
+}
+
 
 QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
 {

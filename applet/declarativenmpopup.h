@@ -35,8 +35,6 @@ class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 public:
     DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent=0);
 
-    void connectionAdded(ConnectionItem *connection);
-    void connectionRemoved(ConnectionItem *connection);
     void updateHasWireless(bool checked = true);
     void updateHasWwan();
     void addVpnInterface();

@@ -1043,10 +1043,6 @@ void NetworkManagerApplet::clearActivatedOverlay()
 void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
 {
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(activatable);
-    #ifdef USE_QML
-    ConnectionItem *listItem = new ConnectionItem(activatable);
-    d->m_popup->connectionAdded(listItem);
-    #endif
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
@@ -1143,9 +1139,6 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
             kDebug() << "removed network any";
         }
     }
-    // TODO: avoid allocating a new object just to remove it afterwards.
-    ConnectionItem *connection = new ConnectionItem(activatable);
-    d->m_popup->connectionRemoved(connection);
 #endif
 }
 

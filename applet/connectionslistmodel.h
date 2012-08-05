@@ -106,6 +106,8 @@ public slots:
     void hoverLeftConnections(QString deviceUni);
     void hoverEnterVpn();
     void hoverLeftVpn();
+    void activatableAdded(RemoteActivatable *activatable);
+    void activatableRemoved(RemoteActivatable *activatable);
 
 private:
     QList<ConnectionItem *> connections;
