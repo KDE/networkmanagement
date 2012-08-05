@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KToolInvocation>
 #include <KStandardDirs>
+#include <Plasma/Separator>
 
 #include <QtDeclarative>
 
@@ -52,6 +53,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     interfaceListModel = new InterfacesListModel(parent);
 
     qmlRegisterType<InterfaceDetailsWidget>("InterfaceDetails", 0, 1, "InterfaceDetailsWidget");
+    qmlRegisterType<Plasma::Separator>("Separator", 0, 1, "Separator");
 
     setInitializationDelayed(true);
     m_rootContext = engine()->rootContext();
