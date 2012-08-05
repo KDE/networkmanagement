@@ -131,20 +131,21 @@ Item {
         Column {
             id: rightColumn
 
-            height: Math.max(tabWidget.height + controls.height + 12, leftColumn.height)
+            height: interfaceDetails.visible ? leftColumn.height : (tabWidget.height + controls.height + 28)
             anchors.right: parent.right
             spacing: 8
 
             ConnectionsTabWidget {
                 id: tabWidget
-                height: 200
+                height: interfaceDetails.visible ? (leftColumn.height - controls.height - 28) : 200
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Column {
-	        id: controls
+                id: controls
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: 4
                 width: parent.width
                 spacing: 4
 
@@ -205,6 +206,11 @@ Item {
     states: [
         State {
             name: "InitialState"
+
+            PropertyChanges {
+                target: showConnectionButton
+                text: i18n("Show Interfaces")
+            }
 
             PropertyChanges {
                 target: leftColumn
