@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "declarativeinterfaceitem.h"
 
 class InterfaceDetailsWidget;
+class QDeclarativeContext;
 
 class DeclarativeNMPopup : public Plasma::DeclarativeWidget
 {
@@ -71,6 +72,7 @@ private:
     bool m_hasWirelessInterface;
     RemoteActivatableList* m_activatables;
     InterfaceDetailsWidget* m_interfaceDetails;
+    QDeclarativeContext * m_rootContext;
 };
 
 #endif

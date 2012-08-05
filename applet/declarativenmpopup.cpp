@@ -54,12 +54,13 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     qmlRegisterType<InterfaceDetailsWidget>("InterfaceDetails", 0, 1, "InterfaceDetailsWidget");
 
     setInitializationDelayed(true);
-    engine()->rootContext()->setContextProperty("connectionsListModel", listModel);
-    engine()->rootContext()->setContextProperty("interfacesListModel", interfaceListModel);
+    m_rootContext = engine()->rootContext();
+    m_rootContext->setContextProperty("connectionsListModel", listModel);
+    m_rootContext->setContextProperty("interfacesListModel", interfaceListModel);
     setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
 
-    engine()->rootContext()->setContextProperty("wirelessVisible", QVariant(false));
-    engine()->rootContext()->setContextProperty("mobileVisible", QVariant(false));
+    m_rootContext->setContextProperty("wirelessVisible", QVariant(false));
+    m_rootContext->setContextProperty("mobileVisible", QVariant(false));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem *)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem *)));
@@ -111,9 +112,9 @@ void DeclarativeNMPopup::changeSize(int width, int height)
 void DeclarativeNMPopup::managerWwanEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wwan enable state" << enabled;
-    engine()->rootContext()->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
+    m_rootContext->setContextProperty("mobileChecked", enabled ? Qt::Checked : Qt::Unchecked);
     if (enabled) {
-        engine()->rootContext()->setContextProperty("mobileEnabled", enabled);
+        m_rootContext->setContextProperty("mobileEnabled", enabled);
     }
 }
 
@@ -164,7 +165,7 @@ void DeclarativeNMPopup::manageUpdateTraffic(DeclarativeInterfaceItem *device)
 void DeclarativeNMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wwan enable switch state changed" << enabled;
-    engine()->rootContext()->setContextProperty("mobileVisible", enabled);
+    m_rootContext->setContextProperty("mobileVisible", enabled);
 }
 
 void DeclarativeNMPopup::addVpnInterface()
@@ -210,9 +211,9 @@ void DeclarativeNMPopup::managerWirelessEnabledChanged(bool enabled)
     kDebug() << "NM daemon changed wireless enable state" << enabled;
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
-    engine()->rootContext()->setContextProperty("wirelessChecked", enabled);
+    m_rootContext->setContextProperty("wirelessChecked", enabled);
     if (enabled) {
-        engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+        m_rootContext->setContextProperty("wirelessEnabled", enabled);
     } else {
         listModel->removeHiddenItem();
     }
@@ -246,14 +247,14 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     } else {
         //listModel->insertHiddenItem();
     }
-    engine()->rootContext()->setContextProperty("wirelessVisible", hasWireless);
+    m_rootContext->setContextProperty("wirelessVisible", hasWireless);
 }
 
 
 void DeclarativeNMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
-    engine()->rootContext()->setContextProperty("wirelessEnabled", enabled);
+    m_rootContext->setContextProperty("wirelessEnabled", enabled);
     //if(!enabled) listModel->removeHiddenItem();
 }
 
@@ -285,21 +286,21 @@ void DeclarativeNMPopup::readConfig()
     }
 
     //m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
-    engine()->rootContext()->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
+    m_rootContext->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
 
     /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
      * So we always enable the wireless checkbox for versions below 4.6.2. */
 #if KDE_IS_VERSION(4,6,2)
-    engine()->rootContext()->setContextProperty("wirelessEnabled", NetworkManager::isWirelessHardwareEnabled());
+    m_rootContext->setContextProperty("wirelessEnabled", NetworkManager::isWirelessHardwareEnabled());
 #else
-    engine()->rootContext()->setContextProperty("wirelessEnabled", QVariant(true));
+    m_rootContext->setContextProperty("wirelessEnabled", QVariant(true));
 #endif
 
     /*m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
                                  NetworkManager::isWirelessEnabled());*/
 
-    engine()->rootContext()->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
-    engine()->rootContext()->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
+    m_rootContext->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
+    m_rootContext->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
     /**
     m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
     m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
@@ -378,7 +379,7 @@ void DeclarativeNMPopup::updateHasWwan()
             break;
         }
     }
-    engine()->rootContext()->setContextProperty("mobileVisible", hasWwan);
+    m_rootContext->setContextProperty("mobileVisible", hasWwan);
 }
 
 void DeclarativeNMPopup::showInterfaceDetails(const QString & uni)
