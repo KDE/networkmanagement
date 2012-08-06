@@ -25,6 +25,7 @@ import org.kde.qtextracomponents 0.1
 
 Item {
     id: modemInterfaceItem
+    anchors.fill: parent
     
     property string interfaceTitle;
     property string connectionDescription;
@@ -33,9 +34,6 @@ Item {
     signal hoverEnter();
     signal hoverLeft();
     
-    width: 240
-    height: 50
-
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
@@ -65,26 +63,22 @@ Item {
                 hoverLeft();
             }
         }
-
-
     }
 
     Row {
         width: parent.width
         height: parent.height
         anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 10
 
         Row {
             id: row2
-            height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 5
+            spacing: 4
 
             QIconItem {
                 id: connectionIcon
@@ -97,7 +91,7 @@ Item {
             }
 
             Column {
-                spacing: 10
+                spacing: 4
                 PlasmaComponents.Label {
                     text: interfaceTitle
                     font.weight: Font.Bold
@@ -109,4 +103,3 @@ Item {
         }
     }
 }
- 

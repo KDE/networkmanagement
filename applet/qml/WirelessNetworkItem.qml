@@ -91,10 +91,12 @@ Item {
             spacing: 5
             WirelessNetworkIcon {
                 status: wifiStatus
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {
                 text: networkName
+                anchors.verticalCenter: parent.verticalCenter
                 font.weight: {
                     if(wifiStatus == "connected") Font.Bold 
                     else Font.Normal
