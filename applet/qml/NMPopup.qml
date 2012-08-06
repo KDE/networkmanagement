@@ -92,8 +92,7 @@ Item {
             InterfacesListWidget {
                 id: interfaceList
                 visible: false
-                widgetHeight: 230
-                widgetWidth: 260
+                width: 260
                 onShowTraffic: {
                     interfacesListModel.loadTraffic(index);
                 }
@@ -131,13 +130,13 @@ Item {
         Column {
             id: rightColumn
 
-            height: interfaceDetails.visible ? leftColumn.height : (tabWidget.height + controls.height + 28)
+            height: leftColumn.visible ? Math.max(tabWidget.height + controls.height + 28, leftColumn.height) : (tabWidget.height + controls.height + 28)
             anchors.right: parent.right
             spacing: 8
 
             ConnectionsTabWidget {
                 id: tabWidget
-                height: interfaceDetails.visible ? (leftColumn.height - controls.height - 28) : 200
+                height: leftColumn.visible ? (leftColumn.height - controls.height - 28) : 200
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
