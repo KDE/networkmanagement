@@ -28,11 +28,12 @@ Item {
     height: 48
     
     property bool routeDefault;
+    property string content;
     
     QIconItem {
         id: connectionIcon
 
-        icon: QIcon("network-wired")
+        icon: QIcon(content)
         width: 48
         height: 48
         visible: true

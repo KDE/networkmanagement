@@ -49,6 +49,7 @@ Item {
             isDefault: defaultRoute
             deviceUni: interfaceDeviceUni
             visibleInterface: interfaceVisible
+            widgetIcon: interfaceIcon
             
 	    Component.onCompleted: {
 	        scrollList.height = scrollList.count * (height + scrollList.spacing)

@@ -33,6 +33,7 @@ InterfacesListModel::InterfacesListModel(QObject *parent)
     roles[DefaultRouteRole] = "defaultRoute";
     roles[DeviceUniRole] = "interfaceDeviceUni";
     roles[VisibleRole] = "interfaceVisible";
+    roles[IconRole] = "interfaceIcon";
     setRoleNames(roles);
 }
 
@@ -57,6 +58,8 @@ QVariant InterfacesListModel::data(const QModelIndex &index, int role) const
                 return interfaces.at(index.row())->deviceUni();
             case VisibleRole:
                 return interfaces.at(index.row())->isVisible();
+            case IconRole:
+                return interfaces.at(index.row())->icon();
             default:
                 return QVariant();
         }

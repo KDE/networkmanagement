@@ -52,6 +52,7 @@ public:
     QString type() const;
     QString interfaceTitle();
     QString deviceUni();
+    QString icon();
     bool enabled();
     bool isVisible();
     bool defaultRoute();
@@ -80,6 +81,7 @@ private:
     void setNameDisplayMode(NameDisplayMode mode);
     void setEnabled(bool enabled);
     bool accept(RemoteActivatable* activatable) const;
+    void setInterfaceIcon();
 
     QList<RemoteActivatable*> m_vpnActivatables;
 
@@ -92,6 +94,7 @@ private:
     QString m_interfaceName;
     QString m_connectionName;
     QString m_interfaceTitle;
+    QString m_icon;
     QString m_type;
     bool m_disconnect;
     bool m_visible;

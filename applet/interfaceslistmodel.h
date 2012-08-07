@@ -37,7 +37,8 @@ public:
         ConnectionRole,
         DefaultRouteRole,
         DeviceUniRole,
-        VisibleRole
+        VisibleRole,
+        IconRole
     };
 
     InterfacesListModel(QObject *parent=0);

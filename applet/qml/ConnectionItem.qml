@@ -120,6 +120,7 @@ Item {
     }
     
     Component.onCompleted: {
+        console.log("Added connection QML " + connectionType);
         if (connectionType == "wireless") {
             if(hidden) {
                 hiddenWirelessNetworkComponent.createObject(connectionItem);

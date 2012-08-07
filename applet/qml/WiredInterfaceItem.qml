@@ -30,6 +30,7 @@ Item {
     property string interfaceTitle;
     property string connectionDescription;
     property bool defaultRoute;
+    property string itemIcon;
     
     signal wiredInterfaceClicked();
     signal hoverEnter();
@@ -82,6 +83,7 @@ Item {
             spacing: 4
 
             WiredInterfaceIcon {
+                content: itemIcon;
                 visible: true
                 routeDefault: defaultRoute;
                 anchors.verticalCenter: parent.verticalCenter

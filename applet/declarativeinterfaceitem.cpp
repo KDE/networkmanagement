@@ -57,16 +57,6 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
     
     if (m_iface) {
-        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
-            m_type = "wired";
-            /*NetworkManager::WiredDevice* wirediface =
-                            static_cast<NetworkManager::WiredDevice*>(m_iface.data());
-            connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));*/
-        } else if (m_iface.data()->type() == NetworkManager::Device::Wifi) {
-            m_type = "wifi";
-        } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
-            m_type = "modem";
-        }
         m_state = NetworkManager::Device::UnknownState;
         stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
 
@@ -74,10 +64,12 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
             m_type = "wired";
         } else if (m_iface.data()->type() == NetworkManager::Device::Wifi) {
             m_type = "wifi";
+            setConnectionInfo();
         } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
             m_type = "modem";
         }
         m_starting = false;
+        setInterfaceIcon();
     } else {
         m_type = "vpn";
         serviceAppeared();
@@ -204,6 +196,7 @@ void DeclarativeInterfaceItem::updateCurrentConnection(RemoteInterfaceConnection
 void DeclarativeInterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
     m_hasDefaultRoute = changed;
+    setInterfaceIcon();
     kDebug() << "Default Route changed!!" << changed;
     emit itemChanged();
 }
@@ -302,8 +295,10 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
 
     //m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
-    kDebug() << "State changed" << lname;
     m_connectionName = lname;
+    setInterfaceIcon();
+    
+    kDebug() << "m_icon is: " << m_icon;
 
     emit stateChanged();
     emit itemChanged();
@@ -367,6 +362,17 @@ QString DeclarativeInterfaceItem::connectionName()
         return m_currentConnection->connectionName();
     }
     return QString();
+}
+
+void DeclarativeInterfaceItem::setInterfaceIcon()
+{
+    m_icon = UiUtils::iconName(m_iface.data());
+    emit itemChanged();
+}
+
+QString DeclarativeInterfaceItem::icon()
+{
+    return m_icon;
 }
 
 QString DeclarativeInterfaceItem::type() const

@@ -29,6 +29,7 @@ Item {
     property string name;
     property string connection;
     property string deviceUni;
+    property string widgetIcon;
     property bool enabledInterface;
     property bool isDefault;
     property bool visibleInterface;
@@ -62,6 +63,7 @@ Item {
             connectionDescription: connection
             interfaceTitle: name
             defaultRoute: isDefault;
+            itemIcon: widgetIcon;
             onWiredInterfaceClicked: {
                interfaceClicked(index);
             }
@@ -147,6 +149,7 @@ Item {
     }
     
     Component.onCompleted: {
+        console.log("widgetIcon: " + widgetIcon);
         if (interfaceType == "wifi") {
             wirelessInterfaceComponent.createObject(interfaceItem);
         } else if (interfaceType == "wired") {
