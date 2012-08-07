@@ -35,6 +35,7 @@ Item {
     property bool connected;
     property string protectedNetworkIcon;
     property bool hoverEnter;
+    property bool routeDefault;
     
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
@@ -91,6 +92,7 @@ Item {
             spacing: 5
             WirelessNetworkIcon {
                 status: wifiStatus
+                route: routeDefault
                 anchors.verticalCenter: parent.verticalCenter
             }
 

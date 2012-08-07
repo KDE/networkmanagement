@@ -33,6 +33,7 @@ Item {
     property string wiredStatus;
     property bool connected;
     property bool hoverEnter;
+    property bool routeDefault;
     
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
@@ -91,6 +92,7 @@ Item {
             
             WiredNetworkIcon {
                 status: wiredStatus
+                route: routeDefault;
             }
 
             PlasmaComponents.Label {

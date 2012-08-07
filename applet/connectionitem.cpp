@@ -56,6 +56,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     QObject(parent),
     m_activatable(activatable),
     m_hoverEnter(false),
+    m_hasDefaultRoute(false),
     m_hidden(hidden)
 {
     m_connected = false;
@@ -64,6 +65,8 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         RemoteInterfaceConnection * remote = interfaceConnection();
 
         if (remote) {
+            connect(remote, SIGNAL(hasDefaultRouteChanged(bool)),
+                    SLOT(handleHasDefaultRouteChanged(bool)));
             connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                             SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
     
@@ -166,6 +169,12 @@ QString ConnectionItem::connectionType()
 bool ConnectionItem::hidden()
 {
     return m_hidden;
+}
+
+void ConnectionItem::handleHasDefaultRouteChanged(bool has)
+{
+    m_hasDefaultRoute = has;
+    emit itemChanged();
 }
 
 QString ConnectionItem::connectionUuid()
@@ -277,6 +286,11 @@ void ConnectionItem::handlePropertiesChanges(int strength)
 bool ConnectionItem::connected()
 {
     return m_connected;
+}
+
+bool ConnectionItem::defaultRoute()
+{
+    return m_hasDefaultRoute;
 }
 
 QString ConnectionItem::status()

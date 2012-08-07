@@ -106,9 +106,6 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             case OldActivationStateRole:
                 //return connections.at(index.row())->oldActivationState();
                 return QVariant();
-            case HasDefaultRouteRole:
-                //return connections.at(index.row())->hasDefaultRoute();
-                return QVariant();
             case SsidRole:
                 return connections.at(index.row())->ssid();
             case StrengthRole:
@@ -127,6 +124,8 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 return connections.at(index.row())->hover();
             case NetworkIconRole:
                 return connections.at(index.row())->connectionIcon();
+            case HasDefaultRouteRole:
+                return connections.at(index.row())->defaultRoute();
             /**
             case InterfaceCapabilitiesRole:
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());

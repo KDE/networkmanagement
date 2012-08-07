@@ -52,11 +52,13 @@ public:
     void hoverEnter();
     void hoverLeft();
     bool hover();
+    bool defaultRoute();
 
 protected Q_SLOTS:
     void handlePropertiesChanges(int strength);
     void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
     void notifyNetworkingState();
+    void handleHasDefaultRouteChanged(bool has);
 
 Q_SIGNALS:
     void itemChanged();
@@ -66,6 +68,7 @@ private:
     RemoteActivatable *m_activatable;
     bool m_connected;
     bool m_hoverEnter;
+    bool m_hasDefaultRoute;
     QString m_status;
     QString m_type;
     bool m_hidden;

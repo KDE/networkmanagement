@@ -36,6 +36,7 @@ Item {
     property string connectionType;
     property bool hidden;
     property bool isHovered;
+    property bool defaultRoute;
     
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
@@ -53,6 +54,8 @@ Item {
             connected: connectionItem.networkConnected;
             wiredStatus: connectionItem.status;
             hoverEnter: connectionItem.isHovered;
+            routeDefault: connectionItem.defaultRoute;
+            
             onDisconnect: {
                 connectionItem.disconnectNetwork(uuid);
             }
@@ -88,6 +91,8 @@ Item {
            connected: connectionItem.networkConnected;
            wifiStatus: connectionItem.status;
            hoverEnter: connectionItem.isHovered;
+           routeDefault: connectionItem.defaultRoute;
+           
            onDisconnect: {
                connectionItem.disconnectNetwork(uuid);
            }
@@ -120,7 +125,6 @@ Item {
     }
     
     Component.onCompleted: {
-        console.log("Added connection QML " + connectionType);
         if (connectionType == "wireless") {
             if(hidden) {
                 hiddenWirelessNetworkComponent.createObject(connectionItem);

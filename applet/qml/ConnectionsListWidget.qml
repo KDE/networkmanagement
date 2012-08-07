@@ -54,6 +54,7 @@ Item {
             status: networkStatus;
             isHovered: hoverEntered;
             iconNetwork: netIcon;
+            defaultRoute: hasDefaultRoute;
             onDisconnectNetwork: {
                 connectionsListModel.disconnectFrom(uuidProperty);
             }

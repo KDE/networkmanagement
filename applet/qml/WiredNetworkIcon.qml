@@ -28,6 +28,7 @@ Item {
     height: 16
     
     property string status;
+    property bool route;
     
     QIconItem {
         id: connectionIcon
@@ -45,10 +46,7 @@ Item {
         icon: QIcon("network-defaultroute.png")
         width: 8
         height: 8
-        visible: {
-            if(status == "connected") true
-            else false
-        }
+        visible: route
         anchors.verticalCenter: parent.verticalCenter
     } 
 } 
