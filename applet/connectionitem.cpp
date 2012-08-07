@@ -65,6 +65,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         RemoteInterfaceConnection * remote = interfaceConnection();
 
         if (remote) {
+            m_hasDefaultRoute = remote->hasDefaultRoute();
             connect(remote, SIGNAL(hasDefaultRouteChanged(bool)),
                     SLOT(handleHasDefaultRouteChanged(bool)));
             connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
