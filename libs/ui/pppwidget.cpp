@@ -55,6 +55,7 @@ void PppWidget::readConfig()
     d->ui.chap->setChecked(!d->setting->refusechap());
     d->ui.mschap->setChecked(!d->setting->refusemschap());
     d->ui.mschapv2->setChecked(!d->setting->refusemschapv2());
+    d->ui.eap->setChecked(!d->setting->refuseeap());
     d->ui.requiremppe->setChecked(d->setting->requiremppe());
     d->ui.requiremppe128->setChecked(d->setting->requiremppe128());
     d->ui.mppestateful->setChecked(d->setting->mppestateful());
@@ -73,6 +74,7 @@ void PppWidget::writeConfig()
     d->setting->setRefusechap(!d->ui.chap->isChecked());
     d->setting->setRefusemschap(!d->ui.mschap->isChecked());
     d->setting->setRefusemschapv2(!d->ui.mschapv2->isChecked());
+    d->setting->setRefuseeap(!d->ui.eap->isChecked());
     d->setting->setRequiremppe(d->ui.requiremppe->isChecked());
     d->setting->setRequiremppe128(d->ui.requiremppe128->isChecked());
     d->setting->setMppestateful(d->ui.mppestateful->isChecked());
