@@ -111,9 +111,14 @@ QUuid RemoteInterfaceConnection::connectionUuid() const
     return d->uuid;
 }
 
-QString RemoteInterfaceConnection::connectionName() const
+QString RemoteInterfaceConnection::connectionName(const bool escaped) const
 {
     Q_D(const RemoteInterfaceConnection);
+    if (escaped) {
+        QString temp = d->name;
+        temp.replace(QLatin1Char('&'), QLatin1String("&&"));
+        return temp;
+    }
     return d->name;
 }
 
