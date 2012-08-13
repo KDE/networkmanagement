@@ -159,7 +159,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
 #if 0
     if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-        Solid::Control::WiredNetworkInterface * wiredIface = dynamic_cast<Solid::Control::WiredNetworkInterface *>(iface);
+        Solid::Control::WiredNetworkInterfaceNm09 * wiredIface = dynamic_cast<Solid::Control::WiredNetworkInterfaceNm09 *>(iface);
 
         if (wiredSetting && wiredIface) {
 
@@ -170,7 +170,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
         }
     } else if (connection->type() == Knm::Connection::Wireless) {
         Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-        Solid::Control::WirelessNetworkInterface * wirelessIface = dynamic_cast<Solid::Control::WirelessNetworkInterface *>(iface);
+        Solid::Control::WirelessNetworkInterfaceNm09 * wirelessIface = dynamic_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(iface);
 
         if (wirelessSetting && wirelessIface) {
 
@@ -189,7 +189,7 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
     Q_D(NetworkInterfaceActivatableProvider);
     // check type
     kDebug() << addedConnection->uuid();
-    if (!d->activatables.contains(addedConnection->uuid())) {
+    if (!d->activatables.contains(addedConnection->uuid()) && d->interface->connectionState() != Solid::Control::NetworkInterfaceNm09::Unmanaged) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             if (matches(addedConnection->type(), d->interface->type())) {
                 Knm::InterfaceConnection * ifaceConnection = Knm::InterfaceConnectionHelpers::buildInterfaceConnection(addedConnection, d->interface->uni(), this);;
