@@ -682,7 +682,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString icon = "networkmanager";
         QStringList lines;
         foreach (Solid::Control::NetworkInterfaceNm09 *iface, interfaces) {
-            if (iface->connectionState() != Solid::Control::NetworkInterfaceNm09::Unavailable) {
+            if (iface->connectionState() != Solid::Control::NetworkInterfaceNm09::Unavailable &&
+                iface->connectionState() != Solid::Control::NetworkInterfaceNm09::Unmanaged) {
                 if (!lines.isEmpty()) {
                     lines << QString();
                 }
