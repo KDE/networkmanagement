@@ -1,7 +1,7 @@
 /*
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -103,7 +103,7 @@ void GsmInterfaceConnectionItem::setupItem()
     RemoteGsmInterfaceConnection * remoteconnection = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
         m_connectButton->setIcon(remoteconnection->iconName());
-        m_connectButton->setText(remoteconnection->connectionName());
+        m_connectButton->setText(remoteconnection->connectionName(true));
         m_strengthMeter->setValue(remoteconnection->getSignalQuality());
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
@@ -153,10 +153,10 @@ void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
 
     if (tech != ModemInterface::UnknownTechnology) {
         m_connectButton->setText(QString("%1 (%2)").
-                                 arg(remote->connectionName(),
+                                 arg(remote->connectionName(true),
                                      ModemInterface::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
     } else {
-        m_connectButton->setText(remote->connectionName());
+        m_connectButton->setText(remote->connectionName(true));
     }
 }
 

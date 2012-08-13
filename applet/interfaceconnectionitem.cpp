@@ -1,5 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -61,7 +62,7 @@ void InterfaceConnectionItem::setupItem()
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
         m_connectButton->setIcon(remoteconnection->iconName());
-        m_connectButton->setText(remoteconnection->connectionName());
+        m_connectButton->setText(remoteconnection->connectionName(true));
         //kDebug() << remoteconnection->connectionName() << remoteconnection->iconName();
         handleHasDefaultRouteChanged(remoteconnection->hasDefaultRoute());
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());

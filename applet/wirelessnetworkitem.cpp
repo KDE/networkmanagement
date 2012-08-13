@@ -1,6 +1,7 @@
 /*
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2010-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -96,7 +97,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
-        m_connectButton->setText(remoteconnection->connectionName());
+        m_connectButton->setText(remoteconnection->connectionName(true));
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setText(m_wirelessStatus->ssid());
@@ -169,7 +170,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     // Indicate the active interface
     QString t;
     if (interfaceConnection()) {
-        t = interfaceConnection()->connectionName();
+        t = interfaceConnection()->connectionName(true);
         m_connectButton->setIcon(interfaceConnection()->iconName());
     } else {
         t = m_wirelessStatus->ssid();
