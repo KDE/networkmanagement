@@ -690,7 +690,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString icon = "networkmanager";
         QStringList lines;
         foreach (NetworkManager::Device *iface, interfaces) {
-            if (iface->state() != NetworkManager::Device::Unavailable) {
+            if (iface->state() != NetworkManager::Device::Unavailable &&
+                iface->state() != NetworkManager::Device::Unmanaged) {
                 if (!lines.isEmpty()) {
                     lines << QString();
                 }
