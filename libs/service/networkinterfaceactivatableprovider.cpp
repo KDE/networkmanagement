@@ -152,18 +152,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
     bool matches = true;
     Q_UNUSED(connection);
     Q_UNUSED(iface);
-    if (connection->type() == Knm::Connection::Wired) {
-        Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-        NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
-
-        if (wiredSetting && wiredIface) {
-
-            // only settings which contain a valid macaddress are interesting
-            if (!wiredSetting->macaddress().isEmpty()) {
-                matches = (UiUtils::macAddressAsString(wiredSetting->macaddress()) == wiredIface->hardwareAddress());
-            }
-        }
-    } else if (connection->type() == Knm::Connection::Wireless) {
+    if (connection->type() == Knm::Connection::Wireless) {
         Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
         NetworkManager::WirelessDevice * wirelessIface = dynamic_cast<NetworkManager::WirelessDevice *>(iface);
 
@@ -172,6 +161,17 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
             // only settings which contain a valid macaddress are interesting
             if (!wirelessSetting->macaddress().isEmpty()) {
                 matches = (UiUtils::macAddressAsString(wirelessSetting->macaddress()) == wirelessIface->hardwareAddress());
+            }
+        }
+    } else if (connection->type() == Knm::Connection::Wired) {
+        Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
+        NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
+
+        if (wiredSetting && wiredIface) {
+
+            // only settings which contain a valid macaddress are interesting
+            if (!wiredSetting->macaddress().isEmpty()) {
+                matches = (UiUtils::macAddressAsString(wiredSetting->macaddress()) == wiredIface->hardwareAddress());
             }
         }
     }
