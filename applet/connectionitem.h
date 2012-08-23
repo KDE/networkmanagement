@@ -30,7 +30,7 @@ class ConnectionItem : public QObject
     Q_OBJECT
 
 public:
-    ConnectionItem(RemoteActivatable *activatable, bool hidden = false, QObject *parent = 0);
+    explicit ConnectionItem(RemoteActivatable *activatable, bool hidden = false, QObject *parent = 0);
     QString deviceUni();
     QString activatableType();
     bool isShared();

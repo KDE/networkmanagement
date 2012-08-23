@@ -64,7 +64,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     m_rootContext->setContextProperty("mobileVisible", QVariant(false));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
-    connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem *)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem *)));
+    connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem*)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem*)));
     connect(this, SIGNAL(finished()), this, SLOT(qmlCreationFinished()));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
@@ -101,7 +101,7 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(rootObject(), SIGNAL(enableMobile(bool)), this, SLOT(updateMobile(bool)));
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
     connect(rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
-    connect(rootObject(), SIGNAL(adjustSize(int, int)), this, SLOT(changeSize(int, int)));
+    connect(rootObject(), SIGNAL(adjustSize(int,int)), this, SLOT(changeSize(int,int)));
 }
 
 void DeclarativeNMPopup::changeSize(int width, int height)

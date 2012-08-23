@@ -66,7 +66,7 @@ public:
         SharedConnections
     };
 
-    ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
+    explicit ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 

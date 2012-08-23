@@ -44,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <remotewirelessnetwork.h>
 #include <wirelesssecurityidentifier.h>
 
-#include "activatableitem.h"
 #include "wirelessnetworkitem.h"
 
 #include "../libs/service/events.h"
@@ -98,6 +97,8 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
             m_type = "vpn";
             break;
         }
+
+	/* TODO: add GsmInterfaceConnection, HiddenWirelessInterfaceConnection and UnconfiguredInterface. Maybe just get rid of the last two too. */
     }
 
     if(hidden) {

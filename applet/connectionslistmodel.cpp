@@ -152,9 +152,11 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-void ConnectionsListModel::disconnectFrom(QVariant uuid) {
+void ConnectionsListModel::disconnectFrom(QVariant uuid)
+{
     QString connectionId = uuid.toString();
-    if(connectionId != "") {
+
+    if (!connectionId.isEmpty()) {
         foreach (ConnectionItem *item, connections) {
             if (item && item->connectionUuid() == connectionId) {
                 item->disconnect();
@@ -165,7 +167,7 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid) {
 
 void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
 {
-    if(deviceUni != "") {
+    if (!deviceUni.isEmpty()) {
         foreach (ConnectionItem *item, connections) {
             if (item && item->interfaceConnection() && item->interfaceConnection()->deviceUni() == deviceUni) {
                 item->disconnect();
@@ -176,7 +178,7 @@ void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
 
 void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
 {
-    if(deviceUni != "") {
+    if (!deviceUni.isEmpty()) {
         foreach (ConnectionItem *item, connections) {
             RemoteInterfaceConnection *conn = item->interfaceConnection();
             if(conn && conn->deviceUni() == deviceUni) {
@@ -188,7 +190,7 @@ void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
 
 void ConnectionsListModel::hoverLeftConnections(QString deviceUni)
 {
-    if(deviceUni != "") {
+    if (!deviceUni.isEmpty()) {
         foreach (ConnectionItem *item, connections) {
             RemoteInterfaceConnection *conn = item->interfaceConnection();
             if(conn && conn->deviceUni() == deviceUni) {
