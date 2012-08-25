@@ -205,12 +205,12 @@ Item {
     states: [
         State {
             name: "InitialState"
-    
+
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Show Interfaces")
             }
-    
+
             PropertyChanges {
                 target: leftColumn
                 visible: false
@@ -227,21 +227,21 @@ Item {
                 target: interfaceList
                 visible: false
             }
-    
+
             PropertyChanges {
                 target: separator
                 visible: false
             }
         },
-    
+
         State {
             name: "ShowInterfaceList"
-    
+
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Hide Interfaces")
             }
-    
+
             PropertyChanges {
                 target: leftColumn
                 visible: true
@@ -258,21 +258,21 @@ Item {
                 target: interfaceList
                 visible: true
             }
-    
+
             PropertyChanges {
                 target: separator
                 visible: true
             }
         },
-    
+
         State {
             name: "ShowInterfaceDetails"
-    
+
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Hide Interfaces")
             }
-    
+
             PropertyChanges {
                 target: leftColumn
                 visible: true
@@ -289,7 +289,7 @@ Item {
                 target: interfaceList
                 visible: false
             }
-    
+
             PropertyChanges {
                 target: separator
                 visible: true

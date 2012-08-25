@@ -111,27 +111,27 @@ Item {
     states: [
         State {
             name: "EditNetworkName"
-    
+
             PropertyChanges {
                 target: networkNameEdit
                 visible: true
             }
-    
+
             PropertyChanges {
                 target: content
                 visible: false
             }
-    
+
             PropertyChanges {
                 target: icon
                 visible: false
             }
-    
+
             PropertyChanges {
                 target: description
                 visible: false
             }
-    
+
             PropertyChanges {
                 target: row2
                 visible: false
