@@ -43,7 +43,7 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
     m_hasDefaultRoute(false),
     m_starting(true)
 {
-    
+
     if (m_iface) {
         connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
@@ -55,7 +55,7 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
     connect(m_activatables, SIGNAL(appeared()), this, SLOT(serviceAppeared()));
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
-    
+
     if (m_iface) {
         m_state = NetworkManager::Device::UnknownState;
         stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
@@ -74,12 +74,12 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
         m_type = "vpn";
         serviceAppeared();
         setConnectionInfo();
-    }    
+    }
 }
 
 void DeclarativeInterfaceItem::serviceDisappeared()
 {
-    if(m_type == "vpn") {
+    if (m_type == "vpn") {
         m_vpnActivatables.clear();
         currentConnectionChanged();
     } else {
@@ -89,8 +89,8 @@ void DeclarativeInterfaceItem::serviceDisappeared()
 
 void DeclarativeInterfaceItem::serviceAppeared()
 {
-    if(m_type == "vpn") {
-        foreach (RemoteActivatable* remote, m_activatables->activatables()) {
+    if (m_type == "vpn") {
+        foreach(RemoteActivatable * remote, m_activatables->activatables()) {
             activatableAdded(remote);
         }
     }
@@ -113,7 +113,7 @@ bool DeclarativeInterfaceItem::isVisible()
 
 void DeclarativeInterfaceItem::activatableAdded(RemoteActivatable * activatable)
 {
-    if(m_type == "vpn") {
+    if (m_type == "vpn") {
         if (accept(activatable)) {
             m_vpnActivatables << activatable;
             RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
@@ -163,7 +163,7 @@ void DeclarativeInterfaceItem::handleConnectionStateChange(NetworkManager::Devic
 
 void DeclarativeInterfaceItem::activatableRemoved(RemoteActivatable * activatable)
 {
-    if(m_type != "vpn") {
+    if (m_type != "vpn") {
         if (activatable == m_currentConnection) {
             m_currentConnection = 0;
         }
@@ -184,7 +184,7 @@ void DeclarativeInterfaceItem::updateCurrentConnection(RemoteInterfaceConnection
         m_currentConnection = ic;
 
         connect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)),
-                                     SLOT(handleHasDefaultRouteChanged(bool)));
+                SLOT(handleHasDefaultRouteChanged(bool)));
         handleHasDefaultRouteChanged(m_currentConnection->hasDefaultRoute());
         return;
     }
@@ -208,7 +208,7 @@ bool DeclarativeInterfaceItem::defaultRoute()
 
 void DeclarativeInterfaceItem::setConnectionInfo()
 {
-    if(m_type == "vpn") {
+    if (m_type == "vpn") {
         bool showDisconnect = false;
         if (m_currentConnection) {
             m_interfaceTitle = m_currentConnection->connectionName();
@@ -266,38 +266,38 @@ void DeclarativeInterfaceItem::stateChanged(NetworkManager::Device::State state,
     }
 
     switch (state) {
-        case NetworkManager::Device::Unavailable:
-            if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
-                lname = "Cable Unplugged";
-            }
-            setEnabled(false); // FIXME: tone down colors using an animation
-            break;
-        case NetworkManager::Device::Disconnected:
-        case NetworkManager::Device::Deactivating:
-            setEnabled(true);
-            break;
-        case NetworkManager::Device::Preparing:
-        case NetworkManager::Device::ConfiguringHardware:
-        case NetworkManager::Device::NeedAuth:
-        case NetworkManager::Device::ConfiguringIp:
-        case NetworkManager::Device::CheckingIp:
-        case NetworkManager::Device::WaitingForSecondaries:
-        case NetworkManager::Device::Activated:
-            setEnabled(true);
-            m_disconnect = true;
-            break;
-        case NetworkManager::Device::Unmanaged:
-        case NetworkManager::Device::Failed:
-        case NetworkManager::Device::UnknownState:
-            setEnabled(false);
-            break;
+    case NetworkManager::Device::Unavailable:
+        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
+            lname = "Cable Unplugged";
+        }
+        setEnabled(false); // FIXME: tone down colors using an animation
+        break;
+    case NetworkManager::Device::Disconnected:
+    case NetworkManager::Device::Deactivating:
+        setEnabled(true);
+        break;
+    case NetworkManager::Device::Preparing:
+    case NetworkManager::Device::ConfiguringHardware:
+    case NetworkManager::Device::NeedAuth:
+    case NetworkManager::Device::ConfiguringIp:
+    case NetworkManager::Device::CheckingIp:
+    case NetworkManager::Device::WaitingForSecondaries:
+    case NetworkManager::Device::Activated:
+        setEnabled(true);
+        m_disconnect = true;
+        break;
+    case NetworkManager::Device::Unmanaged:
+    case NetworkManager::Device::Failed:
+    case NetworkManager::Device::UnknownState:
+        setEnabled(false);
+        break;
     }
 
     //m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     m_connectionName = lname;
     setInterfaceIcon();
-    
+
     kDebug() << "m_icon is: " << m_icon;
 
     emit stateChanged();
@@ -319,14 +319,14 @@ NetworkManager::Device* DeclarativeInterfaceItem::interface()
 
 void DeclarativeInterfaceItem::currentConnectionChanged()
 {
-    if(m_type == "vpn") {
+    if (m_type == "vpn") {
         int vpns = 0;
-        foreach (RemoteActivatable* activatable, m_activatables->activatables()) {
+        foreach(RemoteActivatable * activatable, m_activatables->activatables()) {
             if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
                 RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
                 if (remoteconnection) {
                     if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
-                                || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                            || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
                         vpns++;
                         if (m_currentConnection != remoteconnection) {
                             m_currentConnection = remoteconnection;
@@ -346,7 +346,7 @@ void DeclarativeInterfaceItem::currentConnectionChanged()
 
 void DeclarativeInterfaceItem::activeConnectionsChanged()
 {
-    if(m_type != "vpn") 
+    if (m_type != "vpn")
         setConnectionInfo();
 }
 
@@ -392,7 +392,7 @@ QString DeclarativeInterfaceItem::connection()
 
 QString DeclarativeInterfaceItem::deviceUni()
 {
-    if(interface()) {
+    if (interface()) {
         return interface()->uni();
     }
     return QString();
@@ -400,8 +400,8 @@ QString DeclarativeInterfaceItem::deviceUni()
 
 bool DeclarativeInterfaceItem::equals(const DeclarativeInterfaceItem *item)
 {
-    if(item) {
-        if(item->type() == "vpn" && m_type == item->type())
+    if (item) {
+        if (item->type() == "vpn" && m_type == item->type())
             return true;
     }
     if (!item || !item->m_iface) {

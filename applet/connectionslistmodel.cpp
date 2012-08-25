@@ -82,50 +82,50 @@ void ConnectionsListModel::activatableRemoved(RemoteActivatable *activatable)
 
 QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
 {
-    if(index.row() < 0 || index.row() >= connections.size() || !index.isValid())
+    if (index.row() < 0 || index.row() >= connections.size() || !index.isValid())
         return QVariant();
 
-    if(connections.at(index.row())) {
-        switch(role) {
-            case DeviceUniRole:
-                return connections.at(index.row())->deviceUni();
-            case ActivatableTypeRole:
-                return connections.at(index.row())->activatableType();
-            case IsSharedRole:
-                return connections.at(index.row())->isShared();
-            case ConnectionTypeRole:
-                return connections.at(index.row())->connectionType();
-            case ConnectionUuidRole:
-                return connections.at(index.row())->connectionUuid();
-            case ConnectionNameRole:
-                //return connections.at(index.row())->connectionName();
-                return QVariant();
-            case ActivationStateRole:
-                //return connections.at(index.row())->activationStateRole();
-                return QVariant();
-            case OldActivationStateRole:
-                //return connections.at(index.row())->oldActivationState();
-                return QVariant();
-            case SsidRole:
-                return connections.at(index.row())->ssid();
-            case StrengthRole:
-                return connections.at(index.row())->signalStrength();
-            case ConnectedRole:
-                return connections.at(index.row())->connected();
-            case StatusRole:
-                return connections.at(index.row())->status();
-            case ProtectedIconRole:
-                return connections.at(index.row())->protectedIcon();
-            case HiddenRole:
-                return connections.at(index.row())->hidden();
-            case WiredNetworkNameRole:
-                return connections.at(index.row())->wiredName();
-            case HoverEnterRole:
-                return connections.at(index.row())->hover();
-            case NetworkIconRole:
-                return connections.at(index.row())->connectionIcon();
-            case HasDefaultRouteRole:
-                return connections.at(index.row())->defaultRoute();
+    if (connections.at(index.row())) {
+        switch (role) {
+        case DeviceUniRole:
+            return connections.at(index.row())->deviceUni();
+        case ActivatableTypeRole:
+            return connections.at(index.row())->activatableType();
+        case IsSharedRole:
+            return connections.at(index.row())->isShared();
+        case ConnectionTypeRole:
+            return connections.at(index.row())->connectionType();
+        case ConnectionUuidRole:
+            return connections.at(index.row())->connectionUuid();
+        case ConnectionNameRole:
+            //return connections.at(index.row())->connectionName();
+            return QVariant();
+        case ActivationStateRole:
+            //return connections.at(index.row())->activationStateRole();
+            return QVariant();
+        case OldActivationStateRole:
+            //return connections.at(index.row())->oldActivationState();
+            return QVariant();
+        case SsidRole:
+            return connections.at(index.row())->ssid();
+        case StrengthRole:
+            return connections.at(index.row())->signalStrength();
+        case ConnectedRole:
+            return connections.at(index.row())->connected();
+        case StatusRole:
+            return connections.at(index.row())->status();
+        case ProtectedIconRole:
+            return connections.at(index.row())->protectedIcon();
+        case HiddenRole:
+            return connections.at(index.row())->hidden();
+        case WiredNetworkNameRole:
+            return connections.at(index.row())->wiredName();
+        case HoverEnterRole:
+            return connections.at(index.row())->hover();
+        case NetworkIconRole:
+            return connections.at(index.row())->connectionIcon();
+        case HasDefaultRouteRole:
+            return connections.at(index.row())->defaultRoute();
             /**
             case InterfaceCapabilitiesRole:
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
@@ -144,8 +144,8 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
                 break;
                 **/
-            default:
-                return QVariant();
+        default:
+            return QVariant();
         }
     }
 
@@ -157,7 +157,7 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid)
     QString connectionId = uuid.toString();
 
     if (!connectionId.isEmpty()) {
-        foreach (ConnectionItem *item, connections) {
+        foreach(ConnectionItem * item, connections) {
             if (item && item->connectionUuid() == connectionId) {
                 item->disconnect();
             }
@@ -168,7 +168,7 @@ void ConnectionsListModel::disconnectFrom(QVariant uuid)
 void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
 {
     if (!deviceUni.isEmpty()) {
-        foreach (ConnectionItem *item, connections) {
+        foreach(ConnectionItem * item, connections) {
             if (item && item->interfaceConnection() && item->interfaceConnection()->deviceUni() == deviceUni) {
                 item->disconnect();
             }
@@ -179,9 +179,9 @@ void ConnectionsListModel::deactivateConnection(const QString& deviceUni)
 void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
 {
     if (!deviceUni.isEmpty()) {
-        foreach (ConnectionItem *item, connections) {
+        foreach(ConnectionItem * item, connections) {
             RemoteInterfaceConnection *conn = item->interfaceConnection();
-            if(conn && conn->deviceUni() == deviceUni) {
+            if (conn && conn->deviceUni() == deviceUni) {
                 item->hoverEnter();
             }
         }
@@ -191,9 +191,9 @@ void ConnectionsListModel::hoverEnterConnections(QString deviceUni)
 void ConnectionsListModel::hoverLeftConnections(QString deviceUni)
 {
     if (!deviceUni.isEmpty()) {
-        foreach (ConnectionItem *item, connections) {
+        foreach(ConnectionItem * item, connections) {
             RemoteInterfaceConnection *conn = item->interfaceConnection();
-            if(conn && conn->deviceUni() == deviceUni) {
+            if (conn && conn->deviceUni() == deviceUni) {
                 item->hoverLeft();
             }
         }
@@ -202,9 +202,9 @@ void ConnectionsListModel::hoverLeftConnections(QString deviceUni)
 
 void ConnectionsListModel::hoverEnterVpn()
 {
-    foreach (ConnectionItem *item, connections) {
+    foreach(ConnectionItem * item, connections) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
-        if(conn && conn->connectionType() == Knm::Connection::Vpn) {
+        if (conn && conn->connectionType() == Knm::Connection::Vpn) {
             item->hoverEnter();
         }
     }
@@ -212,29 +212,32 @@ void ConnectionsListModel::hoverEnterVpn()
 
 void ConnectionsListModel::hoverLeftVpn()
 {
-    foreach (ConnectionItem *item, connections) {
+    foreach(ConnectionItem * item, connections) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
-        if(conn && conn->connectionType() == Knm::Connection::Vpn) {
+        if (conn && conn->connectionType() == Knm::Connection::Vpn) {
             item->hoverLeft();
         }
     }
 }
 
-void ConnectionsListModel::connectTo(int index) {
-    if(index > -1 && index < connections.size()) {
+void ConnectionsListModel::connectTo(int index)
+{
+    if (index > -1 && index < connections.size()) {
         ConnectionItem *item = connections.at(index);
-        if(item != 0) {
+        if (item != 0) {
             item->connectNetwork();
         }
     }
 }
 
-int ConnectionsListModel::rowCount(const QModelIndex &parent) const {
+int ConnectionsListModel::rowCount(const QModelIndex &parent) const
+{
     Q_UNUSED(parent);
     return connections.size();
 }
 
-void ConnectionsListModel::appendRow(ConnectionItem *item) {
+void ConnectionsListModel::appendRow(ConnectionItem *item)
+{
     const int start = rowCount();
     beginInsertRows(QModelIndex(), start, start);
 
@@ -245,8 +248,9 @@ void ConnectionsListModel::appendRow(ConnectionItem *item) {
     endInsertRows();
 }
 
-void ConnectionsListModel::insertHiddenItem() {
-    if(!hiddenInserted) {
+void ConnectionsListModel::insertHiddenItem()
+{
+    if (!hiddenInserted) {
         beginInsertRows(QModelIndex(), 0, 0);
         kDebug() << "adding hidden item";
         connections.insert(0, new ConnectionItem(0, true));
@@ -255,38 +259,42 @@ void ConnectionsListModel::insertHiddenItem() {
     }
 }
 
-void ConnectionsListModel::removeHiddenItem() {
-    if(hiddenInserted) {
+void ConnectionsListModel::removeHiddenItem()
+{
+    if (hiddenInserted) {
         removeRow(0);
         hiddenInserted = false;
         kDebug() << "Will remove hidden item";
     }
 }
 
-void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items) {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount()+items.size()-1);
-    foreach (ConnectionItem *item, items) {
+void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items)
+{
+    beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
+    foreach(ConnectionItem * item, items) {
         connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
         connections.append(item);
     }
     endInsertRows();
 }
 
-void ConnectionsListModel::itemChanged() {
+void ConnectionsListModel::itemChanged()
+{
     ConnectionItem * item = qobject_cast<ConnectionItem *>(sender());
 
     if (!item) {
         return;
     }
     QModelIndex index = indexFromItem(item);
-    if(index.isValid()) {
+    if (index.isValid()) {
         emit dataChanged(index, index);
     }
 }
 
-bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent) {
+bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent)
+{
     Q_UNUSED(parent);
-    if(row < 0 || row >= connections.size()) return false;
+    if (row < 0 || row >= connections.size()) return false;
     beginRemoveRows(QModelIndex(), row, row);
     ConnectionItem * c = connections.takeAt(row);
     QObject::disconnect(c, 0, this, 0);
@@ -295,11 +303,12 @@ bool ConnectionsListModel::removeRow(int row, const QModelIndex &parent) {
     return true;
 }
 
-bool ConnectionsListModel::removeItem(ConnectionItem *act) {
+bool ConnectionsListModel::removeItem(ConnectionItem *act)
+{
     int row = 0;
-    foreach (ConnectionItem *item, connections) {
-        if(item->equals(act)) {
-            if(item->hidden()) hiddenInserted = false;
+    foreach(ConnectionItem * item, connections) {
+        if (item->equals(act)) {
+            if (item->hidden()) hiddenInserted = false;
             return removeRow(row);
         }
         row++;
@@ -307,12 +316,13 @@ bool ConnectionsListModel::removeItem(ConnectionItem *act) {
     return false;
 }
 
-bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &parent) {
+bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &parent)
+{
     Q_UNUSED(parent);
-    if(row < 0 || (row+count) >= connections.size()) return false;
-    beginRemoveRows(QModelIndex(), row, row+count-1);
-    for(int i=0; i<count; ++i) {
-      delete connections.takeAt(row+i);
+    if (row < 0 || (row + count) >= connections.size()) return false;
+    beginRemoveRows(QModelIndex(), row, row + count - 1);
+    for (int i = 0; i < count; ++i) {
+        delete connections.takeAt(row + i);
     }
     endRemoveRows();
     return true;
@@ -320,9 +330,9 @@ bool ConnectionsListModel::removeRows(int row, int count, const QModelIndex &par
 
 QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) const
 {
-    if(item) {
-        for(int row=0; row < connections.size(); ++row) {
-            if(connections.at(row)->equals(item)) return index(row);
+    if (item) {
+        for (int row = 0; row < connections.size(); ++row) {
+            if (connections.at(row)->equals(item)) return index(row);
         }
     }
     return QModelIndex();
@@ -330,7 +340,7 @@ QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) cons
 
 void ConnectionsListModel::setFilter(QVariant tabName)
 {
-    if(tabName == "Connections") {
+    if (tabName == "Connections") {
         currentFilter = NormalConnections;
     } else if (tabName == "VPN") {
         currentFilter = VpnConnections;
@@ -359,65 +369,65 @@ void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, con
 
 void ConnectionsListModel::updateConnectionsList()
 {
-    foreach (ConnectionItem *item, connections) {
+    foreach(ConnectionItem * item, connections) {
         removeItem(item);
     }
 
     removeHiddenItem();
 
 
-    if(m_device) {
-        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled() && m_device->type() == NetworkManager::Device::Wifi) && !m_vpn) {
+    if (m_device) {
+        if ((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled() && m_device->type() == NetworkManager::Device::Wifi) && !m_vpn) {
             insertHiddenItem();
         }
     } else {
-        if((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled()) && !m_vpn) {
+        if ((currentFilter == NormalConnections && NetworkManager::isWirelessEnabled()) && !m_vpn) {
             insertHiddenItem();
         }
     }
 
-    foreach (RemoteActivatable *activatable, m_activatables->activatables()) {
-        switch(currentFilter) {
-            case NormalConnections:
-                if(!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) && !m_vpn) {
-                    if(m_device) {
-                        if(activatable->deviceUni() == m_device->uni()) {
-                            ConnectionItem *item = new ConnectionItem(activatable);
-                            appendRow(item);
-                        }
-                    } else {
+    foreach(RemoteActivatable * activatable, m_activatables->activatables()) {
+        switch (currentFilter) {
+        case NormalConnections:
+            if (!activatable->isShared() && !(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) && !m_vpn) {
+                if (m_device) {
+                    if (activatable->deviceUni() == m_device->uni()) {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
                     }
+                } else {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
                 }
-                break;
-            case VpnConnections:
-                if(activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-                    if(m_device) {
-                        if(activatable->deviceUni() == m_device->uni()) {
-                            ConnectionItem *item = new ConnectionItem(activatable);
-                            appendRow(item);
-                        }
-                    } else {
+            }
+            break;
+        case VpnConnections:
+            if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+                if (m_device) {
+                    if (activatable->deviceUni() == m_device->uni()) {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
                     }
+                } else {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
                 }
-                break;
-            case SharedConnections:
-                if(activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
-                                                 activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled()) && !m_vpn) {
-                    if(m_device) {
-                        if(activatable->deviceUni() == m_device->uni()) {
-                            ConnectionItem *item = new ConnectionItem(activatable);
-                            appendRow(item);
-                        }
-                    } else {
+            }
+            break;
+        case SharedConnections:
+            if (activatable->isShared() && !((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
+                                              activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled()) && !m_vpn) {
+                if (m_device) {
+                    if (activatable->deviceUni() == m_device->uni()) {
                         ConnectionItem *item = new ConnectionItem(activatable);
                         appendRow(item);
                     }
+                } else {
+                    ConnectionItem *item = new ConnectionItem(activatable);
+                    appendRow(item);
                 }
-                break;
+            }
+            break;
         }
     }
 }
@@ -427,7 +437,7 @@ void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
     QString ssid = ssidParam.toString();
     kDebug() << "ssid is: " << ssid;
     NetworkManager::WirelessDevice * wiface = 0;
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach(NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi && iface->state() > NetworkManager::Device::Unavailable) {
             wiface = qobject_cast<NetworkManager::WirelessDevice *>(iface);
             break;
@@ -446,13 +456,13 @@ void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
 
     if (network) {
         moduleArgs = QString::fromLatin1("%1 %2")
-            .arg(wiface->uni())
-            .arg(network->referenceAccessPoint());
+                     .arg(wiface->uni())
+                     .arg(network->referenceAccessPoint());
 
     } else {
         moduleArgs = QString::fromLatin1("%1 %2")
-            .arg(wiface->uni())
-            .arg(ssid);
+                     .arg(wiface->uni())
+                     .arg(ssid);
     }
 
     args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");

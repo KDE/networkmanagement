@@ -29,13 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 
-class ConnectionsListModel : public QAbstractListModel {
+class ConnectionsListModel : public QAbstractListModel
+{
     Q_OBJECT
 
 public:
 
     enum Roles {
-        DeviceUniRole = Qt::UserRole+1,
+        DeviceUniRole = Qt::UserRole + 1,
         ActivatableTypeRole,
         IsSharedRole,
         ConnectionTypeRole,

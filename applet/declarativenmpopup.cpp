@@ -75,7 +75,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     connect(NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
             this, SLOT(managerWwanHardwareEnabledChanged(bool)));
 
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach(NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         addInterfaceInternal(iface);
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
@@ -86,7 +86,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
             SLOT(interfaceRemoved(QString)));
 
     readConfig();
-    
+
     addVpnInterface();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -155,7 +155,7 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
 void DeclarativeNMPopup::manageUpdateTraffic(DeclarativeInterfaceItem *device)
 {
     kDebug() << "handle traffic plotter changes";
-    if(rootObject()) {
+    if (rootObject()) {
         m_interfaceDetails->setInterface(device->interface());
         m_interfaceDetails->setUpdateEnabled(true);
         QMetaObject::invokeMethod(rootObject(), "showDetailsWidget");
@@ -195,7 +195,7 @@ void DeclarativeNMPopup::updateWireless(bool checked)
     }
 }
 
-DeclarativeInterfaceItem* DeclarativeNMPopup::vpnItem() 
+DeclarativeInterfaceItem* DeclarativeNMPopup::vpnItem()
 {
     return m_vpnItem;
 }
@@ -225,8 +225,8 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     //kDebug() << "UPDATE!!!!!!!!!!!!";
     bool hasWireless = true;
     if (!NetworkManager::isWirelessHardwareEnabled() ||
-        !NetworkManager::isNetworkingEnabled() ||
-        !NetworkManager::isWirelessEnabled() || !checked) {
+            !NetworkManager::isNetworkingEnabled() ||
+            !NetworkManager::isWirelessEnabled() || !checked) {
 
         //kDebug () << "networking enabled?" << NetworkManager::isNetworkingEnabled();
         //kDebug () << "wireless hardware enabled?" << NetworkManager::isWirelessHardwareEnabled();
@@ -346,9 +346,9 @@ void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
             ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
             //connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         }
-       // connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+        // connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
         //connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
-         //       m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
+        //       m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
 
         //connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
         //connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
@@ -366,7 +366,7 @@ void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
 void DeclarativeNMPopup::updateHasWwan()
 {
     bool hasWwan = false;
-    foreach (DeclarativeInterfaceItem* ifaceitem, m_interfaces) {
+    foreach(DeclarativeInterfaceItem * ifaceitem, m_interfaces) {
         NetworkManager::ModemDevice* iface = qobject_cast<NetworkManager::ModemDevice *>(ifaceitem->interface());
         if (iface) {
             hasWwan = true;

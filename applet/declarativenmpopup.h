@@ -34,7 +34,7 @@ class DeclarativeNMPopup : public Plasma::DeclarativeWidget
     Q_OBJECT
 
 public:
-    explicit DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent=0);
+    explicit DeclarativeNMPopup(RemoteActivatableList * activatableList, QGraphicsWidget *parent = 0);
 
     void updateHasWireless(bool checked = true);
     void updateHasWwan();

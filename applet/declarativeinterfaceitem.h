@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace NetworkManager
 {
-    class Device;
+class Device;
 }
 
 class RemoteInterfaceConnection;
@@ -40,7 +40,7 @@ class RemoteActivatableList;
 
 class DeclarativeInterfaceItem : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
     DeclarativeInterfaceItem(NetworkManager::Device* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QObject* parent = 0);

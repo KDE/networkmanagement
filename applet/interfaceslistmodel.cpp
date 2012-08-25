@@ -39,29 +39,29 @@ InterfacesListModel::InterfacesListModel(QObject *parent)
 
 QVariant InterfacesListModel::data(const QModelIndex &index, int role) const
 {
-    if(index.row() < 0 || index.row() >= interfaces.size() || !index.isValid())
+    if (index.row() < 0 || index.row() >= interfaces.size() || !index.isValid())
         return QVariant();
 
-    if(interfaces.at(index.row())) {
-        switch(role) {
-            case InterfaceNameRole:
-                return interfaces.at(index.row())->interfaceTitle();
-            case TypeRole:
-                return interfaces.at(index.row())->type();
-            case EnabledRole:
-                return interfaces.at(index.row())->enabled();
-            case ConnectionRole:
-                return interfaces.at(index.row())->connection();
-            case DefaultRouteRole:
-                return interfaces.at(index.row())->defaultRoute();
-            case DeviceUniRole:
-                return interfaces.at(index.row())->deviceUni();
-            case VisibleRole:
-                return interfaces.at(index.row())->isVisible();
-            case IconRole:
-                return interfaces.at(index.row())->icon();
-            default:
-                return QVariant();
+    if (interfaces.at(index.row())) {
+        switch (role) {
+        case InterfaceNameRole:
+            return interfaces.at(index.row())->interfaceTitle();
+        case TypeRole:
+            return interfaces.at(index.row())->type();
+        case EnabledRole:
+            return interfaces.at(index.row())->enabled();
+        case ConnectionRole:
+            return interfaces.at(index.row())->connection();
+        case DefaultRouteRole:
+            return interfaces.at(index.row())->defaultRoute();
+        case DeviceUniRole:
+            return interfaces.at(index.row())->deviceUni();
+        case VisibleRole:
+            return interfaces.at(index.row())->isVisible();
+        case IconRole:
+            return interfaces.at(index.row())->icon();
+        default:
+            return QVariant();
         }
     }
 
@@ -75,32 +75,33 @@ int InterfacesListModel::rowCount(const QModelIndex & parent) const
     return interfaces.size();
 }
 
-void InterfacesListModel::itemChanged() {
+void InterfacesListModel::itemChanged()
+{
     DeclarativeInterfaceItem * item = qobject_cast<DeclarativeInterfaceItem *>(sender());
     if (!item) {
         return;
     }
     QModelIndex index = indexFromItem(item);
-    if(index.isValid()) {
+    if (index.isValid()) {
         emit dataChanged(index, index);
     }
 }
 
 void InterfacesListModel::appendRow(DeclarativeInterfaceItem *item)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
+    beginInsertRows(QModelIndex(), rowCount(), rowCount() + 1);
 
     connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
 
     interfaces.append(item);
-    
+
     endInsertRows();
 }
 
 void InterfacesListModel::appendRows(const QList<DeclarativeInterfaceItem*> &items)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount()+items.size()-1);
-    foreach (DeclarativeInterfaceItem *item, items) {
+    beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
+    foreach(DeclarativeInterfaceItem * item, items) {
         connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
         interfaces.append(item);
     }
@@ -110,7 +111,7 @@ void InterfacesListModel::appendRows(const QList<DeclarativeInterfaceItem*> &ite
 bool InterfacesListModel::removeRow(int row, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
-    if(row < 0 || row >= interfaces.size()) return false;
+    if (row < 0 || row >= interfaces.size()) return false;
     beginRemoveRows(QModelIndex(), row, row);
     DeclarativeInterfaceItem * c = interfaces.takeAt(row);
     QObject::disconnect(c, 0, this, 0);
@@ -122,8 +123,8 @@ bool InterfacesListModel::removeRow(int row, const QModelIndex &parent)
 bool InterfacesListModel::removeItem(DeclarativeInterfaceItem *act)
 {
     int row = 0;
-    foreach (DeclarativeInterfaceItem *item, interfaces) {
-        if(item->equals(act)) {
+    foreach(DeclarativeInterfaceItem * item, interfaces) {
+        if (item->equals(act)) {
             return removeRow(row);
         }
         row++;
@@ -134,7 +135,7 @@ bool InterfacesListModel::removeItem(DeclarativeInterfaceItem *act)
 void InterfacesListModel::loadTraffic(int index)
 {
     kDebug() << "load traffic plotter with index " << index;
-    if(index >= 0 && index < interfaces.size()) {
+    if (index >= 0 && index < interfaces.size()) {
         emit updateTraffic(interfaces[index]);
         kDebug() << "emitted update traffic plotter signal";
     }
@@ -143,10 +144,10 @@ void InterfacesListModel::loadTraffic(int index)
 bool InterfacesListModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     Q_UNUSED(parent);
-    if(row < 0 || (row+count) >= interfaces.size()) return false;
-    beginRemoveRows(QModelIndex(), row, row+count-1);
-    for(int i=0; i<count; ++i) {
-      delete interfaces.takeAt(row+i);
+    if (row < 0 || (row + count) >= interfaces.size()) return false;
+    beginRemoveRows(QModelIndex(), row, row + count - 1);
+    for (int i = 0; i < count; ++i) {
+        delete interfaces.takeAt(row + i);
     }
     endRemoveRows();
     return true;
@@ -154,9 +155,9 @@ bool InterfacesListModel::removeRows(int row, int count, const QModelIndex &pare
 
 QModelIndex InterfacesListModel::indexFromItem(const DeclarativeInterfaceItem *item) const
 {
-    if(item) {
-        for(int row=0; row < interfaces.size(); ++row) {
-            if(interfaces.at(row)->equals(item)) return index(row);
+    if (item) {
+        for (int row = 0; row < interfaces.size(); ++row) {
+            if (interfaces.at(row)->equals(item)) return index(row);
         }
     }
     return QModelIndex();

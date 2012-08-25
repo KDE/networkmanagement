@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class InterfacesListModel : public QAbstractListModel
 {
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
     enum Roles {
-        InterfaceNameRole = Qt::UserRole+1,
+        InterfaceNameRole = Qt::UserRole + 1,
         TypeRole,
         EnabledRole,
         ConnectionRole,
@@ -41,7 +41,7 @@ public:
         IconRole
     };
 
-    InterfacesListModel(QObject *parent=0);
+    InterfacesListModel(QObject *parent = 0);
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
