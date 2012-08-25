@@ -21,15 +21,15 @@
 import QtQuick 1.0
 import org.kde.qtextracomponents 0.1
 
-Item {  
+Item {
     id: wirelessIcon
-    
+
     width: 16
     height: 16
-    
+
     property string status;
     property bool route;
-    
+
     QIconItem {
         id: connectionIcon
 
@@ -39,7 +39,7 @@ Item {
         visible: true
         anchors.verticalCenter: parent.verticalCenter
     }
-            
+
     QIconItem {
         id: connectionIcon2
 
@@ -48,5 +48,5 @@ Item {
         height: 8
         visible: route
         anchors.verticalCenter: parent.verticalCenter
-    } 
+    }
 }

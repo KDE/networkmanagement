@@ -21,15 +21,15 @@
 import QtQuick 1.0
 import org.kde.qtextracomponents 0.1
 
-Item {  
+Item {
     id: wiredIcon
-    
+
     width: 48
     height: 48
-    
+
     property bool routeDefault;
     property string content;
-    
+
     QIconItem {
         id: connectionIcon
 
@@ -39,18 +39,15 @@ Item {
         visible: true
         anchors.verticalCenter: parent.verticalCenter
     }
-            
+
     QIconItem {
         id: connectionIcon2
 
         icon: QIcon("network-defaultroute.png")
         width: 16
         height: 16
-        visible: {
-            if(routeDefault) true
-            else false
-        }
+        visible: routeDefault
         anchors.verticalCenter: parent.verticalCenter
-    } 
-} 
- 
+    }
+}
+

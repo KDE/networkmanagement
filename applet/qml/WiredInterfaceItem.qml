@@ -26,12 +26,12 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: wiredInterfaceItem
     anchors.fill: parent
-    
+
     property string interfaceTitle;
     property string connectionDescription;
     property bool defaultRoute;
     property string itemIcon;
-    
+
     signal wiredInterfaceClicked();
     signal hoverEnter();
     signal hoverLeft();
@@ -52,7 +52,7 @@ Item {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-            
+
             onClicked: wiredInterfaceClicked();
 
             onEntered: {

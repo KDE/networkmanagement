@@ -66,7 +66,7 @@ Item {
 
     Row {
         id: mainRow
-        
+
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 8
@@ -190,7 +190,7 @@ Item {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
-                            if(main.state != "ShowInterfaceList" && main.state != "ShowInterfaceDetails") {
+                            if (main.state != "ShowInterfaceList" && main.state != "ShowInterfaceDetails") {
                                 main.state = "ShowInterfaceList"
                             } else {
                                 main.state = "InitialState"
@@ -205,12 +205,12 @@ Item {
     states: [
         State {
             name: "InitialState"
-
+    
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Show Interfaces")
             }
-
+    
             PropertyChanges {
                 target: leftColumn
                 visible: false
@@ -227,21 +227,21 @@ Item {
                 target: interfaceList
                 visible: false
             }
-
+    
             PropertyChanges {
                 target: separator
                 visible: false
             }
         },
-
+    
         State {
             name: "ShowInterfaceList"
-
+    
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Hide Interfaces")
             }
-
+    
             PropertyChanges {
                 target: leftColumn
                 visible: true
@@ -258,21 +258,21 @@ Item {
                 target: interfaceList
                 visible: true
             }
-
+    
             PropertyChanges {
                 target: separator
                 visible: true
             }
         },
-
+    
         State {
             name: "ShowInterfaceDetails"
-
+    
             PropertyChanges {
                 target: showConnectionButton
                 text: i18n("Hide Interfaces")
             }
-
+    
             PropertyChanges {
                 target: leftColumn
                 visible: true
@@ -289,7 +289,7 @@ Item {
                 target: interfaceList
                 visible: false
             }
-
+    
             PropertyChanges {
                 target: separator
                 visible: true

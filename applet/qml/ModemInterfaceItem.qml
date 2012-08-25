@@ -26,14 +26,14 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: modemInterfaceItem
     anchors.fill: parent
-    
+
     property string interfaceTitle;
     property string connectionDescription;
-    
+
     signal modemInterfaceClicked();
     signal hoverEnter();
     signal hoverLeft();
-    
+
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
@@ -50,7 +50,7 @@ Item {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-            
+
             onClicked: modemInterfaceClicked()
 
             onEntered: {

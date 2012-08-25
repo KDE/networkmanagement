@@ -26,11 +26,11 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: vpnInterfaceItem
     anchors.fill: parent
-    
+
     property string interfaceTitle;
     property string connectionDescription;
     property bool defaultRoute;
-    
+
     signal vpnInterfaceClicked();
     signal hoverEnter();
     signal hoverLeft();

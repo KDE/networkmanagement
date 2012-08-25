@@ -27,43 +27,41 @@ Item {
     id: hiddenWirelessItem
     width: 300
     height: 30
-    
+
     property string uuid;
     property string wifiStatus;
     property bool connected;
     property string protectedNetworkIcon;
-    
+
     signal enterPressed(string networkName);
-    
+
     Rectangle {
         id: content
-        
+
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         color: "#00000000"
-        
+
         ButtonShadow {
             id: shadow
             anchors.fill: parent
             state: "hidden"
         }
-        
+
         MouseArea {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-            
+
             onEntered: shadow.state = "hover"
-            
+
             onExited: shadow.state = "hidden"
-            
+
             onClicked: parent.parent.state = "EditNetworkName"
         }
-        
-        
     }
-    
+
     Row {
         width: parent.width
         height: parent.height
@@ -74,13 +72,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
-        
+
         Row {
             id: row2
             height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
-            
+
             WirelessNetworkIcon {
                 id: icon
                 status: "not connected"
@@ -91,9 +89,9 @@ Item {
                 text: i18n("<hidden network>")
             }
         }
- 
+
     }
-    
+
     PlasmaComponents.TextField {
         id: networkNameEdit
         placeholderText: i18n("Enter network name and press <enter>")
@@ -102,38 +100,38 @@ Item {
         anchors.fill: parent
         visible: false
         onAccepted: {
-            if(networkNameEdit.text != "") {
+            if (networkNameEdit.text != "") {
                 enterPressed(networkNameEdit.text);
                 networkNameEdit.text = "";
             }
             hiddenWirelessItem.state = "InitialState"
         }
     }
-        
+
     states: [
         State {
             name: "EditNetworkName"
-
+    
             PropertyChanges {
                 target: networkNameEdit
                 visible: true
             }
-            
+    
             PropertyChanges {
                 target: content
                 visible: false
             }
-            
+    
             PropertyChanges {
                 target: icon
                 visible: false
             }
-            
+    
             PropertyChanges {
                 target: description
                 visible: false
             }
-            
+    
             PropertyChanges {
                 target: row2
                 visible: false

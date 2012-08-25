@@ -24,7 +24,7 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 
 Column {
     spacing: 8
-                
+
     PlasmaComponents.TabBar {
         width: 300
         height: 30
@@ -32,12 +32,12 @@ Column {
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Connections")}
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("VPN")}
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Shared Connections")}
-        
+
         onCurrentTabChanged: {
             connectionsListModel.setFilter(currentTab.text);
         }
     }
-    
+
     PlasmaComponents.TabGroup {
         height: parent.height - 30
         width: parent.width - parent.spacing
@@ -52,4 +52,4 @@ Column {
 
         }
     }
-} 
+}

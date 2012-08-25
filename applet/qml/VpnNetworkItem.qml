@@ -27,52 +27,50 @@ Item {
     id: vpnItem
     width: 300
     height: 30
-    
+
     property string uuid;
     property string networkName;
     property string wiredStatus;
     property bool connected;
     property bool hoverEnter;
     property string networkIcon;
-    
+
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
-        
+
     onHoverEnterChanged: {
-        if(hoverEnter) {
+        if (hoverEnter) {
             shadow.state = "hover"
         } else {
             shadow.state = "hidden"
         }
     }
-    
+
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         color: "#00000000"
-        
+
         ButtonShadow {
             id: shadow
             anchors.fill: parent
             state: "hidden"
         }
-        
+
         MouseArea {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-            
+
             onEntered: shadow.state = "hover";
-            
+
             onExited: shadow.state = "hidden"
-            
+
             onClicked: connectionClicked(index);
         }
-        
-        
     }
-    
+
     Row {
         width: parent.width
         height: parent.height
@@ -83,13 +81,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
-        
+
         Row {
             id: row2
             height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
-            
+
             QIconItem {
                 id: connectionIcon
 
@@ -102,17 +100,11 @@ Item {
 
             PlasmaComponents.Label {
                 text: networkName
-                font.weight: {
-                    if(wiredStatus == "connected") Font.Bold 
-                    else Font.Normal
-                }
-                font.italic: {
-                    if(wiredStatus == "connecting") true 
-                    else false
-                }
+                font.weight: wiredStatus == "connected" ? Font.Bold : Font.Normal
+                font.italic: wiredStatus == "connecting"
             }
         }
-     
+
         Row {
             id: row3
             height: parent.heght - 20
@@ -125,15 +117,13 @@ Item {
                 onHoverButton: {
                     shadow.state = "hover"
                 }
-                
+
                 onDisconnectClicked: {
                     disconnect(uuid);
                 }
-                
+
                 status: connected
             }
         }
     }
 }
- 
- 

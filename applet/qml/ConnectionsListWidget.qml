@@ -31,7 +31,7 @@ Item {
 
     height: widgetHeight
     width: widgetWidth
-    
+
     ListView {
         id: scrollList
 

@@ -24,7 +24,7 @@ Item {
     id: connectionItem
     width: 300
     height: 30
-    
+
     property string networkUuid;
     property string wiredNetworkName;
     property string wirelessNetworkName;
@@ -37,11 +37,11 @@ Item {
     property bool hidden;
     property bool isHovered;
     property bool defaultRoute;
-    
+
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
     signal connectToHiddenNetwork(string ssid);
-    
+
     Component {
         id: wiredNetworkItemComponent
 
@@ -55,7 +55,7 @@ Item {
             wiredStatus: connectionItem.status;
             hoverEnter: connectionItem.isHovered;
             routeDefault: connectionItem.defaultRoute;
-            
+
             onDisconnect: {
                 connectionItem.disconnectNetwork(uuid);
             }
@@ -64,7 +64,7 @@ Item {
             }
         }
     }
-    
+
     Component {
         id: hiddenWirelessNetworkComponent
 
@@ -76,32 +76,32 @@ Item {
             }
         }
     }
-    
+
     Component {
-       id: wirelessNetworkItemComponent
+        id: wirelessNetworkItemComponent
 
-       WirelessNetworkItem {
-           id: wirelessItem
+        WirelessNetworkItem {
+            id: wirelessItem
 
-           width: connectionItem.width;
-           uuid: connectionItem.networkUuid;
-           networkName: connectionItem.wirelessNetworkName;
-           signalStrengthValue: connectionItem.wirelessSignalStrength;
-           protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
-           connected: connectionItem.networkConnected;
-           wifiStatus: connectionItem.status;
-           hoverEnter: connectionItem.isHovered;
-           routeDefault: connectionItem.defaultRoute;
-           
-           onDisconnect: {
-               connectionItem.disconnectNetwork(uuid);
-           }
-           onConnectionClicked: {
-               connectionItem.connectNetwork(index);
-           }
-       }
+            width: connectionItem.width;
+            uuid: connectionItem.networkUuid;
+            networkName: connectionItem.wirelessNetworkName;
+            signalStrengthValue: connectionItem.wirelessSignalStrength;
+            protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
+            connected: connectionItem.networkConnected;
+            wifiStatus: connectionItem.status;
+            hoverEnter: connectionItem.isHovered;
+            routeDefault: connectionItem.defaultRoute;
+
+            onDisconnect: {
+                connectionItem.disconnectNetwork(uuid);
+            }
+            onConnectionClicked: {
+                connectionItem.connectNetwork(index);
+            }
+        }
     }
-    
+
     Component {
         id: vpnNetworkItemComponent
 
@@ -123,10 +123,10 @@ Item {
             }
         }
     }
-    
+
     Component.onCompleted: {
         if (connectionType == "wireless") {
-            if(hidden) {
+            if (hidden) {
                 hiddenWirelessNetworkComponent.createObject(connectionItem);
             } else {
                 wirelessNetworkItemComponent.createObject(connectionItem);

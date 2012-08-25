@@ -28,11 +28,11 @@ Item {
 
     property int widgetHeight;
     property int widgetWidth;
-    
+
     signal showTraffic(int index);
 
     height: Math.max(290, scrollList.height)
-    
+
     ListView {
         id: scrollList
 
@@ -50,10 +50,10 @@ Item {
             deviceUni: interfaceDeviceUni
             visibleInterface: interfaceVisible
             widgetIcon: interfaceIcon
-            
-	    Component.onCompleted: {
-	        scrollList.height = scrollList.count * (height + scrollList.spacing)
-	    }
+
+            Component.onCompleted: {
+                scrollList.height = scrollList.count * (height + scrollList.spacing)
+            }
             onInterfaceClicked: {
                 showTraffic(index);
             }

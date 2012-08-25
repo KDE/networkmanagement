@@ -25,24 +25,24 @@ import org.kde.qtextracomponents 0.1
 
 Item {
     id: disconnectButton
-    
+
     property bool status;
-    
+
     width: 16
     height: 16
-    
+
     opacity: (status) ? 1 : 0.2
-    
+
     onStatusChanged: {
-        if(!status) opacity = 0.2;
+        if (!status) opacity = 0.2;
         else opacity = 1;
     }
-    
+
     property alias showIcon: menuIconElement.visible
 
     signal hoverButton()
     signal disconnectClicked()
-    
+
     QIconItem {
         id: menuIconElement
 
@@ -51,32 +51,32 @@ Item {
         height: parent.height
 
     }
-        
+
     MouseArea {
         id: buttonMouseArea
         anchors.fill: parent
         hoverEnabled: true
-        
+
         onEntered: {
-            if(status) {
-                parent.opacity = 0.7; 
+            if (status) {
+                parent.opacity = 0.7;
             }
             hoverButton();
         }
-        
+
         onExited:  {
-            if(status) {
+            if (status) {
                 parent.opacity = 1.0
             }
         }
-        
+
         onClicked: {
             disconnectClicked();
         }
     }
-    
+
     scale: {
-        if(status) {
+        if (status) {
             buttonMouseArea.pressed ? 0.90 : 1.00
         }
     }

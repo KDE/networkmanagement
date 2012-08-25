@@ -27,7 +27,7 @@ Item {
     id: wirelessItem
     width: 300
     height: 30
-    
+
     property string uuid;
     property string networkName;
     property string wifiStatus;
@@ -36,45 +36,43 @@ Item {
     property string protectedNetworkIcon;
     property bool hoverEnter;
     property bool routeDefault;
-    
+
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
-    
+
     onHoverEnterChanged: {
-        if(hoverEnter) {
+        if (hoverEnter) {
             shadow.state = "hover"
         } else {
             shadow.state = "hidden"
         }
     }
-    
+
     Rectangle {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         color: "#00000000"
-        
+
         ButtonShadow {
             id: shadow
             anchors.fill: parent
             state: "hidden"
         }
-        
+
         MouseArea {
             id: wirelessWidgetArea
             hoverEnabled: true
             anchors.fill: parent
-            
+
             onEntered: shadow.state = "hover";
-            
+
             onExited: shadow.state = "hidden"
-            
+
             onClicked: connectionClicked(index);
         }
-        
-        
     }
-    
+
     Row {
         width: parent.width
         height: parent.height
@@ -85,7 +83,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
-        
+
         Row {
             id: row2
             anchors.verticalCenter: parent.verticalCenter
@@ -99,37 +97,31 @@ Item {
             PlasmaComponents.Label {
                 text: networkName
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: {
-                    if(wifiStatus == "connected") Font.Bold 
-                    else Font.Normal
-                }
-                font.italic: {
-                    if(wifiStatus == "connecting") true 
-                    else false
-                }
+                font.weight: wifiStatus == "connected" ? Font.Bold : Font.Normal
+                font.italic: wifiStatus == "connecting"
             }
         }
-     
+
         Row {
             id: row3
             anchors.right: parent.right
             spacing: 10
             anchors.verticalCenter: parent.verticalCenter
-         
+
             PlasmaComponents.ProgressBar {
                 id: signalStrength
-                
+
                 orientation: Qt.Horizontal
                 minimumValue: 0
                 maximumValue: 110
                 value: signalStrengthValue
                 height: 12
                 width: 68
-                
+
                 visible: signalStrengthValue > 0
                 anchors.verticalCenter: parent.verticalCenter
             }
-            
+
             QIconItem {
                 id: protectIcon
 
@@ -145,11 +137,11 @@ Item {
                 onHoverButton: {
                     shadow.state = "hover"
                 }
-                
+
                 onDisconnectClicked: {
                     disconnect(uuid);
                 }
-                
+
                 status: connected
             }
 
