@@ -24,14 +24,15 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
+    id: main
     width: 300
     height: 30
 
     property string uuid
-    property alias connectionName: connectionNameLabel.text
+    property string connectionName
     property string activationState
     property string accessTechnology
-    property alias siqnalQuality: qualityProgressBar.value
+    property alias signalQuality: qualityProgressBar.value
     property bool hoverEnter
     property bool routeDefault
 
@@ -93,7 +94,7 @@ Item {
             }
 
             PlasmaComponents.Label {
-                id: connectionNameLabel
+                text: main.accessTechnology == "" ? main.connectionName : main.connectionName + " (" + main.accessTechnology + ")"
                 font.weight: activationState == "activated" ? Font.Bold : Font.Normal
                 font.italic: activationState == "activating"
             }
@@ -119,6 +120,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
             
+            Item {
+                id: spacer
+
+                width: 22
+                height: 22
+            }
+
             DisconnectButton {
                 anchors.verticalCenter: parent.verticalCenter
                 onHoverButton: {

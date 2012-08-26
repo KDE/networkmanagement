@@ -53,6 +53,8 @@ Item {
             isHovered: hoverEntered
             iconNetwork: netIcon
             defaultRoute: hasDefaultRoute
+            signalQuality: model["signalQuality"]
+            accessTechnology: model["accessTechnology"]
             onDisconnectNetwork: {
                 connectionsListModel.disconnectFrom(uuidProperty)
             }

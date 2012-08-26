@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableitem.h"
 #include <kdebug.h>
 #include "remoteactivatable.h"
+#include "uiutils.h"
 
 #include <QPainter>
 #include <QGraphicsSceneHoverEvent>
@@ -42,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <remotewirelessobject.h>
 #include <remotewirelessinterfaceconnection.h>
 #include <remotewirelessnetwork.h>
+#include <remotegsminterfaceconnection.h>
 #include <wirelesssecurityidentifier.h>
 
 #include "wirelessnetworkitem.h"
@@ -78,11 +80,11 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
 
         switch (m_activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
-            connect(qobject_cast<RemoteWirelessNetwork *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
+            connect(qobject_cast<RemoteWirelessNetwork *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
             m_type = "wireless";
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
-            connect(qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges(int)));
+            connect(qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
             m_type = "wireless";
             break;
         case Knm::Activatable::InterfaceConnection:
@@ -91,9 +93,11 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         case Knm::Activatable::VpnInterfaceConnection:
             m_type = "vpn";
             break;
-	case Knm::Activatable::GsmInterfaceConnection:
+        case Knm::Activatable::GsmInterfaceConnection:
+            connect(qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable), SIGNAL(signalQualityChanged(int)), this, SLOT(handlePropertiesChanges()));
+            connect(qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable), SIGNAL(accessTechnologyChanged(int)), this, SLOT(handlePropertiesChanges()));
             m_type = "gsm";
-	    break;
+            break;
         /* TODO: add HiddenWirelessInterfaceConnection and UnconfiguredInterface, or just get rid of them. */
         }
     }
@@ -277,15 +281,42 @@ int ConnectionItem::signalStrength()
     return 0;
 }
 
-void ConnectionItem::handlePropertiesChanges(int strength)
+void ConnectionItem::handlePropertiesChanges()
 {
-    Q_UNUSED(strength);
     emit itemChanged();
 }
 
 bool ConnectionItem::defaultRoute()
 {
     return m_hasDefaultRoute;
+}
+
+int ConnectionItem::signalQuality()
+{
+    if (m_activatable && m_activatable->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
+        RemoteGsmInterfaceConnection * giface = qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable);
+
+        if (giface) {
+            return giface->getSignalQuality();
+        }
+    }
+    return -1;
+}
+
+QString ConnectionItem::accessTechnology()
+{
+    if (m_activatable && m_activatable->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
+        RemoteGsmInterfaceConnection * giface = qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable);
+
+        if (giface) {
+            ModemManager::ModemInterface::AccessTechnology tech = static_cast<ModemManager::ModemInterface::AccessTechnology>(giface->getAccessTechnology());
+            
+            if (tech != ModemManager::ModemInterface::UnknownTechnology) {
+                return UiUtils::convertAccessTechnologyToString(tech);
+            }
+        }
+    }
+    return QString();
 }
 
 QString ConnectionItem::activationState()

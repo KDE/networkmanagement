@@ -58,6 +58,8 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[HiddenRole] = "hiddenNetwork";
     roles[HoverEnterRole] = "hoverEntered";
     roles[NetworkIconRole] = "netIcon";
+    roles[SignalQualityRole] = "signalQuality";
+    roles[AccessTechnologyRole] = "accessTechnology";
     setRoleNames(roles);
 
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), SLOT(activatableAdded(RemoteActivatable*)));
@@ -133,6 +135,10 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
                 RemoteWirelessInterfaceConnection *rwic = qobject_cast<RemoteWirelessInterfaceConnection *>connections.at(index.row());
                 break;
                 **/
+        case SignalQualityRole:
+            return connections.at(index.row())->signalQuality();
+        case AccessTechnologyRole:
+            return connections.at(index.row())->accessTechnology();
         default:
             return QVariant();
         }

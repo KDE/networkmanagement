@@ -52,9 +52,11 @@ public:
     void hoverLeft();
     bool hover();
     bool defaultRoute();
+    int signalQuality();
+    QString accessTechnology();
 
 protected Q_SLOTS:
-    void handlePropertiesChanges(int strength);
+    void handlePropertiesChanges();
     void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
     void notifyNetworkingState();
     void handleHasDefaultRouteChanged(bool has);

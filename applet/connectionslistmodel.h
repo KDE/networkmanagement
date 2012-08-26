@@ -56,7 +56,9 @@ public:
         ProtectedIconRole,
         HiddenRole,
         HoverEnterRole,
-        NetworkIconRole
+        NetworkIconRole,
+        SignalQualityRole,
+        AccessTechnologyRole
     };
 
     enum Filter {

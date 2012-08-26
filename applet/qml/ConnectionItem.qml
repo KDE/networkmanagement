@@ -35,6 +35,8 @@ Item {
     property bool hidden
     property bool isHovered
     property bool defaultRoute
+    property int signalQuality
+    property string accessTechnology
 
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
@@ -129,7 +131,8 @@ Item {
             uuid: connectionItem.networkUuid
             connectionName: connectionItem.connectionName
             activationState: connectionItem.activationState
-            /* TODO: connect signalQuality and accessTechnology properties */
+            signalQuality: connectionItem.signalQuality
+            accessTechnology: connectionItem.accessTechnology
             hoverEnter: connectionItem.isHovered
             onDisconnect: {
                 connectionItem.disconnectNetwork(uuid)
