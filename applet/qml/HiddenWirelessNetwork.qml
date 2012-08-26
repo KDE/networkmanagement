@@ -28,7 +28,7 @@ Item {
     width: 300
     height: 30
 
-    signal enterPressed(string networkName);
+    signal enterPressed(string networkName)
 
     Rectangle {
         id: content
@@ -96,8 +96,8 @@ Item {
         visible: false
         onAccepted: {
             if (networkNameEdit.text != "") {
-                enterPressed(networkNameEdit.text);
-                networkNameEdit.text = "";
+                enterPressed(networkNameEdit.text)
+                networkNameEdit.text = ""
             }
             hiddenWirelessItem.state = "InitialState"
         }

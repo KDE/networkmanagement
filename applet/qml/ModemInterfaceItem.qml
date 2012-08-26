@@ -27,12 +27,12 @@ Item {
     id: modemInterfaceItem
     anchors.fill: parent
 
-    property string interfaceTitle;
-    property string connectionDescription;
+    property string interfaceTitle
+    property string connectionDescription
 
-    signal modemInterfaceClicked();
-    signal hoverEnter();
-    signal hoverLeft();
+    signal modemInterfaceClicked()
+    signal hoverEnter()
+    signal hoverLeft()
 
     Rectangle {
         anchors.leftMargin: 2
@@ -54,13 +54,13 @@ Item {
             onClicked: modemInterfaceClicked()
 
             onEntered: {
-                shadow.state = "hover";
-                hoverEnter();
+                shadow.state = "hover"
+                hoverEnter()
             }
 
             onExited: {
                 shadow.state = "hidden"
-                hoverLeft();
+                hoverLeft()
             }
         }
     }

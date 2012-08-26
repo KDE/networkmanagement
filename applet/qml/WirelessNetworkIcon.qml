@@ -27,8 +27,8 @@ Item {
     width: 16
     height: 16
 
-    property string status;
-    property bool route;
+    property string status
+    property bool route
 
     QIconItem {
         id: connectionIcon

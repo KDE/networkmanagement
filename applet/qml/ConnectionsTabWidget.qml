@@ -34,7 +34,7 @@ Column {
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Shared Connections")}
 
         onCurrentTabChanged: {
-            connectionsListModel.setFilter(currentTab.text);
+            connectionsListModel.setFilter(currentTab.text)
         }
     }
 

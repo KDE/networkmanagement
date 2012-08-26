@@ -24,12 +24,12 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 
 
 Item {
-    id: listWidget;
+    id: listWidget
 
-    property int widgetHeight;
-    property int widgetWidth;
+    property int widgetHeight
+    property int widgetWidth
 
-    signal showTraffic(int index);
+    signal showTraffic(int index)
 
     height: Math.max(290, scrollList.height)
 
@@ -55,7 +55,7 @@ Item {
                 scrollList.height = scrollList.count * (height + scrollList.spacing)
             }
             onInterfaceClicked: {
-                showTraffic(index);
+                showTraffic(index)
             }
         }
 

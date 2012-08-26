@@ -25,31 +25,31 @@ Item {
     width: 240
     height: 50
 
-    property string interfaceType;
-    property string name;
-    property string connection;
-    property string deviceUni;
-    property string widgetIcon;
-    property bool enabledInterface;
-    property bool isDefault;
-    property bool visibleInterface;
+    property string interfaceType
+    property string name
+    property string connection
+    property string deviceUni
+    property string widgetIcon
+    property bool enabledInterface
+    property bool isDefault
+    property bool visibleInterface
 
-    signal interfaceClicked(int index);
+    signal interfaceClicked(int index)
 
     function hoverEnterConnections() {
-        connectionsListModel.hoverEnterConnections(deviceUni);
+        connectionsListModel.hoverEnterConnections(deviceUni)
     }
 
     function hoverLeftConnections() {
-        connectionsListModel.hoverLeftConnections(deviceUni);
+        connectionsListModel.hoverLeftConnections(deviceUni)
     }
 
     function hoverEnterVpn() {
-        connectionsListModel.hoverEnterVpn();
+        connectionsListModel.hoverEnterVpn()
     }
 
     function hoverLeftVpn() {
-        connectionsListModel.hoverLeftVpn();
+        connectionsListModel.hoverLeftVpn()
     }
 
     Component {
@@ -58,20 +58,20 @@ Item {
         WiredInterfaceItem {
             id: wiredItem
 
-            width: interfaceItem.width;
+            width: interfaceItem.width
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
             interfaceTitle: name
-            defaultRoute: isDefault;
-            itemIcon: widgetIcon;
+            defaultRoute: isDefault
+            itemIcon: widgetIcon
             onWiredInterfaceClicked: {
-                interfaceClicked(index);
+                interfaceClicked(index)
             }
             onHoverEnter: {
-                hoverEnterConnections();
+                hoverEnterConnections()
             }
             onHoverLeft: {
-                hoverLeftConnections();
+                hoverLeftConnections()
             }
         }
     }
@@ -81,21 +81,21 @@ Item {
 
         ModemInterfaceItem {
             id: modemItem
-            width: interfaceItem.width;
+            width: interfaceItem.width
 
             interfaceTitle: name
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
             onModemInterfaceClicked: {
-                interfaceClicked(index);
+                interfaceClicked(index)
             }
             onHoverEnter: {
-                hoverEnterConnections();
+                hoverEnterConnections()
             }
             onHoverLeft: {
-                hoverLeftConnections();
+                hoverLeftConnections()
             }
-            //defaultRoute: isDefault;
+            //defaultRoute: isDefault
         }
     }
 
@@ -105,19 +105,19 @@ Item {
         WirelessInterfaceItem {
             id: wirelessItem
 
-            width: interfaceItem.width;
+            width: interfaceItem.width
             interfaceTitle: name
             opacity: enabledInterface ? 1.0 : 0.7
             connectionDescription: connection
-            defaultRoute: isDefault;
+            defaultRoute: isDefault
             onWirelessInterfaceClicked: {
-                interfaceClicked(index);
+                interfaceClicked(index)
             }
             onHoverEnter: {
-                hoverEnterConnections();
+                hoverEnterConnections()
             }
             onHoverLeft: {
-                hoverLeftConnections();
+                hoverLeftConnections()
             }
         }
     }
@@ -129,35 +129,35 @@ Item {
             id: vpnItem
 
             visible: visibleInterface
-            width: interfaceItem.width;
+            width: interfaceItem.width
             opacity: enabledInterface ? 1.0 : 0.7
 
             connectionDescription: connection
             interfaceTitle: name
-            defaultRoute: isDefault;
+            defaultRoute: isDefault
 
             onVpnInterfaceClicked: {
-                interfaceClicked(index);
+                interfaceClicked(index)
             }
             onHoverEnter: {
-                hoverEnterVpn();
+                hoverEnterVpn()
             }
             onHoverLeft: {
-                hoverLeftVpn();
+                hoverLeftVpn()
             }
         }
     }
 
     Component.onCompleted: {
-        console.log("widgetIcon: " + widgetIcon);
+        console.log("widgetIcon: " + widgetIcon)
         if (interfaceType == "wifi") {
-            wirelessInterfaceComponent.createObject(interfaceItem);
+            wirelessInterfaceComponent.createObject(interfaceItem)
         } else if (interfaceType == "wired") {
-            wiredInterfaceComponent.createObject(interfaceItem);
+            wiredInterfaceComponent.createObject(interfaceItem)
         } else if (interfaceType == "modem") {
-            modemInterfaceComponent.createObject(interfaceItem);
+            modemInterfaceComponent.createObject(interfaceItem)
         } else if (interfaceType == "vpn") {
-            vpnInterfaceComponent.createObject(interfaceItem);
+            vpnInterfaceComponent.createObject(interfaceItem)
         }
     }
 }

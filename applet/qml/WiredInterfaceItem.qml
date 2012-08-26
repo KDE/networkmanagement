@@ -27,14 +27,14 @@ Item {
     id: wiredInterfaceItem
     anchors.fill: parent
 
-    property string interfaceTitle;
-    property string connectionDescription;
-    property bool defaultRoute;
-    property string itemIcon;
+    property string interfaceTitle
+    property string connectionDescription
+    property bool defaultRoute
+    property string itemIcon
 
-    signal wiredInterfaceClicked();
-    signal hoverEnter();
-    signal hoverLeft();
+    signal wiredInterfaceClicked()
+    signal hoverEnter()
+    signal hoverLeft()
 
     Rectangle {
         anchors.leftMargin: 2
@@ -53,16 +53,16 @@ Item {
             hoverEnabled: true
             anchors.fill: parent
 
-            onClicked: wiredInterfaceClicked();
+            onClicked: wiredInterfaceClicked()
 
             onEntered: {
-                shadow.state = "hover";
-                hoverEnter();
+                shadow.state = "hover"
+                hoverEnter()
             }
 
             onExited: {
                 shadow.state = "hidden"
-                hoverLeft();
+                hoverLeft()
             }
         }
     }
@@ -83,9 +83,9 @@ Item {
             spacing: 4
 
             WiredInterfaceIcon {
-                content: itemIcon;
+                content: itemIcon
                 visible: true
-                routeDefault: defaultRoute;
+                routeDefault: defaultRoute
                 anchors.verticalCenter: parent.verticalCenter
             }
 

@@ -32,7 +32,7 @@ Item {
 
     property int minimumWidth: Math.max(320, mainRow.width + 2*4)
     property int minimumHeight: Math.max(290, mainRow.height + 2*4)
-    property string previousState;
+    property string previousState
 
     property int iconSize: 22
 
@@ -43,7 +43,7 @@ Item {
     signal adjustSize(int width, int height)
 
     Component.onCompleted: {
-        main.state = "InitialState";
+        main.state = "InitialState"
     }
 
     onMinimumWidthChanged: {
@@ -55,8 +55,8 @@ Item {
     }
 
     function showDetailsWidget() {
-        previousState = main.state;
-        main.state = "ShowInterfaceDetails";
+        previousState = main.state
+        main.state = "ShowInterfaceDetails"
     }
 
     PlasmaCore.Svg {
@@ -94,7 +94,7 @@ Item {
                 visible: false
                 width: 260
                 onShowTraffic: {
-                    interfacesListModel.loadTraffic(index);
+                    interfacesListModel.loadTraffic(index)
                 }
             }
             InterfaceDetailsWidget {
@@ -102,15 +102,15 @@ Item {
                 visible: false
                 objectName: "interfaceDetails"
                 onVisibleChanged: {
-                    setUpdateEnabled(visible);
+                    setUpdateEnabled(visible)
                 }
                 onBack: {
-                    console.log("previousState is: " + previousState);
-                    main.state = previousState;
-                    noDeviceSelected();
+                    console.log("previousState is: " + previousState)
+                    main.state = previousState
+                    noDeviceSelected()
                 }
                 onDisconnectInterfaceRequested: {
-                    connectionsListModel.deactivateConnection(deviceUni);
+                    connectionsListModel.deactivateConnection(deviceUni)
                 }
             }
         }
@@ -180,7 +180,7 @@ Item {
                         iconSource: "configure"
                         anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
-                            settingsClicked();
+                            settingsClicked()
                         }
                     }
                     PlasmaComponents.ToolButton {

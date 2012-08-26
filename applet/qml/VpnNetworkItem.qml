@@ -28,11 +28,11 @@ Item {
     width: 300
     height: 30
 
-    property string uuid;
-    property string networkName;
-    property string wiredStatus;
-    property bool hoverEnter;
-    property string networkIcon;
+    property string uuid
+    property string networkName
+    property string wiredStatus
+    property bool hoverEnter
+    property string networkIcon
 
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
@@ -62,11 +62,11 @@ Item {
             hoverEnabled: true
             anchors.fill: parent
 
-            onEntered: shadow.state = "hover";
+            onEntered: shadow.state = "hover"
 
             onExited: shadow.state = "hidden"
 
-            onClicked: connectionClicked(index);
+            onClicked: connectionClicked(index)
         }
     }
 
@@ -118,7 +118,7 @@ Item {
                 }
 
                 onDisconnectClicked: {
-                    disconnect(uuid);
+                    disconnect(uuid)
                 }
 
                 status: connectionState == "connected" || connectionState == "connecting"

@@ -28,13 +28,13 @@ Item {
     width: 300
     height: 30
 
-    property string uuid;
-    property string networkName;
-    property string wifiStatus;
-    property double signalStrengthValue;
-    property string protectedNetworkIcon;
-    property bool hoverEnter;
-    property bool routeDefault;
+    property string uuid
+    property string networkName
+    property string wifiStatus
+    property double signalStrengthValue
+    property string protectedNetworkIcon
+    property bool hoverEnter
+    property bool routeDefault
 
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
@@ -64,11 +64,11 @@ Item {
             hoverEnabled: true
             anchors.fill: parent
 
-            onEntered: shadow.state = "hover";
+            onEntered: shadow.state = "hover"
 
             onExited: shadow.state = "hidden"
 
-            onClicked: connectionClicked(index);
+            onClicked: connectionClicked(index)
         }
     }
 
@@ -138,7 +138,7 @@ Item {
                 }
 
                 onDisconnectClicked: {
-                    disconnect(uuid);
+                    disconnect(uuid)
                 }
 
                 status: connectionState == "connected" || connectionState == "connecting"

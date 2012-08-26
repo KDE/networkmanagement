@@ -24,10 +24,10 @@ import org.kde.plasma.components 0.1 as PlasmaComponents
 
 
 Item {
-    id: listWidget;
+    id: listWidget
 
-    property int widgetHeight;
-    property int widgetWidth;
+    property int widgetHeight
+    property int widgetWidth
 
     height: widgetHeight
     width: widgetWidth
@@ -43,24 +43,24 @@ Item {
         delegate: ConnectionItem {
             id: connectionItem
             width: parent.width - 20
-            networkUuid: connectionUuid;
-            connectionName: networkType == "wireless" ? ssid : connectionName;
-            connectionType: networkType;
+            networkUuid: connectionUuid
+            connectionName: networkType == "wireless" ? ssid : connectionName
+            connectionType: networkType
             hidden: hiddenNetwork
-            wirelessSignalStrength: strength;
-            wirelessNetworkIcon: protectedIcon;
-            status: networkStatus;
-            isHovered: hoverEntered;
-            iconNetwork: netIcon;
-            defaultRoute: hasDefaultRoute;
+            wirelessSignalStrength: strength
+            wirelessNetworkIcon: protectedIcon
+            status: networkStatus
+            isHovered: hoverEntered
+            iconNetwork: netIcon
+            defaultRoute: hasDefaultRoute
             onDisconnectNetwork: {
-                connectionsListModel.disconnectFrom(uuidProperty);
+                connectionsListModel.disconnectFrom(uuidProperty)
             }
             onConnectNetwork: {
-                connectionsListModel.connectTo(index);
+                connectionsListModel.connectTo(index)
             }
             onConnectToHiddenNetwork: {
-                connectionsListModel.connectToHiddenNetwork(ssid);
+                connectionsListModel.connectToHiddenNetwork(ssid)
             }
         }
 

@@ -26,7 +26,7 @@ import org.kde.qtextracomponents 0.1
 Item {
     id: disconnectButton
 
-    property bool status;
+    property bool status
 
     width: 16
     height: 16
@@ -34,8 +34,8 @@ Item {
     opacity: (status) ? 1 : 0.2
 
     onStatusChanged: {
-        if (!status) opacity = 0.2;
-        else opacity = 1;
+        if (!status) opacity = 0.2
+        else opacity = 1
     }
 
     property alias showIcon: menuIconElement.visible
@@ -59,9 +59,9 @@ Item {
 
         onEntered: {
             if (status) {
-                parent.opacity = 0.7;
+                parent.opacity = 0.7
             }
-            hoverButton();
+            hoverButton()
         }
 
         onExited:  {
@@ -71,7 +71,7 @@ Item {
         }
 
         onClicked: {
-            disconnectClicked();
+            disconnectClicked()
         }
     }
 
