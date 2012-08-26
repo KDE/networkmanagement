@@ -35,7 +35,7 @@ public:
     QString activatableType();
     bool isShared();
     QString ssid();
-    QString wiredName();
+    QString connectionName();
     bool hidden();
     int signalStrength();
     QString connectionUuid();

@@ -44,10 +44,9 @@ Item {
             id: connectionItem
             width: parent.width - 20
             networkUuid: connectionUuid;
-            wiredNetworkName: wiredName;
+            connectionName: networkType == "wireless" ? ssid : connectionName;
             connectionType: networkType;
             hidden: hiddenNetwork
-            wirelessNetworkName: ssid;
             wirelessSignalStrength: strength;
             wirelessNetworkIcon: protectedIcon;
             status: networkStatus;

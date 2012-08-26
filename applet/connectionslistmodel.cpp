@@ -57,7 +57,6 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[StatusRole] = "networkStatus";
     roles[ProtectedIconRole] = "protectedIcon";
     roles[HiddenRole] = "hiddenNetwork";
-    roles[WiredNetworkNameRole] = "wiredName";
     roles[HoverEnterRole] = "hoverEntered";
     roles[NetworkIconRole] = "netIcon";
     setRoleNames(roles);
@@ -97,8 +96,7 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
         case ConnectionUuidRole:
             return connections.at(index.row())->connectionUuid();
         case ConnectionNameRole:
-            //return connections.at(index.row())->connectionName();
-            return QVariant();
+            return connections.at(index.row())->connectionName();
         case ActivationStateRole:
             //return connections.at(index.row())->activationStateRole();
             return QVariant();
@@ -115,8 +113,6 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             return connections.at(index.row())->protectedIcon();
         case HiddenRole:
             return connections.at(index.row())->hidden();
-        case WiredNetworkNameRole:
-            return connections.at(index.row())->wiredName();
         case HoverEnterRole:
             return connections.at(index.row())->hover();
         case NetworkIconRole:

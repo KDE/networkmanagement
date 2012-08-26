@@ -151,7 +151,7 @@ QString ConnectionItem::ssid()
     return "";
 }
 
-QString ConnectionItem::wiredName()
+QString ConnectionItem::connectionName()
 {
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
