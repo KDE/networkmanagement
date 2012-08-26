@@ -44,7 +44,7 @@ public:
     bool equals(const ConnectionItem *item);
     void disconnect();
     void connectNetwork();
-    QString status();
+    QString activationState();
     QString protectedIcon();
     QString connectionType();
     QString connectionIcon();
@@ -67,7 +67,7 @@ private:
     RemoteActivatable *m_activatable;
     bool m_hoverEnter;
     bool m_hasDefaultRoute;
-    QString m_status;
+    QString m_activationState;
     QString m_type;
     bool m_hidden;
 };

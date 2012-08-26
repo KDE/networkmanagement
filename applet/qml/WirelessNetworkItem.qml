@@ -30,7 +30,7 @@ Item {
 
     property string uuid
     property string networkName
-    property string wifiStatus
+    property string activationState
     property alias signalStrength: strengthProgressBar.value
     property string protectedNetworkIcon
     property bool hoverEnter
@@ -88,7 +88,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
             WirelessNetworkIcon {
-                status: wifiStatus
+                status: activationState
                 route: routeDefault
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -96,8 +96,8 @@ Item {
             PlasmaComponents.Label {
                 text: networkName
                 anchors.verticalCenter: parent.verticalCenter
-                font.weight: wifiStatus == "connected" ? Font.Bold : Font.Normal
-                font.italic: wifiStatus == "connecting"
+                font.weight: activationState == "connected" ? Font.Bold : Font.Normal
+                font.italic: activationState == "connecting"
             }
         }
 
@@ -140,7 +140,7 @@ Item {
                     disconnect(uuid)
                 }
 
-                status: connectionState == "connected" || connectionState == "connecting"
+                status: activationState == "connected" || activationState == "connecting"
             }
         }
     }

@@ -49,7 +49,7 @@ Item {
             hidden: hiddenNetwork
             wirelessSignalStrength: strength
             wirelessNetworkIcon: protectedIcon
-            status: networkStatus
+            activationState: model["activationState"]
             isHovered: hoverEntered
             iconNetwork: netIcon
             defaultRoute: hasDefaultRoute

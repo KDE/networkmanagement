@@ -56,6 +56,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     m_activatable(activatable),
     m_hoverEnter(false),
     m_hasDefaultRoute(false),
+    m_activationState(QLatin1String("not connected")),
     m_hidden(hidden)
 {
     if (m_activatable) {
@@ -68,13 +69,10 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
             connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                     SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
 
-            if (remote->activationState() == Knm::InterfaceConnection::Activating ||
-                    remote->activationState() == Knm::InterfaceConnection::Activated) {
-                if (remote->activationState() == Knm::InterfaceConnection::Activated) {
-                    m_status = "connected";
-                } else {
-                    m_status = "connecting";
-                }
+            if (remote->activationState() == Knm::InterfaceConnection::Activated) {
+                m_activationState = "connected";
+            } else if (remote->activationState() == Knm::InterfaceConnection::Activating) {
+                m_activationState = "connecting";
             }
         }
 
@@ -288,9 +286,9 @@ bool ConnectionItem::defaultRoute()
     return m_hasDefaultRoute;
 }
 
-QString ConnectionItem::status()
+QString ConnectionItem::activationState()
 {
-    return m_status;
+    return m_activationState;
 }
 
 void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
@@ -299,13 +297,13 @@ void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::Activation
 
     switch (newState) {
     case Knm::InterfaceConnection::Activated:
-        m_status = "connected";
+        m_activationState = "connected";
         break;
     case Knm::InterfaceConnection::Unknown:
-        m_status = "not connected";
+        m_activationState = "not connected";
         break;
     case Knm::InterfaceConnection::Activating:
-        m_status = "connecting";
+        m_activationState = "connecting";
         break;
     }
 

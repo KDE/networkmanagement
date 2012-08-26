@@ -30,7 +30,7 @@ Item {
 
     property string uuid
     property string networkName
-    property string wiredStatus
+    property string activationState
     property bool hoverEnter
     property string networkIcon
 
@@ -99,8 +99,8 @@ Item {
 
             PlasmaComponents.Label {
                 text: networkName
-                font.weight: wiredStatus == "connected" ? Font.Bold : Font.Normal
-                font.italic: wiredStatus == "connecting"
+                font.weight: activationState == "connected" ? Font.Bold : Font.Normal
+                font.italic: activationState == "connecting"
             }
         }
 
@@ -121,7 +121,7 @@ Item {
                     disconnect(uuid)
                 }
 
-                status: connectionState == "connected" || connectionState == "connecting"
+                status: activationState == "connected" || activationState == "connecting"
             }
         }
     }
