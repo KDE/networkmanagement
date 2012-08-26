@@ -31,19 +31,13 @@ Item {
     property bool route
 
     QIconItem {
-        id: connectionIcon
-
         icon: QIcon("network-wired")
-        width: 16
-        height: 16
-        visible: true
+        anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
     }
 
     QIconItem {
-        id: connectionIcon2
-
-        icon: QIcon("network-defaultroute.png")
+        icon: QIcon("network-defaultroute")
         width: 8
         height: 8
         visible: route
