@@ -29,7 +29,7 @@ Item {
     height: 30
 
     property string uuid
-    property string networkName
+    property alias networkName: networkNameLabel.text
     property string activationState
     property alias signalStrength: strengthProgressBar.value
     property string protectedNetworkIcon
@@ -94,7 +94,7 @@ Item {
             }
 
             PlasmaComponents.Label {
-                text: networkName
+                id: networkNameLabel
                 anchors.verticalCenter: parent.verticalCenter
                 font.weight: activationState == "connected" ? Font.Bold : Font.Normal
                 font.italic: activationState == "connecting"
