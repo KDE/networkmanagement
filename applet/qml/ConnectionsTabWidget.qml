@@ -27,7 +27,7 @@ Column {
 
     PlasmaComponents.TabBar {
         width: 300
-        height: 28
+        height: theme.defaultFont.mSize.height * 2.2
         anchors.horizontalCenter: parent.horizontalCenter
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Connections")}
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("VPN")}
