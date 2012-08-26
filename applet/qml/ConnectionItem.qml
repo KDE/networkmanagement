@@ -144,7 +144,7 @@ Item {
     }
 
     Component.onCompleted: {
-        if (connectionType == "wireless") {
+        if (connectionType == "wireless" || connectionType == "wirelessNetwork") {
             if (hidden) {
                 hiddenWirelessNetworkComponent.createObject(connectionItem)
             } else {

@@ -81,7 +81,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         switch (m_activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
             connect(qobject_cast<RemoteWirelessNetwork *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
-            m_type = "wireless";
+            m_type = "wirelessNetwork";
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
             connect(qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
@@ -103,7 +103,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     }
 
     if (hidden) {
-        m_type = "wireless";
+        m_type = "wirelessNetwork";
     }
 }
 
