@@ -24,7 +24,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: wirelessItem
+    id: wiredItem
     width: 300
     height: 30
 
@@ -59,7 +59,7 @@ Item {
         }
 
         MouseArea {
-            id: wirelessWidgetArea
+            id: wiredWidgetArea
             hoverEnabled: true
             anchors.fill: parent
 
