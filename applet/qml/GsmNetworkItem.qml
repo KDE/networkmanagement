@@ -94,8 +94,8 @@ Item {
 
             PlasmaComponents.Label {
                 id: connectionNameLabel
-                font.weight: activationState == "connected" ? Font.Bold : Font.Normal
-                font.italic: activationState == "connecting"
+                font.weight: activationState == "activated" ? Font.Bold : Font.Normal
+                font.italic: activationState == "activating"
             }
         }
 
@@ -129,7 +129,7 @@ Item {
                     disconnect(uuid)
                 }
 
-                status: activationState == "connected" || activationState == "connecting"
+                status: activationState == "activated" || activationState == "activating"
             }
         }
     }

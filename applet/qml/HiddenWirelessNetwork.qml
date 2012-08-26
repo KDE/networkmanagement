@@ -76,7 +76,7 @@ Item {
 
             WirelessNetworkIcon {
                 id: icon
-                status: "not connected"
+                status: "unknown"
                 anchors.verticalCenter: parent.verticalCenter
             }
 

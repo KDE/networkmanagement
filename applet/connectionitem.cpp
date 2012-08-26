@@ -56,7 +56,7 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     m_activatable(activatable),
     m_hoverEnter(false),
     m_hasDefaultRoute(false),
-    m_activationState(QLatin1String("not connected")),
+    m_activationState(QLatin1String("unknown")),
     m_hidden(hidden)
 {
     if (m_activatable) {
@@ -70,9 +70,9 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
                     SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
 
             if (remote->activationState() == Knm::InterfaceConnection::Activated) {
-                m_activationState = "connected";
+                m_activationState = "activated";
             } else if (remote->activationState() == Knm::InterfaceConnection::Activating) {
-                m_activationState = "connecting";
+                m_activationState = "activating";
             }
         }
 
@@ -299,13 +299,13 @@ void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::Activation
 
     switch (newState) {
     case Knm::InterfaceConnection::Activated:
-        m_activationState = "connected";
+        m_activationState = "activated";
         break;
     case Knm::InterfaceConnection::Unknown:
-        m_activationState = "not connected";
+        m_activationState = "unknown";
         break;
     case Knm::InterfaceConnection::Activating:
-        m_activationState = "connecting";
+        m_activationState = "activating";
         break;
     }
 
