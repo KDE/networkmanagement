@@ -83,7 +83,7 @@ Item {
             width: connectionItem.width
             uuid: connectionItem.networkUuid
             networkName: connectionItem.connectionName
-            signalStrengthValue: connectionItem.wirelessSignalStrength
+            signalStrength: connectionItem.wirelessSignalStrength
             protectedNetworkIcon: connectionItem.wirelessNetworkIcon
             wifiStatus: connectionItem.status
             hoverEnter: connectionItem.isHovered

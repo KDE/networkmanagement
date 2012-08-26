@@ -31,7 +31,7 @@ Item {
     property string uuid
     property string networkName
     property string wifiStatus
-    property double signalStrengthValue
+    property alias signalStrength: strengthProgressBar.value
     property string protectedNetworkIcon
     property bool hoverEnter
     property bool routeDefault
@@ -108,16 +108,15 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
 
             PlasmaComponents.ProgressBar {
-                id: signalStrength
+                id: strengthProgressBar
 
                 orientation: Qt.Horizontal
                 minimumValue: 0
                 maximumValue: 110
-                value: signalStrengthValue
                 height: 12
                 width: 68
 
-                visible: signalStrengthValue > 0
+                visible: value > 0
                 anchors.verticalCenter: parent.verticalCenter
             }
 
