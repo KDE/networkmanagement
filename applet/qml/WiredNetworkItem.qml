@@ -29,7 +29,7 @@ Item {
     height: 30
 
     property string uuid
-    property alias networkName: networkNameLabel.text
+    property alias connectionName: connectionNameLabel.text
     property string activationState
     property bool hoverEnter
     property bool routeDefault
@@ -94,7 +94,7 @@ Item {
             }
 
             PlasmaComponents.Label {
-                id: networkNameLabel
+                id: connectionNameLabel
                 font.weight: activationState == "connected" ? Font.Bold : Font.Normal
                 font.italic: activationState == "connecting"
             }

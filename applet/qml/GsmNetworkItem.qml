@@ -28,7 +28,7 @@ Item {
     height: 30
 
     property string uuid
-    property alias networkName: networkNameLabel.text
+    property alias connectionName: connectionNameLabel.text
     property string activationState
     property string accessTechnology
     property alias siqnalQuality: qualityProgressBar.value
@@ -93,7 +93,7 @@ Item {
             }
 
             PlasmaComponents.Label {
-                id: networkNameLabel
+                id: connectionNameLabel
                 font.weight: activationState == "connected" ? Font.Bold : Font.Normal
                 font.italic: activationState == "connecting"
             }

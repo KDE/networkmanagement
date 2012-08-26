@@ -28,7 +28,7 @@ Item {
     width: 300
     height: 30
 
-    signal enterPressed(string networkName)
+    signal enterPressed(string connectionName)
 
     Rectangle {
         id: content
@@ -53,7 +53,7 @@ Item {
 
             onExited: shadow.state = "hidden"
 
-            onClicked: parent.parent.state = "EditNetworkName"
+            onClicked: parent.parent.state = "EditConnectionName"
         }
     }
 
@@ -89,16 +89,16 @@ Item {
     }
 
     PlasmaComponents.TextField {
-        id: networkNameEdit
+        id: connectionNameEdit
         placeholderText: i18n("Enter network name and press <enter>")
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
         visible: false
         onAccepted: {
-            if (networkNameEdit.text != "") {
-                enterPressed(networkNameEdit.text)
-                networkNameEdit.text = ""
+            if (connectionNameEdit.text != "") {
+                enterPressed(connectionNameEdit.text)
+                connectionNameEdit.text = ""
             }
             hiddenWirelessItem.state = "InitialState"
         }
@@ -106,10 +106,10 @@ Item {
 
     states: [
         State {
-            name: "EditNetworkName"
+            name: "EditConnectionName"
 
             PropertyChanges {
-                target: networkNameEdit
+                target: connectionNameEdit
                 visible: true
             }
 

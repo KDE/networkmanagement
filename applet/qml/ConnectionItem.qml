@@ -48,7 +48,7 @@ Item {
 
             width: connectionItem.width
             uuid: connectionItem.networkUuid
-            networkName: connectionItem.connectionName
+            connectionName: connectionItem.connectionName
             activationState: connectionItem.activationState
             hoverEnter: connectionItem.isHovered
             routeDefault: connectionItem.defaultRoute
@@ -69,7 +69,7 @@ Item {
             id: hiddenItem
             width: connectionItem.width
             onEnterPressed: {
-                connectionItem.connectToHiddenNetwork(networkName)
+                connectionItem.connectToHiddenNetwork(connectionName)
             }
         }
     }
@@ -82,7 +82,7 @@ Item {
 
             width: connectionItem.width
             uuid: connectionItem.networkUuid
-            networkName: connectionItem.connectionName
+            connectionName: connectionItem.connectionName
             signalStrength: connectionItem.wirelessSignalStrength
             protectedNetworkIcon: connectionItem.wirelessNetworkIcon
             activationState: connectionItem.activationState
@@ -106,7 +106,7 @@ Item {
 
             width: connectionItem.width
             uuid: connectionItem.networkUuid
-            networkName: connectionItem.connectionName
+            connectionName: connectionItem.connectionName
             activationState: connectionItem.activationState
             hoverEnter: connectionItem.isHovered
             networkIcon: connectionItem.iconNetwork
@@ -127,7 +127,7 @@ Item {
 
             width: connectionItem.width
             uuid: connectionItem.networkUuid
-            networkName: connectionItem.connectionName
+            connectionName: connectionItem.connectionName
             activationState: connectionItem.activationState
             /* TODO: connect signalQuality and accessTechnology properties */
             hoverEnter: connectionItem.isHovered
