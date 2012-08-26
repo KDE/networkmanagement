@@ -77,6 +77,7 @@ Item {
             WirelessNetworkIcon {
                 id: icon
                 status: "not connected"
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {
