@@ -75,9 +75,5 @@ Item {
         }
     }
 
-    scale: {
-        if (status) {
-            buttonMouseArea.pressed ? 0.90 : 1.00
-        }
-    }
+    scale: status && buttonMouseArea.pressed ? 0.90 : 1.00
 }
