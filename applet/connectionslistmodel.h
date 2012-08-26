@@ -55,7 +55,6 @@ public:
         StatusRole,
         ProtectedIconRole,
         HiddenRole,
-        WiredNetworkNameRole,
         HoverEnterRole,
         NetworkIconRole
     };
