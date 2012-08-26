@@ -33,6 +33,7 @@ Item {
     QIconItem {
         id: connectionIcon
 
+        // TODO: change icon depending on signal strength, like in the C++ plasmoid.
         icon: QIcon("network-wireless-connected-100")
         width: 16
         height: 16
