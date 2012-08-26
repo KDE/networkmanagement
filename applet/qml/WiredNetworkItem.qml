@@ -90,6 +90,7 @@ Item {
             WiredNetworkIcon {
                 status: wiredStatus
                 route: routeDefault
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {
