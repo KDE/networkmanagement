@@ -28,10 +28,6 @@ Item {
     width: 300
     height: 30
 
-    property string uuid;
-    property string wifiStatus;
-    property string protectedNetworkIcon;
-
     signal enterPressed(string networkName);
 
     Rectangle {
