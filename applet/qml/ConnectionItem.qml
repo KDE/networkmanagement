@@ -125,16 +125,17 @@ Item {
         GsmNetworkItem {
             id: gsmItem
 
-            width: connectionItem.width;
-            uuid: connectionItem.networkUuid;
-            networkName: connectionItem.connectionName;
-            activationState: connectionItem.activationState;
-            hoverEnter: connectionItem.isHovered;
+            width: connectionItem.width
+            uuid: connectionItem.networkUuid
+            networkName: connectionItem.connectionName
+            activationState: connectionItem.activationState
+            /* TODO: connect signalQuality and accessTechnology properties */
+            hoverEnter: connectionItem.isHovered
             onDisconnect: {
-                connectionItem.disconnectNetwork(uuid);
+                connectionItem.disconnectNetwork(uuid)
             }
             onConnectionClicked: {
-                connectionItem.connectNetwork(index);
+                connectionItem.connectNetwork(index)
             }
         }
     }
@@ -151,9 +152,9 @@ Item {
         } else if (connectionType == "vpn") {
             vpnNetworkItemComponent.createObject(connectionItem)
         } else if (connectionType == "gsm") {
-            gsmNetworkItemComponent.createObject(connectionItem);
+            gsmNetworkItemComponent.createObject(connectionItem)
         } else {
-	    console.log("Unhandled connection type " + connectionType)
-	}
+            console.log("Unhandled connection type " + connectionType)
+        }
     }
 }
