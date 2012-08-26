@@ -22,8 +22,8 @@ import QtQuick 1.1
 
 Item {
     id: connectionItem
-    width: 300
-    height: 30
+    width: parent.width
+    height: 32
 
     property string networkUuid
     property string connectionName

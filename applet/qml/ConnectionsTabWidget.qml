@@ -27,7 +27,7 @@ Column {
 
     PlasmaComponents.TabBar {
         width: 300
-        height: 30
+        height: 28
         anchors.horizontalCenter: parent.horizontalCenter
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Connections")}
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("VPN")}
@@ -39,12 +39,12 @@ Column {
     }
 
     PlasmaComponents.TabGroup {
-        height: parent.height - 30
+        height: parent.height - 28
         width: parent.width - parent.spacing
         Flickable {
             id: tabContent
             width: parent.width
-            height: parent.height - 30
+            height: parent.height - 28
             ConnectionsListWidget{
                 widgetHeight: parent.height
                 widgetWidth: parent.width

@@ -25,8 +25,7 @@ import org.kde.qtextracomponents 0.1
 
 Item {
     id: wirelessItem
-    width: 300
-    height: 30
+    anchors.fill: parent
 
     property string uuid
     property alias connectionName: connectionNameLabel.text
@@ -73,21 +72,21 @@ Item {
     }
 
     Row {
-        width: parent.width
-        height: parent.height
+        id: mainRow
         anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 10
+        spacing: 8
 
         Row {
             id: row2
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 5
+            spacing: 4
             WirelessNetworkIcon {
+                id: icon
                 status: activationState
                 route: routeDefault
                 anchors.verticalCenter: parent.verticalCenter
@@ -98,13 +97,15 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 font.weight: activationState == "activated" ? Font.Bold : Font.Normal
                 font.italic: activationState == "activating"
+                elide: Text.ElideRight
+                width: mainRow.width - row3.width - icon.width - 8
             }
         }
 
         Row {
             id: row3
             anchors.right: parent.right
-            spacing: 10
+            spacing: 8
             anchors.verticalCenter: parent.verticalCenter
 
             PlasmaComponents.ProgressBar {

@@ -136,7 +136,7 @@ Item {
 
             ConnectionsTabWidget {
                 id: tabWidget
-                height: leftColumn.visible ? (leftColumn.height - controls.height - 28) : 200
+                height: leftColumn.visible ? (leftColumn.height - controls.height - 28) : 208
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 

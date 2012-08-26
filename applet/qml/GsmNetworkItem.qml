@@ -25,8 +25,7 @@ import org.kde.qtextracomponents 0.1
 
 Item {
     id: main
-    width: 300
-    height: 30
+    anchors.fill: parent
 
     property string uuid
     property string connectionName
@@ -72,23 +71,23 @@ Item {
     }
 
     Row {
-        width: parent.width
-        height: parent.height
+        id: mainRow
         anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 10
+        spacing: 8
 
         Row {
             id: row2
             height: parent.heght - 20
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 5
+            spacing: 4
 
             GsmNetworkIcon {
+                id: icon
                 route: routeDefault
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -97,6 +96,8 @@ Item {
                 text: main.accessTechnology == "" ? main.connectionName : main.connectionName + " (" + main.accessTechnology + ")"
                 font.weight: activationState == "activated" ? Font.Bold : Font.Normal
                 font.italic: activationState == "activating"
+                elide: Text.ElideRight
+                width: mainRow.width - row3.width - icon.width - 8
             }
         }
 
