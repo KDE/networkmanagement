@@ -31,7 +31,6 @@ Item {
     property string uuid;
     property string networkName;
     property string wiredStatus;
-    property bool connected;
     property bool hoverEnter;
     property bool routeDefault;
 
@@ -117,7 +116,7 @@ Item {
                     disconnect(uuid);
                 }
 
-                status: connected
+                status: connectionState == "connected" || connectionState == "connecting"
             }
         }
     }

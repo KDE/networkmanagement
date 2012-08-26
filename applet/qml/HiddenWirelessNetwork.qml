@@ -30,7 +30,6 @@ Item {
 
     property string uuid;
     property string wifiStatus;
-    property bool connected;
     property string protectedNetworkIcon;
 
     signal enterPressed(string networkName);

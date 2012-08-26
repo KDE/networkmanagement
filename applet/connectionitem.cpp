@@ -58,8 +58,6 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
     m_hasDefaultRoute(false),
     m_hidden(hidden)
 {
-    m_connected = false;
-
     if (m_activatable) {
         RemoteInterfaceConnection * remote = interfaceConnection();
 
@@ -72,7 +70,6 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
 
             if (remote->activationState() == Knm::InterfaceConnection::Activating ||
                     remote->activationState() == Knm::InterfaceConnection::Activated) {
-                m_connected = true;
                 if (remote->activationState() == Knm::InterfaceConnection::Activated) {
                     m_status = "connected";
                 } else {
@@ -286,11 +283,6 @@ void ConnectionItem::handlePropertiesChanges(int strength)
     emit itemChanged();
 }
 
-bool ConnectionItem::connected()
-{
-    return m_connected;
-}
-
 bool ConnectionItem::defaultRoute()
 {
     return m_hasDefaultRoute;
@@ -308,15 +300,12 @@ void ConnectionItem::activationStateChanged(Knm::InterfaceConnection::Activation
     switch (newState) {
     case Knm::InterfaceConnection::Activated:
         m_status = "connected";
-        m_connected = true;
         break;
     case Knm::InterfaceConnection::Unknown:
         m_status = "not connected";
-        m_connected = false;
         break;
     case Knm::InterfaceConnection::Activating:
         m_status = "connecting";
-        m_connected = true;
         break;
     }
 

@@ -50,7 +50,6 @@ Item {
             wirelessNetworkName: ssid;
             wirelessSignalStrength: strength;
             wirelessNetworkIcon: protectedIcon;
-            networkConnected: connectedNetwork;
             status: networkStatus;
             isHovered: hoverEntered;
             iconNetwork: netIcon;

@@ -54,7 +54,6 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[HasDefaultRouteRole] = "hasDefaultRoute";
     roles[SsidRole] = "ssid";
     roles[StrengthRole] = "strength";
-    roles[ConnectedRole] = "connectedNetwork";
     roles[StatusRole] = "networkStatus";
     roles[ProtectedIconRole] = "protectedIcon";
     roles[HiddenRole] = "hiddenNetwork";
@@ -110,8 +109,6 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             return connections.at(index.row())->ssid();
         case StrengthRole:
             return connections.at(index.row())->signalStrength();
-        case ConnectedRole:
-            return connections.at(index.row())->connected();
         case StatusRole:
             return connections.at(index.row())->status();
         case ProtectedIconRole:

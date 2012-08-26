@@ -31,7 +31,6 @@ Item {
     property string status;
     property string iconNetwork;
     property double wirelessSignalStrength;
-    property bool networkConnected;
     property string wirelessNetworkIcon;
     property string connectionType;
     property bool hidden;
@@ -51,7 +50,6 @@ Item {
             width: connectionItem.width;
             uuid: connectionItem.networkUuid;
             networkName: connectionItem.wiredNetworkName;
-            connected: connectionItem.networkConnected;
             wiredStatus: connectionItem.status;
             hoverEnter: connectionItem.isHovered;
             routeDefault: connectionItem.defaultRoute;
@@ -88,7 +86,6 @@ Item {
             networkName: connectionItem.wirelessNetworkName;
             signalStrengthValue: connectionItem.wirelessSignalStrength;
             protectedNetworkIcon: connectionItem.wirelessNetworkIcon;
-            connected: connectionItem.networkConnected;
             wifiStatus: connectionItem.status;
             hoverEnter: connectionItem.isHovered;
             routeDefault: connectionItem.defaultRoute;
@@ -111,7 +108,6 @@ Item {
             width: connectionItem.width;
             uuid: connectionItem.networkUuid;
             networkName: connectionItem.wiredNetworkName;
-            connected: connectionItem.networkConnected;
             wiredStatus: connectionItem.status;
             hoverEnter: connectionItem.isHovered;
             networkIcon: connectionItem.iconNetwork;

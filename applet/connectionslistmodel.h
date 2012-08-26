@@ -52,7 +52,6 @@ public:
         WpaFlagsRole,
         RsnFlagsRole,
         OperationModeRole,
-        ConnectedRole,
         StatusRole,
         ProtectedIconRole,
         HiddenRole,

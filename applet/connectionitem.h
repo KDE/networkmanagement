@@ -38,7 +38,6 @@ public:
     QString wiredName();
     bool hidden();
     int signalStrength();
-    bool connected();
     QString connectionUuid();
     RemoteInterfaceConnection* interfaceConnection() const;
     RemoteActivatable* activatable() const;
@@ -66,7 +65,6 @@ Q_SIGNALS:
 
 private:
     RemoteActivatable *m_activatable;
-    bool m_connected;
     bool m_hoverEnter;
     bool m_hasDefaultRoute;
     QString m_status;

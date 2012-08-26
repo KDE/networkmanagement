@@ -32,7 +32,6 @@ Item {
     property string networkName;
     property string wifiStatus;
     property double signalStrengthValue;
-    property bool connected;
     property string protectedNetworkIcon;
     property bool hoverEnter;
     property bool routeDefault;
@@ -142,9 +141,8 @@ Item {
                     disconnect(uuid);
                 }
 
-                status: connected
+                status: connectionState == "connected" || connectionState == "connecting"
             }
-
         }
     }
 }
