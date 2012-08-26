@@ -119,6 +119,26 @@ Item {
         }
     }
 
+    Component {
+        id: gsmNetworkItemComponent
+
+        GsmNetworkItem {
+            id: gsmItem
+
+            width: connectionItem.width;
+            uuid: connectionItem.networkUuid;
+            networkName: connectionItem.connectionName;
+            activationState: connectionItem.activationState;
+            hoverEnter: connectionItem.isHovered;
+            onDisconnect: {
+                connectionItem.disconnectNetwork(uuid);
+            }
+            onConnectionClicked: {
+                connectionItem.connectNetwork(index);
+            }
+        }
+    }
+
     Component.onCompleted: {
         if (connectionType == "wireless") {
             if (hidden) {
@@ -130,6 +150,10 @@ Item {
             wiredNetworkItemComponent.createObject(connectionItem)
         } else if (connectionType == "vpn") {
             vpnNetworkItemComponent.createObject(connectionItem)
-        }
+        } else if (connectionType == "gsm") {
+            gsmNetworkItemComponent.createObject(connectionItem);
+        } else {
+	    console.log("Unhandled connection type " + connectionType)
+	}
     }
 }

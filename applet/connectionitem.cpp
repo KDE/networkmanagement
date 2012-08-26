@@ -91,9 +91,11 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         case Knm::Activatable::VpnInterfaceConnection:
             m_type = "vpn";
             break;
+	case Knm::Activatable::GsmInterfaceConnection:
+            m_type = "gsm";
+	    break;
+        /* TODO: add HiddenWirelessInterfaceConnection and UnconfiguredInterface, or just get rid of them. */
         }
-
-        /* TODO: add GsmInterfaceConnection, HiddenWirelessInterfaceConnection and UnconfiguredInterface. Maybe just get rid of the last two too. */
     }
 
     if (hidden) {

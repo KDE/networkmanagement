@@ -44,7 +44,7 @@ Item {
             id: connectionItem
             width: parent.width - 20
             networkUuid: connectionUuid
-            connectionName: networkType == "wireless" ? ssid : connectionName
+            connectionName: networkType == "wireless" ? ssid : model["connectionName"]
             connectionType: networkType
             hidden: hiddenNetwork
             wirelessSignalStrength: strength
