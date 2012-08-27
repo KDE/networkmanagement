@@ -44,7 +44,6 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
 {
     QHash<int, QByteArray> roles;
     roles[DeviceUniRole] = "deviceUni";
-    roles[ActivatableTypeRole] = "activatableType";
     roles[IsSharedRole] = "isShared";
     roles[ConnectionTypeRole] = "networkType";
     roles[ConnectionUuidRole] = "connectionUuid";
@@ -88,8 +87,6 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
         switch (role) {
         case DeviceUniRole:
             return connections.at(index.row())->deviceUni();
-        case ActivatableTypeRole:
-            return connections.at(index.row())->activatableType();
         case IsSharedRole:
             return connections.at(index.row())->isShared();
         case ConnectionTypeRole:

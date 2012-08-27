@@ -348,11 +348,6 @@ QString ConnectionItem::deviceUni()
     return QString();
 }
 
-QString ConnectionItem::activatableType()
-{
-    return QString();
-}
-
 bool ConnectionItem::isShared()
 {
     return m_activatable->isShared();

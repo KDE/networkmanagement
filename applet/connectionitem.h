@@ -32,7 +32,6 @@ class ConnectionItem : public QObject
 public:
     explicit ConnectionItem(RemoteActivatable *activatable, bool hidden = false, QObject *parent = 0);
     QString deviceUni();
-    QString activatableType();
     bool isShared();
     QString ssid();
     QString connectionName();
