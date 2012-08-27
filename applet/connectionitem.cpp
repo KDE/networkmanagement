@@ -182,19 +182,9 @@ void ConnectionItem::handleHasDefaultRouteChanged(bool has)
 
 QString ConnectionItem::connectionUuid()
 {
-    RemoteWirelessInterfaceConnection *rwic2;
-
-    if (m_activatable) {
-        if (m_activatable->activatableType() == Knm::Activatable::WirelessNetwork ||
-                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
-            rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable);
-            if (rwic2)
-                return rwic2->connectionUuid();
-        } else {
-            RemoteInterfaceConnection *remoteconnection = interfaceConnection();
-            if (remoteconnection)
-                return remoteconnection->connectionUuid();
-        }
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        return remoteconnection->connectionUuid();
     }
 
     return QString();
