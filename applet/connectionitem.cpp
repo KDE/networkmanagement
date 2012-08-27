@@ -201,12 +201,10 @@ QString ConnectionItem::connectionIcon()
 
 void ConnectionItem::disconnect()
 {
-    if (m_activatable) {
-        RemoteInterfaceConnection * remote = interfaceConnection();
-        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
-                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
-            remote->deactivate();
-        }
+    RemoteInterfaceConnection * remote = interfaceConnection();
+    if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                   remote->activationState() == Knm::InterfaceConnection::Activated)) {
+        remote->deactivate();
     }
 }
 
