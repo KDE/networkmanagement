@@ -100,11 +100,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_activeSystrayInterfaceState = NetworkManager::Device::UnknownState;
     }
 
-    // Just to make sure the kded module is loaded before initializing the activatables.
-    QDBusInterface kded(QLatin1String("org.kde.kded"), QLatin1String("/kded"),
-                        QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
-    kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
-
     m_activatables = new RemoteActivatableList(this);
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), this, SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
@@ -322,6 +317,10 @@ void NetworkManagerApplet::init()
 
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.networkmanagement")) {
         QTimer::singleShot(0, this, SLOT(finishInitialization()));
+    } else {
+        QDBusInterface kded(QLatin1String("org.kde.kded"), QLatin1String("/kded"),
+                            QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
+        kded.asyncCall(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
     }
 }
 
@@ -694,7 +693,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString icon = "networkmanager";
         QStringList lines;
         foreach (NetworkManager::Device *iface, interfaces) {
-            if (iface->state() != NetworkManager::Device::Unavailable) {
+            if (iface->state() != NetworkManager::Device::Unavailable &&
+                iface->state() != NetworkManager::Device::Unmanaged) {
                 if (!lines.isEmpty()) {
                     lines << QString();
                 }

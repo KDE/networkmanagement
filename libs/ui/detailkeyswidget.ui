@@ -181,7 +181,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Details to show</string>
+        <string>Details to Show</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

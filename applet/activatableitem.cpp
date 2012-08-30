@@ -1,7 +1,7 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
-Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -225,7 +225,7 @@ void ActivatableItem::connectionChanged()
         return;
     }
 
-    m_connectButton->setText(interfaceConnection()->connectionName());
+    m_connectButton->setText(interfaceConnection()->connectionName(true));
 }
 
 void ActivatableItem::hoverEnter()

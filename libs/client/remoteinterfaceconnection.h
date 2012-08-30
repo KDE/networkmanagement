@@ -53,7 +53,7 @@ public:
 
     QUuid connectionUuid() const;
 
-    QString connectionName() const;
+    QString connectionName(const bool escaped = false) const;
 
     QString iconName() const;
 

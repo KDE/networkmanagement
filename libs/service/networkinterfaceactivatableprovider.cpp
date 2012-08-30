@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -25,10 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlist.h"
 #include "interfaceconnection.h"
 #include "unconfiguredinterface.h"
-
 #include "activatablelist.h"
-
 #include "interfaceconnectionhelpers.h"
+#include "uiutils.h"
 
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove
@@ -152,11 +152,18 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
     bool matches = true;
     Q_UNUSED(connection);
     Q_UNUSED(iface);
-    // todo figure out how to convert from the struct ether_addr.ether_addr_octet contained in the
-    // hardware address from system-provided connections.  This probably also means the encoding
-    // used in the connections we put on the bus is wrong.
-#if 0
-    if (connection->type() == Knm::Connection::Wired) {
+    if (connection->type() == Knm::Connection::Wireless) {
+        Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
+        NetworkManager::WirelessDevice * wirelessIface = dynamic_cast<NetworkManager::WirelessDevice *>(iface);
+
+        if (wirelessSetting && wirelessIface) {
+
+            // only settings which contain a valid macaddress are interesting
+            if (!wirelessSetting->macaddress().isEmpty()) {
+                matches = (UiUtils::macAddressAsString(wirelessSetting->macaddress()) == wirelessIface->hardwareAddress());
+            }
+        }
+    } else if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
         NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
 
@@ -164,22 +171,10 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
 
             // only settings which contain a valid macaddress are interesting
             if (!wiredSetting->macaddress().isEmpty()) {
-                matches = (QString(wiredSetting->macaddress()) == wiredIface->hardwareAddress());
-            }
-        }
-    } else if (connection->type() == Knm::Connection::Wireless) {
-        Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-        Solid::Control::WirelessNetworkInterface * wirelessIface = dynamic_cast<Solid::Control::WirelessNetworkInterface *>(iface);
-
-        if (wirelessSetting && wirelessIface) {
-
-            // only settings which contain a valid macaddress are interesting
-            if (!wirelessSetting->macaddress().isEmpty()) {
-                matches = (QString(wirelessSetting->macaddress()) == wirelessIface->hardwareAddress());
+                matches = (UiUtils::macAddressAsString(wiredSetting->macaddress()) == wiredIface->hardwareAddress());
             }
         }
     }
-#endif
     return matches;
 }
 
@@ -188,7 +183,7 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
     Q_D(NetworkInterfaceActivatableProvider);
     // check type
     kDebug() << addedConnection->uuid();
-    if (!d->activatables.contains(addedConnection->uuid())) {
+    if (!d->activatables.contains(addedConnection->uuid()) && d->interface->state() != NetworkManager::Device::Unmanaged) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             if (matches(addedConnection->type(), d->interface->type())) {
                 Knm::InterfaceConnection * ifaceConnection = Knm::InterfaceConnectionHelpers::buildInterfaceConnection(addedConnection, d->interface->uni(), this);;
