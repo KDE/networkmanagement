@@ -1013,7 +1013,10 @@ void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
-        QMetaObject::invokeMethod(ic, "activationStateChanged", Q_ARG(Knm::InterfaceConnection::ActivationState, ic->oldActivationState()), Q_ARG(Knm::InterfaceConnection::ActivationState, ic->activationState()));
+	Knm::InterfaceConnection::ActivationState state = ic->activationState();
+	if (state != Knm::InterfaceConnection::Unknown) {
+            QMetaObject::invokeMethod(ic, "activationStateChanged", Q_ARG(Knm::InterfaceConnection::ActivationState, ic->oldActivationState()), Q_ARG(Knm::InterfaceConnection::ActivationState, state));
+	}
     } else if (ic) {
         connect(ic, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(updateActiveInterface(bool)));
         QMetaObject::invokeMethod(ic, "hasDefaultRouteChanged", Q_ARG(bool, ic->hasDefaultRoute()));
