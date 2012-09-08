@@ -1,6 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -27,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KAboutData>
 #include <KLocale>
+#include <KMessageBox>
 #include <KPluginFactory>
 
 #include "knmserviceprefs.h"
@@ -77,7 +79,9 @@ void ManageTrayWidget::save()
     KCModule::save();
 
     if (secretStorageMode != KNetworkManagerServicePrefs::self()->secretStorageMode()) {
-        SecretStorage::switchStorage((SecretStorage::SecretStorageMode)secretStorageMode, (SecretStorage::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
+        if (!SecretStorage::switchStorage((SecretStorage::SecretStorageMode)secretStorageMode, (SecretStorage::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode())) {
+            KMessageBox::error(this, i18nc("@info", "Error switching storage type"));
+        }
     }
     secretStorageMode = KNetworkManagerServicePrefs::self()->secretStorageMode();
     // To make the plasmoid reread the "Show network interface using:" property.
