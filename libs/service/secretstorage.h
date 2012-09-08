@@ -1,5 +1,6 @@
 /*
 Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -71,7 +72,7 @@ public:
     void loadSecrets(Knm::Connection*, const QString &, GetSecretsFlags);
     void saveSecrets(Knm::Connection*);
     void deleteSecrets(Knm::Connection*);
-    static void switchStorage(SecretStorageMode, SecretStorageMode);
+    static bool switchStorage(SecretStorageMode, SecretStorageMode);
 Q_SIGNALS:
     void connectionSaved(Knm::Connection*);
 protected:
