@@ -1,5 +1,6 @@
 /*
 Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -89,6 +90,11 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
     } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
         Q_ASSERT(wallet);
+
+        if (!wallet) {
+            kWarning() << "Error opening kwallet. Secrets not saved.";
+            return;
+        }
 
         connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
         d->connectionsToWrite.append(con);
@@ -201,7 +207,10 @@ void SecretStorage::walletOpenedForRead(bool success)
             retrievalSuccessful = false;
         }
     }
-    wallet->deleteLater();
+
+    if (wallet) {
+        wallet->deleteLater();
+    }
 
     if (!retrievalSuccessful || !success) {
          while (!d->connectionsToRead.isEmpty()) {
@@ -233,6 +242,11 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
     } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
         Q_ASSERT(wallet);
+
+        if (!wallet) {
+            kWarning() << "Error opening kwallet. Secrets not deleted.";
+            return;
+        }
 
         if( wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
             foreach (const QString & k, wallet->entryList()) {
@@ -306,10 +320,18 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             }
         }
 
-        connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
         d->connectionsToRead.append(con);
         QPair<QString,GetSecretsFlags> pair(name, flags);
         d->settingsToRead.insert(uuid, pair);
+
+        if (wallet) {
+            connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
+        } else {
+            kWarning() << "Error opening kwallet. Secrets not loaded.";
+
+            // emit connectionRead() signal to indicate operation has failed.
+            walletOpenedForRead(false);
+        }
     }
 }
 
@@ -357,15 +379,21 @@ void SecretStorage::gotSecrets(KJob *job)
     emit connectionRead(con, csj->settingName(), failed, true);
 }
 
-void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)
+bool SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)
 {
     // TODO: integrate DontStore with NM0.9 secret flags
-    if (oldMode == DontStore || newMode == DontStore)
-        return;
+    if (oldMode == DontStore || newMode == DontStore) {
+        return true;
+    }
 
     KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
         walletWid(),KWallet::Wallet::Synchronous);
     Q_ASSERT(wallet);
+
+    if (!wallet) {
+        kWarning() << "Error opening kwallet.";
+        return false;
+    }
 
     if( !wallet->hasFolder( s_walletFolderName ) )
         wallet->createFolder( s_walletFolderName );
@@ -397,4 +425,5 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
         }
     }
     wallet->deleteLater();
+    return true;
 }
