@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Sebastian Kügler <sebas@kde.org>
-Copyright 2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
