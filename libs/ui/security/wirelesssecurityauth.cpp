@@ -96,9 +96,11 @@ void WirelessSecurityAuthWidget::readConfig()
 
     QCheckBox *showPasswords = new QCheckBox(this);
     showPasswords->setText(i18n("&Show password"));
-    d->layout->setWidget(d->layout->rowCount(), QFormLayout::FieldRole, showPasswords);
+    
+    //pass an empty QWidget to the FormLayout in order to work round a Qt Bug in which Qt can't calculate a minimumSizeHint for a form layout.
+    //item is parented when added to the layout
+    d->layout->addRow(new QWidget(), showPasswords);
     connect(showPasswords, SIGNAL(toggled(bool)), d->settingWidget, SLOT(setShowPasswords(bool)));
-    d->layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void WirelessSecurityAuthWidget::writeConfig()
