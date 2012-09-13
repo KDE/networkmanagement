@@ -119,6 +119,7 @@ kde4_add_ui_files(knmui_SRCS
    security/wep.ui
    security/leap.ui
    security/wpapsk.ui
+   security/wirelesssecurityauth.ui
    #   WPA-EAP - a stack of eap methods UI
    #   Used for both inner and outer auth methods
    security/eapmethodstackbase.ui
