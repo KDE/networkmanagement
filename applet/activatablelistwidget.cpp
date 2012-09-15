@@ -210,7 +210,10 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable, int inde
 
     Q_ASSERT(ai);
     ai->setupItem();
-    m_layout->insertItem(index + 1, ai);
+    if (m_hiddenItem)
+        m_layout->insertItem(index + 1, ai);
+    else
+        m_layout->insertItem(index, ai);
     m_itemIndex[activatable] = ai;
     connect(ai, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
