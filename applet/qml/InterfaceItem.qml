@@ -154,7 +154,7 @@ Item {
             wirelessInterfaceComponent.createObject(interfaceItem)
         } else if (interfaceType == "wired") {
             wiredInterfaceComponent.createObject(interfaceItem)
-        } else if (interfaceType == "modem") {
+        } else if (interfaceType == "modem" || interfaceType == "bluetooth") {
             modemInterfaceComponent.createObject(interfaceItem)
         } else if (interfaceType == "vpn") {
             vpnInterfaceComponent.createObject(interfaceItem)

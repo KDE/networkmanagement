@@ -67,6 +67,8 @@ DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * ifac
             setConnectionInfo();
         } else if (m_iface.data()->type() == NetworkManager::Device::Modem) {
             m_type = "modem";
+        } else if (m_iface.data()->type() == NetworkManager::Device::Bluetooth) {
+            m_type = "bluetooth";
         }
         m_starting = false;
         setInterfaceIcon();
