@@ -89,7 +89,8 @@ void InterfacesListModel::itemChanged()
 
 void InterfacesListModel::appendRow(DeclarativeInterfaceItem *item)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount() + 1);
+    const int start = rowCount();
+    beginInsertRows(QModelIndex(), start, start);
 
     connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
 
@@ -100,7 +101,8 @@ void InterfacesListModel::appendRow(DeclarativeInterfaceItem *item)
 
 void InterfacesListModel::appendRows(const QList<DeclarativeInterfaceItem*> &items)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount() + items.size() - 1);
+    const int start = rowCount();
+    beginInsertRows(QModelIndex(), start, start + items.size() - 1);
     foreach(DeclarativeInterfaceItem * item, items) {
         connect(item, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
         interfaces.append(item);
