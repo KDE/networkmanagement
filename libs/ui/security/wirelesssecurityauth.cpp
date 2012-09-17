@@ -105,7 +105,7 @@ void WirelessSecurityAuthWidget::readConfig()
     }
 
     QCheckBox *showPasswords = new QCheckBox(this);
-    showPasswords->setText(i18n("&Show password"));
+    showPasswords->setText(i18nc("@action:button", "&Show password"));
 
     //pass an empty QWidget to the FormLayout in order to work round a Qt Bug in which Qt can't calculate a minimumSizeHint for a form layout.
     //item is parented when added to the layout
