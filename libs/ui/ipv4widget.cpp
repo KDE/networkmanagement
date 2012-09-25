@@ -147,6 +147,7 @@ void IpV4Widget::readConfig()
             }
             else {
                 d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
+                dnsPartEnabled = true;
             }
             advancedSettingsPartEnabled = true;
             break;
@@ -320,6 +321,7 @@ void IpV4Widget::methodChanged(int currentIndex)
     bool advancedSettingsPartEnabled = true;
     bool dnsPartEnabled = false;
     bool dhcpClientIdEnabled = false;
+    bool methodAuto = false;
 
     if (IpV4WidgetPrivate::ManualMethodIndex == currentIndex) {
         addressPartEnabled = true;
@@ -328,7 +330,9 @@ void IpV4Widget::methodChanged(int currentIndex)
         dnsPartEnabled = true;
         dhcpClientIdEnabled = true;
     } else if (IpV4WidgetPrivate::AutomaticMethodIndex == currentIndex) {
+        dnsPartEnabled = true;
         dhcpClientIdEnabled = true;
+        methodAuto = true;
     }
     else {
         advancedSettingsPartEnabled = false;
@@ -381,7 +385,13 @@ void IpV4Widget::methodChanged(int currentIndex)
     {
         d->ui.advancedSettings->setAdditionalAddresses(QList<NetworkManager::IPv4Address>());
     }
-
+    if (methodAuto) {
+        d->ui.dnsLabel->setText(i18nc("@info","Additional &DNS Servers:"));
+        d->ui.dnsSearchLabel->setText(i18nc("@info","Additional &Search Domains:"));
+    } else {
+        d->ui.dnsLabel->setText(i18nc("@info","&DNS Servers:"));
+        d->ui.dnsSearchLabel->setText(i18nc("@info","&Search Domains:"));
+    }
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.routesSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
