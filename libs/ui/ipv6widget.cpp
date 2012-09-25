@@ -106,6 +106,7 @@ void IpV6Widget::readConfig()
                 dnsPartEnabled = true;
             } else {
                 d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
+                dnsPartEnabled = true;
             }
             advancedSettingsPartEnabled = true;
             break;
@@ -281,12 +282,16 @@ void IpV6Widget::methodChanged(int currentIndex)
     bool addressPartEnabled = false;
     bool advancedSettingsPartEnabled = true;
     bool dnsPartEnabled = false;
+    bool methodAuto = false;
 
     if (IpV6WidgetPrivate::ManualMethodIndex == currentIndex) {
         addressPartEnabled = true;
         dnsPartEnabled = true;
     } else if (IpV6WidgetPrivate::AutomaticAddressesOnlyMethodIndex == currentIndex) {
         dnsPartEnabled = true;
+    } else if (IpV6WidgetPrivate::AutomaticMethodIndex == currentIndex) {
+        dnsPartEnabled = true;
+        methodAuto = true;
     } else if (IpV6WidgetPrivate::AutomaticMethodIndex != currentIndex &&
                IpV6WidgetPrivate::DhcpMethodIndex != currentIndex) {
         advancedSettingsPartEnabled = false;
@@ -338,7 +343,13 @@ void IpV6Widget::methodChanged(int currentIndex)
     {
         d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv6Address>());
     }
-
+    if (methodAuto) {
+        d->ui.dnsLabel->setText(i18nc("@info","Additional &DNS Servers:"));
+        d->ui.dnsSearchLabel->setText(i18nc("@info","Additional &Search Domains:"));
+    } else {
+        d->ui.dnsLabel->setText(i18nc("@info","&DNS Servers:"));
+        d->ui.dnsSearchLabel->setText(i18nc("@info","&Search Domains:"));
+    }
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.routesSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
