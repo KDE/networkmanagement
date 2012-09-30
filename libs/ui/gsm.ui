@@ -82,7 +82,30 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="KLineEdit" name="password"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="KLineEdit" name="password"/>
+        </item>
+        <item>
+         <widget class="KComboBox" name="passwordStorage">
+          <item>
+           <property name="text">
+            <string>Store</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Always Ask</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Not Required</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

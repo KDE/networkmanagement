@@ -42,6 +42,7 @@ public:
 protected Q_SLOTS:
     void validate();
     void chkShowPassToggled();
+    void passwordStorageTypeChanged(int);
     void pinStorageTypeChanged(int);
 };
 
