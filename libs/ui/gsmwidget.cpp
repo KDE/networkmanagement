@@ -30,7 +30,7 @@ class GsmWidgetPrivate : public SettingWidgetPrivate
 public:
     Ui_Gsm ui;
     Knm::GsmSetting * setting;
-    enum PinStorage {Store = 0, AlwaysAsk, NotRequired};
+    enum StorageType {Store = 0, AlwaysAsk, NotRequired};
 };
 
 GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
@@ -40,6 +40,7 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    connect(d->ui.passwordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageTypeChanged(int)));
     connect(d->ui.pinStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(pinStorageTypeChanged(int)));
     d->ui.pin->setEchoMode(KLineEdit::Password);
     /* Not used yet*/
@@ -102,17 +103,36 @@ void GsmWidget::writeConfig()
             d->setting->setPinflags(Knm::Setting::NotRequired);
             break;
     }
-    if (d->setting->password().isEmpty()) {
-        d->setting->setPasswordflags(Knm::Setting::NotRequired);
-    } else {
-        d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+    switch (d->ui.passwordStorage->currentIndex())
+    {
+        case GsmWidgetPrivate::Store:
+            if (!d->connection->permissions().isEmpty())
+                d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPasswordflags(Knm::Setting::None);
+            break;
+        case GsmWidgetPrivate::AlwaysAsk:
+            d->setting->setPasswordflags(Knm::Setting::NotSaved);
+            break;
+        case GsmWidgetPrivate::NotRequired:
+            d->setting->setPasswordflags(Knm::Setting::NotRequired);
+            break;
     }
 }
 
 void GsmWidget::readSecrets()
 {
     Q_D(GsmWidget);
-    d->ui.password->setText(d->setting->password());
+
+    if (d->setting->passwordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->passwordflags().testFlag(Knm::Setting::None)) {
+        d->ui.passwordStorage->setCurrentIndex(GsmWidgetPrivate::Store);
+        d->ui.password->setText(d->setting->password());
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotSaved)) {
+        d->ui.passwordStorage->setCurrentIndex(GsmWidgetPrivate::AlwaysAsk);
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotRequired)) {
+        d->ui.passwordStorage->setCurrentIndex(GsmWidgetPrivate::NotRequired);
+    }
+
     if (d->setting->pinflags().testFlag(Knm::Setting::AgentOwned) || d->setting->pinflags().testFlag(Knm::Setting::None)) {
         d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::Store);
         d->ui.pin->setText(d->setting->pin());
@@ -162,6 +182,21 @@ void GsmWidget::setApnInfo(const QMap<QString, QVariant> apnInfo)
 
     readConfig();
     d->ui.password->setText(d->setting->password());
+}
+
+void GsmWidget::passwordStorageTypeChanged(int type)
+{
+    Q_D(GsmWidget);
+    switch (type)
+    {
+        case GsmWidgetPrivate::Store:
+            d->ui.password->setEnabled(true);
+            break;
+        case GsmWidgetPrivate::AlwaysAsk:
+        case GsmWidgetPrivate::NotRequired:
+            d->ui.password->setEnabled(false);
+            break;
+    }
 }
 
 void GsmWidget::pinStorageTypeChanged(int type)
