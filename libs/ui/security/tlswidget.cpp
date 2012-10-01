@@ -50,7 +50,7 @@ TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * 
 {
     Q_D(TlsWidget);
     setupUi(this);
-    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+)$")), this);
+    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+|)$")), this);
     d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
 
     ListValidator *altSubjectValidator = new ListValidator(this);
