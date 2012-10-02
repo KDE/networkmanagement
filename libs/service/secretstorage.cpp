@@ -88,6 +88,11 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
             }
         }
     } else if (d->storageMode == Secure) {
+        if (!KWallet::Wallet::isEnabled()) {
+            kWarning() << "KWallet is disabled, please enable it or change Plasma NM to use 'In file' storage. Secrets not saved.";
+            return;
+        }
+
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
         Q_ASSERT(wallet);
 
@@ -240,6 +245,11 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
         KSharedConfig::Ptr ptr = secretsFileForUuid(con->uuid());
         QFile::remove(ptr->name());
     } else if (d->storageMode == Secure) {
+        if (!KWallet::Wallet::isEnabled()) {
+            kWarning() << "KWallet is disabled, please enable it. Secrets not deleted.";
+            return;
+        }
+
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
         Q_ASSERT(wallet);
 
@@ -289,6 +299,11 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             emit connectionRead(con, name, false, false);
         }
     } else if (d->storageMode == Secure) {
+        if (!KWallet::Wallet::isEnabled()) {
+            kWarning() << "KWallet is disabled, please enable it. Secrets not loaded.";
+            return;
+        }
+
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
@@ -384,6 +399,11 @@ bool SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
     // TODO: integrate DontStore with NM0.9 secret flags
     if (oldMode == DontStore || newMode == DontStore) {
         return true;
+    }
+
+    if (!KWallet::Wallet::isEnabled()) {
+        kWarning() << "KWallet is disabled, please enable it. Storage mode not changed.";
+        return false;
     }
 
     KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
