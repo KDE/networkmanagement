@@ -74,6 +74,11 @@ bool LeapAuthWidget::validate() const
     return true;
 }
 
+void LeapAuthWidget::readSecrets()
+{
+    d->pw->setText(d->setting->leappassword());
+}
+
 void LeapAuthWidget::writeConfig()
 {
     d->setting->setLeappassword(d->pw->text());

@@ -1,5 +1,6 @@
 /*
 Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -111,6 +112,12 @@ void WirelessSecurityAuthWidget::readConfig()
     //item is parented when added to the layout
     formLayout->addRow(new QWidget(), showPasswords);
     connect(showPasswords, SIGNAL(toggled(bool)), d->settingWidget, SLOT(setShowPasswords(bool)));
+}
+
+void WirelessSecurityAuthWidget::readSecrets()
+{
+    Q_D(WirelessSecurityAuthWidget);
+    d->settingWidget->readSecrets();
 }
 
 void WirelessSecurityAuthWidget::writeConfig()
