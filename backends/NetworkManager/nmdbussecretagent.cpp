@@ -86,7 +86,8 @@ void NMDBusSecretAgent::registerAgent()
 QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
 {
     Q_D(NMDBusSecretAgent);
-    kDebug() << connection;
+    // WARNING: do not commit this uncommented.
+    //kDebug() << connection;
     kDebug() << setting_name << flags << hints;
 
     QDBusMessage msg = message();
