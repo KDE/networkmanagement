@@ -39,7 +39,7 @@ public:
     bool validate() const;
     void readConfig();
     void writeConfig();
-    void readSecrets() {}
+    void readSecrets();
 public Q_SLOTS:
     virtual void setShowPasswords(bool);
     void validateKey(const QString&);

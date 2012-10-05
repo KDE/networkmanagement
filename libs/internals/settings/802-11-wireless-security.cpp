@@ -83,13 +83,32 @@ QMap<QString,QString> WirelessSecuritySetting::secretsToMap() const
 
 void WirelessSecuritySetting::secretsFromMap(QMap<QString,QString> secrets)
 {
-    setWepkey0(secrets.value("wepkey0"));
-    setWepkey1(secrets.value("wepkey1"));
-    setWepkey2(secrets.value("wepkey2"));
-    setWepkey3(secrets.value("wepkey3"));
-    setPsk(secrets.value("psk"));
-    setLeappassword(secrets.value("leappassword"));
-    setSecretsAvailable(true);
+    bool secretsAvailable = false;
+    if (secrets.contains("wepkey0")) {
+        setWepkey0(secrets.value("wepkey0"));
+        secretsAvailable = true;
+    }
+    if (secrets.contains("wepkey1")) {
+        setWepkey1(secrets.value("wepkey1"));
+        secretsAvailable = true;
+    }
+    if (secrets.contains("wepkey2")) {
+        setWepkey2(secrets.value("wepkey2"));
+        secretsAvailable = true;
+    }
+    if (secrets.contains("wepkey3")) {
+        setWepkey3(secrets.value("wepkey3"));
+        secretsAvailable = true;
+    }
+    if (secrets.contains("psk")) {
+        setPsk(secrets.value("psk"));
+        secretsAvailable = true;
+    }
+    if (secrets.contains("leappassword")) {
+        setLeappassword(secrets.value("leappassword"));
+        secretsAvailable = true;
+    }
+    setSecretsAvailable(secretsAvailable);
 }
 
 QStringList WirelessSecuritySetting::needSecrets() const
