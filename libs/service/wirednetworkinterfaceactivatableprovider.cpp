@@ -85,8 +85,23 @@ void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
 bool WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
     Q_D(const WiredNetworkInterfaceActivatableProvider);
-    // wiredInterface() can be null if NetworkManager has just stopped and this provider
-    // has not been unregistered yet.
+    /* wiredInterface() can be null if NetworkManager has just stopped and this provider
+     * has not been unregistered yet:
+     * NMDBusSettingsConnectionProvider::clearConnections() calls the Removed signal for
+     * all connections AFTER NetworkManager has stopped, and consequently, after all
+     * Solid::Control::NetworkManager::NetworkInterface* objects have been invalidated.
+     * The Removed signal triggers the call sequency NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved() ->
+     * NMDBusSettingsConnectionProvider { d->connectionList->removeConnection(con) } ->
+     * ConnectionList { connHandler->handleRemove(connection) }
+     * handleRemove() -> maintainActivatableForUnconfigured() ->
+     * WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() ->
+     * d->wiredInterface() -> qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*>(interface).
+     * interface is an invalid pointer and crashes the kded module.
+     * Actually Solid::Control::NetworkManagerNm09::notifier()'s networkInterfaceRemoved signal should
+     * triggers the removing of WiredNetworkInterfaceActivatableProvider before
+     * NMDBusSettingsConnectionProvider::clearConnections() is called, but it seems sometimes, and only sometimes,
+     * that does not happen.
+     */
     if (d->wiredInterface()) {
         return d->activatables.isEmpty() && d->wiredInterface()->carrier();
     }
