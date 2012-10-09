@@ -74,6 +74,11 @@ bool WpaAuthWidget::validate() const
     return true;
 }
 
+void WpaAuthWidget::readSecrets()
+{
+    d->pw->setText(d->setting->psk());
+}
+
 void WpaAuthWidget::writeConfig()
 {
     d->setting->setPsk(d->pw->text());

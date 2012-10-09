@@ -64,14 +64,15 @@ NMDBusSecretAgent::~NMDBusSecretAgent()
 QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
 {
     Q_D(NMDBusSecretAgent);
-    kDebug() << connection;
+    // WARNING: do not commit this uncommented.
+    //kDebug() << connection;
     kDebug() << setting_name << flags << hints;
 
     QDBusMessage msg = message();
     msg.setDelayedReply(true);
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus condbus(con);
-    condbus.fromDbusMap(connection);
+    condbus.fromDbusSecretsMap(connection);
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
     pair.second = msg;

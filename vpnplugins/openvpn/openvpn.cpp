@@ -385,18 +385,22 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
         if (key_value[0] == SECRET_TAG && key_value.count() > 1) {
             key_value[1] = line.right(line.length() - line.indexOf(QRegExp("\\s"))); // Get whole string after key
             dataMap.insert(QLatin1String(NM_OPENVPN_KEY_STATIC_KEY), unQuote(key_value[1], fileName));
-            key_value[2] = key_value[1];
-            if (!key_value[2].isEmpty() && (key_value[2].toLong() == 0 ||key_value[2].toLong() == 1))
-                dataMap.insert(QLatin1String(NM_OPENVPN_KEY_STATIC_KEY_DIRECTION), key_value[2]);
+            if (key_value.count() > 2) {
+                key_value[2] = key_value[1];
+                if (!key_value[2].isEmpty() && (key_value[2].toLong() == 0 ||key_value[2].toLong() == 1))
+                    dataMap.insert(QLatin1String(NM_OPENVPN_KEY_STATIC_KEY_DIRECTION), key_value[2]);
+            }
             have_sk = true;
             continue;
         }
         if (key_value[0] == TLS_AUTH_TAG && key_value.count() >1) {
             key_value[1] = line.right(line.length() - line.indexOf(QRegExp("\\s"))); // Get whole string after key
             dataMap.insert(QLatin1String(NM_OPENVPN_KEY_TA), unQuote(key_value[1], fileName));
-            key_value[2] = key_value[1];
-            if (!key_value[2].isEmpty() && (key_value[2].toLong() == 0 ||key_value[2].toLong() == 1))
-                dataMap.insert(QLatin1String(NM_OPENVPN_KEY_TA_DIR), key_value[2]);
+            if (key_value.count() > 2) {
+                key_value[2] = key_value[1];
+                if (!key_value[2].isEmpty() && (key_value[2].toLong() == 0 ||key_value[2].toLong() == 1))
+                    dataMap.insert(QLatin1String(NM_OPENVPN_KEY_TA_DIR), key_value[2]);
+            }
             continue;
         }
         if (key_value[0] == CIPHER_TAG) {

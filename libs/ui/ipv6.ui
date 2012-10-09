@@ -225,7 +225,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="dnsLabel">
          <property name="text">
-          <string>&amp;DNS Servers:</string>
+          <string comment="@info">&amp;DNS Servers:</string>
          </property>
          <property name="textFormat">
           <enum>Qt::AutoText</enum>
@@ -271,7 +271,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="dnsSearchLabel">
          <property name="text">
-          <string>&amp;Search Domains:</string>
+          <string comment="@info">&amp;Search Domains:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

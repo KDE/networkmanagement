@@ -109,6 +109,24 @@ void WepAuthWidget::readConfig()
     connect(d->pw, SIGNAL(textChanged(QString)), SLOT(validateKey(QString)));
 }
 
+void WepAuthWidget::readSecrets()
+{
+    switch (d->setting->weptxkeyindex()) {
+        case 0:
+            d->pw->setText(d->setting->wepkey0());
+            break;
+        case 1:
+            d->pw->setText(d->setting->wepkey1());
+            break;
+        case 2:
+            d->pw->setText(d->setting->wepkey2());
+            break;
+        case 3:
+            d->pw->setText(d->setting->wepkey3());
+            break;
+    }
+}
+
 void WepAuthWidget::writeConfig()
 {
     switch (d->setting->weptxkeyindex()) {

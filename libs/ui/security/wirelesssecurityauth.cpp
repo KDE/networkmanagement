@@ -1,5 +1,6 @@
 /*
 Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -33,18 +34,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wepauthwidget.h"
 #include "leapauthwidget.h"
 #include "wpaauthwidget.h"
+#include "ui_wirelesssecurityauth.h"
 
 #include <QFormLayout>
 #include <QCheckBox>
+
 #include <KLocale>
+
 
 class WirelessSecurityAuthWidgetPrivate : public SettingWidgetPrivate
 {
 public:
+    Ui_WirelessSecurityAuth ui;
     Knm::WirelessSetting * settingWireless;
     Knm::WirelessSecuritySetting * settingSecurity;
     SecurityWidget *settingWidget;
-    QFormLayout *layout;
+    QVBoxLayout *layout;
 };
 
 WirelessSecurityAuthWidget::WirelessSecurityAuthWidget(Knm::Connection * connection, QWidget * parent)
@@ -52,10 +57,13 @@ WirelessSecurityAuthWidget::WirelessSecurityAuthWidget(Knm::Connection * connect
 {
     Q_D(WirelessSecurityAuthWidget);
 
-    d->layout = new QFormLayout(this);
-    this->setLayout(d->layout);
+    d->ui.setupUi(this);
+
     d->settingWireless = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+
+    d->ui.title->setText(i18nc("@title:window","The network %1 requires authentication", connection->name()));
+    d->ui.iconLabel->setPixmap(KIcon(connection->iconName()).pixmap(KIconLoader::SizeHuge, KIconLoader::SizeHuge));
 }
 
 WirelessSecurityAuthWidget::~WirelessSecurityAuthWidget()
@@ -65,6 +73,9 @@ WirelessSecurityAuthWidget::~WirelessSecurityAuthWidget()
 void WirelessSecurityAuthWidget::readConfig()
 {
     Q_D(WirelessSecurityAuthWidget);
+
+    QFormLayout *formLayout = d->ui.formLayout;
+
     if (!d->settingWireless) {
         kWarning() << "Wireless setting is null. That should not happen.";
         return;
@@ -74,14 +85,14 @@ void WirelessSecurityAuthWidget::readConfig()
     } else {
         switch (d->settingSecurity->securityType()) {
             case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
-                d->settingWidget = new WepAuthWidget(d->connection, d->layout, this);
+                d->settingWidget = new WepAuthWidget(d->connection, formLayout, this);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::Leap:
-                d->settingWidget = new LeapAuthWidget(d->connection, d->layout, this);
+                d->settingWidget = new LeapAuthWidget(d->connection, formLayout, this);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
             case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
-                d->settingWidget = new WpaAuthWidget(d->connection, d->layout, this);
+                d->settingWidget = new WpaAuthWidget(d->connection, formLayout, this);
                 break;
             // every other security type does not have secrets in 802-11-wireless-security setting,
             // this object should not even have been created
@@ -90,15 +101,23 @@ void WirelessSecurityAuthWidget::readConfig()
                 break;
         }
         d->settingWidget->readConfig();
-        d->layout->addWidget(d->settingWidget);
+        formLayout->addWidget(d->settingWidget);
         connect(d->settingWidget, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     QCheckBox *showPasswords = new QCheckBox(this);
-    showPasswords->setText(i18n("&Show password"));
-    d->layout->setWidget(d->layout->rowCount(), QFormLayout::FieldRole, showPasswords);
+    showPasswords->setText(i18nc("@action:button", "&Show password"));
+
+    //pass an empty QWidget to the FormLayout in order to work round a Qt Bug in which Qt can't calculate a minimumSizeHint for a form layout.
+    //item is parented when added to the layout
+    formLayout->addRow(new QWidget(), showPasswords);
     connect(showPasswords, SIGNAL(toggled(bool)), d->settingWidget, SLOT(setShowPasswords(bool)));
-    d->layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+}
+
+void WirelessSecurityAuthWidget::readSecrets()
+{
+    Q_D(WirelessSecurityAuthWidget);
+    d->settingWidget->readSecrets();
 }
 
 void WirelessSecurityAuthWidget::writeConfig()
