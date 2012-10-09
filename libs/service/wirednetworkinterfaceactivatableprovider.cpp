@@ -55,7 +55,7 @@ void WiredNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * added
 {
     kDebug();
     Q_D(WiredNetworkInterfaceActivatableProvider);
-    if (d->wiredInterface()->carrier()) {
+    if (d->wiredInterface() && d->wiredInterface()->carrier()) {
         NetworkInterfaceActivatableProvider::handleAdd(addedConnection);
     }
 }
