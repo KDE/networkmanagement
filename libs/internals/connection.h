@@ -135,6 +135,7 @@ private:
      * Setting of this type.
      */
     void addSetting(Setting*);
+    void clearSettings();
 
     QString m_name;
     QString m_iconName;
