@@ -92,7 +92,7 @@ void Nm08Connections::importNextNm08Connection()
             // child removes itself from list in its destructor, which causes crashes if we use qDeleteAll() of Qt >= 4.8,
             // so use this loop instead. See https://bugs.kde.org/show_bug.cgi?id=284989
             while (!m_connectionsToDelete.isEmpty()) {
-                delete m_connectionsToDelete.first();
+                delete m_connectionsToDelete.takeFirst();
             }
         }
         deleteLater();
