@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <arpa/inet.h>
 
 #include <QGraphicsGridLayout>
+#include <QGraphicsSceneResizeEvent>
 #include <QLabel>
 #include <QPainter>
 
@@ -120,7 +121,6 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_connectionNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_connectionNameLabel->nativeWidget()->setMaximumWidth(210);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
     //       security
@@ -451,6 +451,19 @@ void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         emit hoverLeave(m_iface.data()->uni());
     }
     IconWidget::hoverLeaveEvent(event);
+}
+
+void InterfaceItem::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    if(m_connectionNameLabel) {
+        int maximumWidth = event->newSize().width();
+        maximumWidth -= m_icon->nativeWidget()->width();
+        maximumWidth -= m_layout->columnSpacing(0);
+        maximumWidth -= m_layout->columnSpacing(1);
+        maximumWidth -= m_layout->columnSpacing(2);
+        m_connectionNameLabel->nativeWidget()->setMaximumWidth(maximumWidth);
+    }
+    IconWidget::resizeEvent(event);
 }
 
 void InterfaceItem::serviceDisappeared()
