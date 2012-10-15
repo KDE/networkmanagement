@@ -39,6 +39,7 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
     Q_D(OtherSettingsWidget);
     d->ui.setupUi(this);
     d->ui.lblVersion->setText(i18nc("Version text", "<b>Version %1</b>", plasmaNmVersion));
+    d->ui.lblVersion->setTextInteractionFlags(Qt::TextSelectableByMouse);
     d->ui.notificationsButton->setIcon(KIcon("preferences-desktop-notification"));
     connect(d->ui.notificationsButton, SIGNAL(clicked()), SLOT(configureNotifications()));
 }
