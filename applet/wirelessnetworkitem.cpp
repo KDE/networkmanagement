@@ -122,22 +122,21 @@ void WirelessNetworkItem::setupItem()
         m_strengthMeter->setValue(m_wirelessStatus->strength());
         m_strengthMeter->setToolTip(i18n("Strength: %1%", m_wirelessStatus->strength()));
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(60, 12));
-        m_strengthMeter->setMaximumHeight(12);
+        m_strengthMeter->setPreferredSize(QSizeF(IconSize(KIconLoader::Small) * 4, QFontMetrics(m_connectButton->font()).height()));
+        m_strengthMeter->setMaximumHeight(QFontMetrics(m_connectButton->font()).height());
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(m_strengthMeter, 0, 2, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
     }
     else
     {
         widget = new QGraphicsWidget(this);
-        widget->setPreferredSize(QSizeF(60, 12));
-        widget->setMaximumHeight(12);
+        widget->setPreferredSize(QSizeF(IconSize(KIconLoader::Small) * 4, 12));
         widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(widget, 0, 2, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
     }
 
     m_securityIcon = new Plasma::Label(this);
-    m_securityIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(22,22));
+    m_securityIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(IconSize(KIconLoader::Small) * 1.2,IconSize(KIconLoader::Small) * 1.2));
     m_securityIcon->setToolTip(m_wirelessStatus->securityTooltip());
     m_layout->addItem(m_securityIcon, 0, 3, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 

@@ -102,8 +102,8 @@ void NMPopup::init()
     m_leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_leftLabel = new Plasma::Label(m_leftWidget);
-    m_leftLabel->setMaximumHeight(24);
-    m_leftLabel->setMinimumHeight(24);
+    m_leftLabel->setMaximumHeight(QFontMetrics(m_leftLabel->font()).height() + QFontMetrics(m_leftLabel->font()).xHeight() * 2);
+    m_leftLabel->setMinimumHeight(m_leftLabel->maximumHeight());
     m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
 
     m_leftLayout = new QGraphicsGridLayout;
@@ -182,10 +182,12 @@ void NMPopup::init()
     connect(m_connectionsTabBar, SIGNAL(currentChanged(int)), SLOT(currentInnerTabChanged(int)));
     /*** Inner TabBar: end ***/
 
+    int rowHeight = QFontMetrics(KGlobalSettings::generalFont()).height() + QFontMetrics(KGlobalSettings::generalFont()).xHeight() * 2;
+
     //m_tab1Layout->setRowMaximumHeight(rowMain, rowHeight);
     m_tab1Layout->addItem(m_connectionsTabBar, rowMain++, 0, 1, 2, Qt::AlignCenter);
     m_tab1Layout->addItem(connectionsFrame, rowMain++, 0, 1, 2, Qt::AlignCenter);
-    m_tab1Layout->setRowFixedHeight(0, QFontMetrics(KGlobalSettings::generalFont()).height()*2.2);
+    m_tab1Layout->setRowFixedHeight(0, rowHeight);
 
     // flight-mode checkbox
 /*   m_networkingCheckBox = new Plasma::CheckBox(this);
@@ -241,8 +243,8 @@ void NMPopup::init()
     //m_advancedSettingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_advancedSettingsButton->setIcon(KIcon("configure"));
     m_advancedSettingsButton->setText(i18nc("settings button in applet's popup window", "Settings..."));
-    m_advancedSettingsButton->setMinimumHeight(28);
-    m_advancedSettingsButton->setMaximumHeight(28);
+    m_advancedSettingsButton->setMinimumHeight(rowHeight);
+    m_advancedSettingsButton->setMaximumHeight(rowHeight);
     connect(m_advancedSettingsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
     m_tab1Layout->addItem(m_advancedSettingsButton, rowMain, 0);
 
@@ -254,8 +256,8 @@ void NMPopup::init()
     //m_showInterfacesButton->setIcon(KIcon("run-build"));
     m_showInterfacesButton->setIcon(KIcon("format-list-unordered"));
     m_showInterfacesButton->setText(i18nc("show interface list in applet's popup window", "Show Interfaces"));
-    m_showInterfacesButton->setMinimumHeight(28);
-    m_showInterfacesButton->setMaximumHeight(28);
+    m_showInterfacesButton->setMinimumHeight(rowHeight);
+    m_showInterfacesButton->setMaximumHeight(rowHeight);
     connect(m_showInterfacesButton, SIGNAL(clicked()), this, SLOT(toggleInterfaceList()));
     m_tab1Layout->addItem(m_showInterfacesButton, rowMain++, 1, 1, 1, Qt::AlignRight);
 
@@ -891,4 +893,3 @@ void NMPopup::currentInnerTabChanged(int index)
     //m_connectToAnotherNetwork->update();
 }
 // vim: sw=4 sts=4 et tw=100
-
