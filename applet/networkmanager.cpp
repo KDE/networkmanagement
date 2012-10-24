@@ -414,7 +414,6 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     if (!m_panelContainment) {
         /* To make applet's size matches the popup's size. The applet is the tray icon, which is 16x16 pixels size by default.*/
         adjustSize();
-        return;
     }
 
     QString el = svgElement(m_activeSystrayInterface);
