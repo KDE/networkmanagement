@@ -151,6 +151,7 @@ private:
     inline void setActiveInterface(Solid::Control::NetworkInterfaceNm09 * iface);
     inline void setActiveSystrayInterface(Solid::Control::NetworkInterfaceNm09 * iface);
 
+    void updateInterfaceList();
     Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 

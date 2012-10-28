@@ -102,8 +102,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_meterFgSvg = new Plasma::FrameSvg(this);
     m_meterFgSvg->setImagePath("widgets/bar_meter_horizontal");
     m_meterFgSvg->setElementPrefix("bar-active");
-    setStatus(Plasma::ActiveStatus);
-    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    updateInterfaceList();
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
         setActiveInterface(m_interfaces.first());
@@ -551,7 +550,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
-    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    updateInterfaceList();
 
     if (!m_activeInterface) {
         if (m_interfaces.isEmpty()) {
@@ -569,7 +568,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 {
     // update the tray icon
-    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    updateInterfaceList();
 
     if (uni == m_lastActiveInterfaceUni) {
         if (m_interfaces.isEmpty()) {
@@ -933,7 +932,7 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
     //kDebug() << "managerstatuschanged";
-    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    updateInterfaceList();
     if (status == Solid::Networking::Unknown) {
         setActiveInterface(0);
         setActiveSystrayInterface(0);
@@ -1112,6 +1111,12 @@ void NetworkManagerApplet::setActiveSystrayInterface(Solid::Control::NetworkInte
     if (m_activeSystrayInterface) {
         m_lastActiveSystrayInterfaceUni = m_activeSystrayInterface->uni();
     }
+}
+
+void NetworkManagerApplet::updateInterfaceList()
+{
+    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    setStatus(m_interfaces.isEmpty() ? Plasma::PassiveStatus : Plasma::ActiveStatus);
 }
 
 #include "networkmanager.moc"
