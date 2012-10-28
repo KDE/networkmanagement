@@ -93,8 +93,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_meterFgSvg = new Plasma::FrameSvg(this);
     m_meterFgSvg->setImagePath("widgets/bar_meter_horizontal");
     m_meterFgSvg->setElementPrefix("bar-active");
-    setStatus(Plasma::ActiveStatus);
-    m_interfaces = NetworkManager::networkInterfaces();
+    updateInterfaceList();
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
         setActiveInterface(m_interfaces.first());
@@ -558,7 +557,7 @@ void NetworkManagerApplet::deviceAdded(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
-    m_interfaces = NetworkManager::networkInterfaces();
+    updateInterfaceList();
 
     if (!m_activeInterface) {
         if (m_interfaces.isEmpty()) {
@@ -576,7 +575,7 @@ void NetworkManagerApplet::deviceAdded(const QString & uni)
 void NetworkManagerApplet::deviceRemoved(const QString & uni)
 {
     // update the tray icon
-    m_interfaces = NetworkManager::networkInterfaces();
+    updateInterfaceList();
 
     if (uni == m_lastActiveInterfaceUni) {
         if (m_interfaces.isEmpty()) {
@@ -940,7 +939,7 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
 void NetworkManagerApplet::managerStatusChanged(NetworkManager::Status status)
 {
     //kDebug() << "managerstatuschanged";
-    m_interfaces = NetworkManager::networkInterfaces();
+    updateInterfaceList();
     if (status == NetworkManager::Unknown) {
         setActiveInterface(0);
         setActiveSystrayInterface(0);
@@ -1134,6 +1133,12 @@ void NetworkManagerApplet::setActiveSystrayInterface(NetworkManager::Device * de
     if (m_activeSystrayInterface) {
         m_lastActiveSystrayInterfaceUni = m_activeSystrayInterface->uni();
     }
+}
+
+void NetworkManagerApplet::updateInterfaceList()
+{
+    m_interfaces = NetworkManager::networkInterfaces();
+    setStatus(m_interfaces.isEmpty() ? Plasma::PassiveStatus : Plasma::ActiveStatus);
 }
 
 #include "networkmanager.moc"
