@@ -27,21 +27,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QVariant>
 
+#include <KProcess>
+
 namespace Knm
 {
     class Connection;
 } // namespace Knm
 
-#include <KProcess>
-class VpncUiPluginPrivate:public QObject
+class VpncUiPluginPrivate: public QObject
 {
 Q_OBJECT
 public:
-    KProcess * ciscoDecrypt;
-    QString decryptedPasswd;
     VpncUiPluginPrivate();
     ~VpncUiPluginPrivate();
     QString readStringKeyValue(const KConfigGroup & configGroup, const QString & key);
+    KProcess * ciscoDecrypt;
+    QString decryptedPasswd;
+
 protected Q_SLOTS:
     void gotciscoDecryptOutput();
     void ciscoDecryptError(QProcess::ProcessError pError);
