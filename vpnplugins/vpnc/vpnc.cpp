@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 Copyright 2011-2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -45,6 +46,17 @@ VpncUiPluginPrivate::VpncUiPluginPrivate()
 }
 VpncUiPluginPrivate::~VpncUiPluginPrivate()
 {
+}
+
+QString VpncUiPluginPrivate::readStringKeyValue(const KConfigGroup & configGroup, const QString & key)
+{
+    QString retValue = configGroup.readEntry(key);
+    if (retValue.isEmpty()) {
+        // String key can also start with "!" in CISCO pcf file.
+        return configGroup.readEntry("!" + key);
+    } else {
+        return retValue;
+    }
 }
 
 void VpncUiPluginPrivate::gotciscoDecryptOutput()
@@ -150,17 +162,17 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         QStringMap ipv4Data;
 
         // gateway
-        data.insert(NM_VPNC_KEY_GATEWAY, cg.readEntry("Host"));
+        data.insert(NM_VPNC_KEY_GATEWAY, decrPlugin->readStringKeyValue(cg,"Host"));
         // group name
-        data.insert(NM_VPNC_KEY_ID, cg.readEntry("GroupName"));
+        data.insert(NM_VPNC_KEY_ID, decrPlugin->readStringKeyValue(cg,"GroupName"));
         // user password
-        if (!cg.readEntry("UserPassword").isEmpty()) {
-            secretData.insert(NM_VPNC_KEY_XAUTH_PASSWORD, cg.readEntry("UserPassword"));
+        if (!decrPlugin->readStringKeyValue(cg,"UserPassword").isEmpty()) {
+            secretData.insert(NM_VPNC_KEY_XAUTH_PASSWORD, decrPlugin->readStringKeyValue(cg,"UserPassword"));
         }
-        else if (!cg.readEntry("enc_UserPassword").isEmpty() && !ciscoDecryptBinary.isEmpty()) {
+        else if (!decrPlugin->readStringKeyValue(cg,"enc_UserPassword").isEmpty() && !ciscoDecryptBinary.isEmpty()) {
             // Decrypt the password and insert into map
             decrArgs.clear();
-            decrArgs << cg.readEntry("enc_UserPassword");
+            decrArgs << decrPlugin->readStringKeyValue(cg,"enc_UserPassword");
             decrPlugin->ciscoDecrypt->setProgram(ciscoDecryptBinary, decrArgs);
             decrPlugin->ciscoDecrypt->start();
             if (decrPlugin->ciscoDecrypt->waitForStarted() && decrPlugin->ciscoDecrypt->waitForFinished()) {
@@ -182,14 +194,14 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         }
 
         // group password
-        if (!cg.readEntry("GroupPwd").isEmpty()) {
-            secretData.insert(NM_VPNC_KEY_SECRET, cg.readEntry("GroupPwd"));
+        if (!decrPlugin->readStringKeyValue(cg,"GroupPwd").isEmpty()) {
+            secretData.insert(NM_VPNC_KEY_SECRET, decrPlugin->readStringKeyValue(cg,"GroupPwd"));
             data.insert(NM_VPNC_KEY_SECRET"-flags", QString::number(Knm::Setting::AgentOwned));
         }
-        else if (!cg.readEntry("enc_GroupPwd").isEmpty() && !ciscoDecryptBinary.isEmpty()) {
+        else if (!decrPlugin->readStringKeyValue(cg,"enc_GroupPwd").isEmpty() && !ciscoDecryptBinary.isEmpty()) {
             //Decrypt the password and insert into map
             decrArgs.clear();
-            decrArgs << cg.readEntry("enc_GroupPwd");
+            decrArgs << decrPlugin->readStringKeyValue(cg,"enc_GroupPwd");
             decrPlugin->ciscoDecrypt->setProgram(ciscoDecryptBinary, decrArgs);
             decrPlugin->ciscoDecrypt->start();
             if (decrPlugin->ciscoDecrypt->waitForStarted() && decrPlugin->ciscoDecrypt->waitForFinished()) {
@@ -197,7 +209,6 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
                 data.insert(NM_VPNC_KEY_SECRET"-flags", QString::number(Knm::Setting::AgentOwned));
             }
         }
-        delete decrPlugin;
 
         // Auth Type
         if (!cg.readEntry("AuthType").isEmpty() && cg.readEntry("AuthType").toInt() == 5) {
@@ -206,12 +217,12 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 
         // Optional settings
         // username
-        if (!cg.readEntry("Username").isEmpty()) {
-            data.insert(NM_VPNC_KEY_XAUTH_USER, cg.readEntry("Username"));
+        if (!decrPlugin->readStringKeyValue(cg,"Username").isEmpty()) {
+            data.insert(NM_VPNC_KEY_XAUTH_USER, decrPlugin->readStringKeyValue(cg,"Username"));
         }
         // domain
-        if (!cg.readEntry("NTDomain").isEmpty()) {
-            data.insert(NM_VPNC_KEY_DOMAIN, cg.readEntry("NTDomain"));
+        if (!decrPlugin->readStringKeyValue(cg,"NTDomain").isEmpty()) {
+            data.insert(NM_VPNC_KEY_DOMAIN, decrPlugin->readStringKeyValue(cg,"NTDomain"));
         }
         // encryption
         if (!cg.readEntry("SingleDES").isEmpty() && cg.readEntry("SingleDES").toInt() != 0) {
@@ -247,7 +258,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
             data.insert(NM_VPNC_KEY_LOCAL_PORT, QString(NM_VPNC_LOCAL_PORT_DEFAULT));
         }
         // DH Group
-        data.insert(NM_VPNC_KEY_DHGROUP, cg.readEntry("DHGroup"));
+        data.insert(NM_VPNC_KEY_DHGROUP, decrPlugin->readStringKeyValue(cg,"DHGroup"));
         // Tunneling Mode - not supported by vpnc
         if (cg.readEntry("TunnelingMode").toInt() == 1) {
             KMessageBox::error(0, i18n("The VPN settings file '%1' specifies that VPN traffic should be tunneled through TCP which is currently not supported in the vpnc software.\n\nThe connection can still be created, with TCP tunneling disabled, however it may not work as expected.", fileName), i18n("Not supported"), KMessageBox::Notify);
@@ -256,8 +267,8 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         if (!cg.readEntry("EnableLocalLAN").isEmpty()) {
             ipv4Data.insert(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, cg.readEntry("EnableLocalLAN"));
         }
-        if (!cg.readEntry("X-NM-Routes").isEmpty()) {
-            ipv4Data.insert(NM_SETTING_IP4_CONFIG_ROUTES, cg.readEntry("X-NM-Routes"));
+        if (!decrPlugin->readStringKeyValue(cg,"X-NM-Routes").isEmpty()) {
+            ipv4Data.insert(NM_SETTING_IP4_CONFIG_ROUTES, decrPlugin->readStringKeyValue(cg,"X-NM-Routes"));
         }
 
         // Set the '...-type' and '...-flags' value also
@@ -269,10 +280,12 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 
         conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(data));
         conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(secretData));
-        conSetting << cg.readEntry("Description");
+        conSetting << decrPlugin->readStringKeyValue(cg,"Description");
         if (!ipv4Data.isEmpty()) {
             conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(ipv4Data));
         }
+
+        delete decrPlugin;
     } else {
         mErrorMessage = i18n("%1: file format error.", fileName);
         return conSetting;
