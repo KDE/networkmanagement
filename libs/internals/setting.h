@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm
 {
 
-class KNMINTERNALS_EXPORT Setting: public QObject
+class KNMINTERNALS_EXPORT Setting
 {
 public:
     Q_FLAGS(secretsTypes)
