@@ -518,7 +518,9 @@ void OpenconnectAuthWidget::validatePeerCert(const QString &fingerprint,
     } else {
         *accepted = true;
     }
+    d->mutex.lock();
     d->workerWaiting.wakeAll();
+    d->mutex.unlock();
 }
 
 // Writes the user input from the form into the oc_auth_form structs we got from

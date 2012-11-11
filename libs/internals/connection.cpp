@@ -158,13 +158,22 @@ Connection::Connection(Connection *con)
 
 Connection::~Connection()
 {
-    qDeleteAll(m_settings);
+    clearSettings();
+}
+
+void Connection::clearSettings()
+{
+    // child removes itself from list in its destructor, which causes crashes if we use qDeleteAll() of Qt >= 4.8,
+    // so use this loop instead. See https://bugs.kde.org/show_bug.cgi?id=284989
+    while (!m_settings.isEmpty()) {
+        delete m_settings.takeFirst();
+    }
+    m_settings.clear();
 }
 
 void Connection::init(NMBluetoothCapabilities bt_cap)
 {
-    qDeleteAll(m_settings);
-    m_settings.clear();
+    clearSettings();
 
     switch (m_type) {
         case Cdma:
@@ -224,8 +233,7 @@ void Connection::init(NMBluetoothCapabilities bt_cap)
 
 void Connection::init(Connection *con)
 {
-    qDeleteAll(m_settings);
-    m_settings.clear();
+    clearSettings();
 
     switch (m_type) {
         case Cdma:

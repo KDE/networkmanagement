@@ -163,8 +163,9 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_disconnectButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_disconnectButton->setIcon(KIcon("user-offline"));
     m_disconnectButton->setText(i18nc("disconnect button in interface details window", "Disconnect"));
-    m_disconnectButton->setMinimumHeight(28);
-    m_disconnectButton->setMaximumHeight(28);
+    int disconnectButtonHeight = QFontMetrics(m_disconnectButton->font()).height() + QFontMetrics(m_disconnectButton->font()).xHeight() * 2;
+    m_disconnectButton->setMinimumHeight(disconnectButtonHeight);
+    m_disconnectButton->setMaximumHeight(disconnectButtonHeight);
 #endif
 
     connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(emitDisconnectInterfaceRequest()));
@@ -173,8 +174,9 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     // add pushbutton for "back" action
     m_backButton = new Plasma::PushButton(this);
-    m_backButton->setMaximumHeight(28);
-    m_backButton->setMaximumWidth(28);
+    int backButtonHeight = QFontMetrics(KGlobalSettings::generalFont()).height() + QFontMetrics(KGlobalSettings::generalFont()).xHeight();
+    m_backButton->setMaximumHeight(backButtonHeight);
+    m_backButton->setMaximumWidth(backButtonHeight);
     m_backButton->setIcon(KIcon("go-previous"));
     //m_backButton->setToolTip(i18n("Go Back"));
     m_backButton->setZValue(100);

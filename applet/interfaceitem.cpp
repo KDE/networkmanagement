@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <arpa/inet.h>
 
 #include <QGraphicsGridLayout>
+#include <QGraphicsSceneResizeEvent>
 #include <QLabel>
 #include <QPainter>
 
@@ -71,7 +72,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     setTextBackgroundColor(QColor(Qt::transparent));
     QString tt = i18nc("tooltip on the LHS widgets", "Click here for interface details");
 
-    m_pixmapSize = QSize(48, 48);
+    m_pixmapSize = QSize(IconSize(KIconLoader::Dialog), IconSize(KIconLoader::Dialog));
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     m_layout = new QGraphicsGridLayout(this);
@@ -120,15 +121,14 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_connectionNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_connectionNameLabel->nativeWidget()->setMaximumWidth(210);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
     //       security
     m_connectionInfoIcon = new Plasma::Label(this);
-    m_connectionInfoIcon->setMinimumHeight(16);
-    m_connectionInfoIcon->setMinimumWidth(16);
-    m_connectionInfoIcon->setMaximumHeight(16);
-    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon("security-low").pixmap(16, 16));
+    m_connectionInfoIcon->setMinimumHeight(IconSize(KIconLoader::Small));
+    m_connectionInfoIcon->setMinimumWidth(IconSize(KIconLoader::Small));
+    m_connectionInfoIcon->setMaximumHeight(IconSize(KIconLoader::Small));
+    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon("security-low").pixmap(IconSize(KIconLoader::Small), IconSize(KIconLoader::Small)));
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
@@ -424,7 +424,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     if (m_hasDefaultRoute && !pmap.isNull()) {
         QPainter p(&pmap);
-        p.drawPixmap(QRect(2,2,18,18), KIcon(overlayIcon).pixmap(QSize(18,18)));
+        p.drawPixmap(QRect(2,2,IconSize(KIconLoader::Small),IconSize(KIconLoader::Small)), KIcon(overlayIcon).pixmap(QSize(IconSize(KIconLoader::Small),IconSize(KIconLoader::Small))));
     }
     return pmap;
 }
@@ -451,6 +451,19 @@ void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         emit hoverLeave(m_iface.data()->uni());
     }
     IconWidget::hoverLeaveEvent(event);
+}
+
+void InterfaceItem::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    if(m_connectionNameLabel) {
+        int maximumWidth = event->newSize().width();
+        maximumWidth -= m_icon->nativeWidget()->width();
+        maximumWidth -= m_layout->columnSpacing(0);
+        maximumWidth -= m_layout->columnSpacing(1);
+        maximumWidth -= m_layout->columnSpacing(2);
+        m_connectionNameLabel->nativeWidget()->setMaximumWidth(maximumWidth);
+    }
+    IconWidget::resizeEvent(event);
 }
 
 void InterfaceItem::serviceDisappeared()

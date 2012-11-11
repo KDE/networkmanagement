@@ -151,6 +151,7 @@ private:
     inline void setActiveInterface(NetworkManager::Device * device);
     inline void setActiveSystrayInterface(NetworkManager::Device * device);
 
+    void updateInterfaceList();
     NetworkManager::DeviceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 

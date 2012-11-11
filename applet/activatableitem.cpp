@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KNotification>
 #include <KGlobalSettings>
+#include <KIconLoader>
 
 #include <Plasma/Animation>
 #include <Plasma/PushButton>
@@ -40,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../libs/service/events.h"
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
-static const int m_iconSize = 48;
-int rowHeight = qMax(30, QFontMetrics(KGlobalSettings::generalFont()).height()+10);
+static const int m_iconSize = IconSize(KIconLoader::Desktop);
+int rowHeight = QFontMetrics(KGlobalSettings::generalFont()).height() + QFontMetrics(KGlobalSettings::generalFont()).xHeight() * 2;
 int maxConnectionNameWidth = QFontMetrics(KGlobalSettings::generalFont()).width("12345678901234567890123");
 
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
@@ -75,8 +76,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
 
     // disconnect button
     m_disconnectButton = new Plasma::IconWidget(this);
-    m_disconnectButton->setMaximumHeight(16);
-    m_disconnectButton->setMaximumWidth(16);
+    m_disconnectButton->setMaximumHeight(IconSize(KIconLoader::Small));
+    m_disconnectButton->setMaximumWidth(IconSize(KIconLoader::Small));
     //m_disconnectButton->setIcon(KIcon("network-disconnect"));
     //m_disconnectButton->setIcon(KIcon("call-stop"));
     m_disconnectButton->setIcon(KIcon("user-offline"));
@@ -131,7 +132,7 @@ void ActivatableItem::notifyNetworkingState()
     } else if (!NetworkManager::isWirelessEnabled() &&
                m_activatable &&
                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
-        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize,m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
+        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize, m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
     }
 }
 

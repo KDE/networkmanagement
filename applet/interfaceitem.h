@@ -142,6 +142,8 @@ protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
+    virtual void resizeEvent(QGraphicsSceneResizeEvent *event);
+
 protected Q_SLOTS:
     virtual void currentConnectionChanged();
 

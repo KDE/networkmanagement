@@ -33,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/ipv4config.h>
 #include <QtNetworkManager/manager.h>
 
+#include <KIconLoader>
+
 WirelessInterfaceItem::WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
@@ -82,7 +84,7 @@ void WirelessInterfaceItem::setConnectionInfo()
                     m_wirelessStatus->init(wremote);
                 }
                 if (!m_wirelessStatus->securityIcon().isEmpty()) {
-                    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(16, 16));
+                    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(IconSize(KIconLoader::Small), IconSize(KIconLoader::Small)));
 
                     m_connectionInfoIcon->setToolTip(m_wirelessStatus->securityTooltip());
                     m_connectionInfoIcon->show();
