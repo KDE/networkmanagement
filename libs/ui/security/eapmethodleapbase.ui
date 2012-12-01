@@ -56,8 +56,8 @@
          <property name="toolTip">
           <string>Password on this network</string>
          </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
+         <property name="passwordMode">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

@@ -43,8 +43,8 @@
      <property name="inputMask">
       <string notr="true"/>
      </property>
-     <property name="echoMode">
-      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     <property name="passwordMode">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
