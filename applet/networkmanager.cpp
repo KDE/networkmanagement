@@ -364,6 +364,8 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(m_kcmNMTray, m_kcmNMTray->moduleInfo().moduleName(),
                     m_kcmNMTray->moduleInfo().icon());
 
+    parent->resize(800, 600);
+
     connect(parent, SIGNAL(applyClicked()), this, SLOT(saveConfiguration()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(saveConfiguration()));
 }
