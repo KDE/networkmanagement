@@ -539,8 +539,8 @@
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
-                 <property name="echoMode">
-                  <enum>QLineEdit::Normal</enum>
+                 <property name="passwordMode">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -1103,8 +1103,8 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Normal</enum>
+           <property name="passwordMode">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

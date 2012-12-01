@@ -34,8 +34,8 @@
      </item>
      <item row="0" column="1">
       <widget class="KLineEdit" name="psk">
-       <property name="echoMode">
-        <enum>QLineEdit::Normal</enum>
+       <property name="passwordMode">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
