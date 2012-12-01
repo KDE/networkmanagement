@@ -91,7 +91,7 @@ void Security8021xSetting::secretsFromMap(QMap<QString,QString> secrets)
 QStringList Security8021xSetting::needSecrets() const
 {
     QStringList list;
-    if (mEnabled) {
+    if (enabled()) {
         Security8021xSetting::EapMethods eap = eapFlags();
         if (eap.testFlag(Security8021xSetting::tls) && privatekeypassword().isEmpty() && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
             list.append("private-key-password");
@@ -109,7 +109,7 @@ QStringList Security8021xSetting::needSecrets() const
 
 bool Security8021xSetting::hasPersistentSecrets() const
 {
-    if (mEnabled) {
+    if (enabled()) {
         Security8021xSetting::EapMethods eap = eapFlags();
         if (eap.testFlag(Security8021xSetting::tls) && (privatekeypasswordflags().testFlag(Setting::None) || privatekeypasswordflags().testFlag(Setting::AgentOwned))) {
             return true;
