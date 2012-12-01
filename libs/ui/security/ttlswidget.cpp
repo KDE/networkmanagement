@@ -85,6 +85,12 @@ TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::chap,
             new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
             i18nc("CHAP inner auth method", "CHAP"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::md5,
+            new EapMethodSimple(EapMethodSimple::MD5, connection, d->innerAuth),
+            i18nc("MD5 inner auth method", "MD5"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::gtc,
+            new EapMethodSimple(EapMethodSimple::GTC, connection, d->innerAuth),
+            i18nc("GTC inner auth method", "GTC"));
     formLayout->addRow(d->innerAuth);
 }
 
