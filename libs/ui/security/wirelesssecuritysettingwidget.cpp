@@ -246,6 +246,7 @@ void WirelessSecuritySettingWidget::securityTypeChanged(int index)
     Q_D(WirelessSecuritySettingWidget);
     d->settingSecurity->reset();
     d->ui.securityWidgets->setCurrentIndex(index);
+    validate();
 }
 
 void WirelessSecuritySettingWidget::readConfig()
