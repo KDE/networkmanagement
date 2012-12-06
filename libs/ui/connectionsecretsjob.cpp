@@ -109,6 +109,8 @@ void ConnectionSecretsJob::doAskUser()
         if (uiPlugin && error.isEmpty()) {
             m_settingWidget= uiPlugin->askUser(m_connection, 0);
             buttonCodes = uiPlugin->suggestAuthDialogButtons();
+        } else {
+            kWarning() << "Loading vpn plugin for" << vpnSetting->serviceType() << "failed: " << error;
         }
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(m_connection, 0);
