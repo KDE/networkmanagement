@@ -72,6 +72,7 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     msg.setDelayedReply(true);
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus condbus(con);
+    condbus.fromDbusMap(connection);
     condbus.fromDbusSecretsMap(connection);
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
