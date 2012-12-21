@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KIconLoader>
 
+#include <Plasma/ToolTipManager>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
@@ -88,6 +89,7 @@ void WirelessNetworkItem::setupItem()
     m_layout->setColumnFixedWidth(3, rowHeight);
     m_layout->setColumnSpacing(2, spacing);
 
+    Plasma::ToolTipContent data;
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMaximumWidth(maxConnectionNameWidth);
@@ -95,18 +97,22 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setAcceptsHoverEvents(false);
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
+    data.setImage(KIcon("network-wireless"));
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
         m_connectButton->setText(remoteconnection->connectionName(true));
+        data.setMainText(remoteconnection->connectionName(true));
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setText(m_wirelessStatus->ssid());
+        data.setMainText(m_wirelessStatus->ssid());
     }
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_layout->addItem(m_connectButton, 0, 0, 2, 2, Qt::AlignVCenter | Qt::AlignLeft);
 
+    Plasma::ToolTipManager::self()->setContent(this, data);
     // spacer to force the strength meter and the security icon to the right.
     QGraphicsWidget *widget = new QGraphicsWidget(this);
     widget->setMaximumHeight(12);
@@ -167,21 +173,26 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     if (!m_connectButton) {
         return;
     }
+    Plasma::ToolTipContent data;
     // Indicate the active interface
     QString t;
     if (interfaceConnection()) {
         t = interfaceConnection()->connectionName(true);
         m_connectButton->setIcon(interfaceConnection()->iconName());
+        data.setImage(KIcon(interfaceConnection()->iconName()));
     } else {
         t = m_wirelessStatus->ssid();
         m_connectButton->setText(t);
         m_connectButton->setIcon("network-wireless"); // "New" network
+        data.setImage(KIcon("network-wireless"));
         return;
     }
 
     if (!t.isEmpty()) {
         m_connectButton->setText(t);
+        data.setMainText(t);
     }
+    Plasma::ToolTipManager::self()->setContent(this, data);
     handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
     ActivatableItem::activationStateChanged(oldState, newState);
     update();

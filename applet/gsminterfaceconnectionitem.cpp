@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KIconLoader>
 
+#include <Plasma/ToolTipManager>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
@@ -91,6 +92,7 @@ void GsmInterfaceConnectionItem::setupItem()
     //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
     m_layout->addItem(m_connectButton, 0, 0, 2, 2, Qt::AlignVCenter | Qt::AlignLeft);
 
+    Plasma::ToolTipContent data;
     // spacer to force the strength meter to the right.
     QGraphicsWidget *widget = new QGraphicsWidget(this);
     widget->setMaximumHeight(12);
@@ -105,10 +107,15 @@ void GsmInterfaceConnectionItem::setupItem()
         m_connectButton->setIcon(remoteconnection->iconName());
         m_connectButton->setText(remoteconnection->connectionName(true));
         m_strengthMeter->setValue(remoteconnection->getSignalQuality());
+        data.setMainText(remoteconnection->connectionName(true));
+        data.setImage(KIcon(remoteconnection->iconName()));
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setIcon("network-wired");
+        data.setImage(KIcon("network-wired"));
     }
+
+    Plasma::ToolTipManager::self()->setContent(this, data);
 
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
