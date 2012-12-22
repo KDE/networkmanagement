@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=KNetworkManager
+Name[bs]=KNetworkManager
 Name[ca]=KNetworkManager
 Name[cs]=KNetworkManager
 Name[da]=KNetworkManager
@@ -32,6 +33,7 @@ Name[uk]=KNetworkManager
 Name[x-test]=xxKNetworkManagerxx
 Name[zh_TW]=KNetworkManager
 GenericName=Network Manager
+GenericName[bs]=Upravitelj Mrežom
 GenericName[ca]=Gestor de xarxa
 GenericName[cs]=Network Manager
 GenericName[da]=Netværkshåndtering
@@ -67,6 +69,7 @@ Exec=knetworkmanager
 Icon=knetworkmanager
 Type=Application
 Comment=A KDE frontend for NetworkManager
+Comment[bs]=KDE okruženje za upravljanje mrežom
 Comment[ca]=Un frontal del KDE pel NetworkManager
 Comment[cs]=KDE rozhraní pro NetworkManager
 Comment[da]=En KDE-brugerflade til Networkmanager

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Manager
 Name[ar]=مدير الشبكة
+Name[bs]=Upravitelj Mrežom
 Name[ca]=Gestor de xarxa
 Name[cs]=Správce sítě
 Name[da]=Network Manager
@@ -34,6 +35,7 @@ Name[x-test]=xxNetwork Managerxx
 Name[zh_TW]=Network Manager
 Comment=Network Manager data engine
 Comment[ar]=محرك بيانات مدير الشبكة
+Comment[bs]=Pogon za podatke upravitelja mrežom
 Comment[ca]=Motor de dades del gestor de xarxa
 Comment[cs]=Datový nástroj Správce sítě
 Comment[da]=Datamotor til Network Manager
