@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Other
 Name[ar]=أخرى
+Name[bs]=Ostalo
 Name[ca]=Altra
 Name[ca@valencia]=Altra
 Name[cs]=Jiné
@@ -46,6 +47,7 @@ Name[zh_CN]=其它
 Name[zh_TW]=其他
 Comment=Configure the Network Management tool
 Comment[ar]=أداة ضبط مدير الشبكة
+Comment[bs]=Konfiguriši alat za upravljanje mrežom
 Comment[ca]=Configura l'eina de gestió de xarxa
 Comment[ca@valencia]=Configura l'eina de gestió de xarxa
 Comment[cs]=Nastavit nástroj pro správu sítě

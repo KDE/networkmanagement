@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Connect to the Internet
 Comment[ar]=اتصل بالإنترنت
+Comment[bs]=Povezivanje na Internet
 Comment[ca]=Connecta a Internet
 Comment[ca@valencia]=Connecta a Internet
 Comment[cs]=Připojit se na Internet
@@ -42,6 +43,7 @@ Encoding=UTF-8
 Keywords=
 Name=Network Connections
 Name[ar]=وصلات الشبكة
+Name[bs]=Konekcije mreže
 Name[ca]=Connexions de xarxa
 Name[ca@valencia]=Connexions de xarxa
 Name[cs]=Síťová spojení
