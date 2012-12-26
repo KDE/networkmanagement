@@ -48,6 +48,8 @@ public:
     virtual void setShowPasswords(bool b = true) = 0;
     virtual void syncWidgetData(const QPair<QString, QString> &widgetData) = 0;
     virtual QPair<QString, QString> widgetData() = 0;
+Q_SIGNALS:
+    void valid(bool);
 protected:
     EapMethod(EapMethodPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
     EapMethodPrivate * d_ptr;

@@ -136,7 +136,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL))) {
     setting->setMayfail(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL)).value<bool>());
   } else {
-    setting->setMayfail(false);
+    setting->setMayfail(true);
   }
 }
 

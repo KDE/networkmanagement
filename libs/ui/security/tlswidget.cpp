@@ -50,6 +50,7 @@ TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * 
 {
     Q_D(TlsWidget);
     setupUi(this);
+    connect(leIdentity, SIGNAL(textChanged(QString)), SLOT(emitValid()));
     d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+|)$")), this);
     d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
 
@@ -84,9 +85,16 @@ TlsWidget::~TlsWidget()
 {
 }
 
+void TlsWidget::emitValid()
+{
+    emit valid(validate());
+}
+
 bool TlsWidget::validate() const
 {
-    return true;
+    // Connection dialog crashes when saving a connection with empty identity.
+    // https://bugs.kde.org/show_bug.cgi?id=307496
+    return !leIdentity->text().isEmpty();
 }
 
 void TlsWidget::readConfig()
@@ -144,6 +152,7 @@ void TlsWidget::readConfig()
         }
         leConnectToTheseServers->setText(servers.join(QLatin1String(", ")));
     }
+    emitValid();
 }
 
 void TlsWidget::writeConfig()

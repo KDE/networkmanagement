@@ -666,7 +666,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     bool enabled() const
     {
-      return mEnabled;
+      return mEnabled && m_initialized;
     }
 
     QByteArray certPathAsByteArray(const QString & path)

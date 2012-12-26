@@ -82,13 +82,14 @@ void SecurityEap::registerEapMethod(int key, EapMethod * eapMethod, const QStrin
     Q_D(SecurityEap);
 
     connect(d->chkShowPassword, SIGNAL(toggled(bool)), eapMethod, SLOT(setShowPasswords(bool)));
+    connect(eapMethod, SIGNAL(valid(bool)), SIGNAL(valid(bool)));
 
     EapMethodStack::registerEapMethod(key, eapMethod, theLabel);
 }
 
 bool SecurityEap::validate() const
 {
-    return true;
+    return currentEapMethod()->validate();
 }
 
 void SecurityEap::readConfig()
