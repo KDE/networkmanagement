@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Animation>
 #include <Plasma/Animator>
-#include <Plasma/ToolTipManager>
 
 #include <solid/control/networkmanager.h>
 
@@ -58,11 +57,6 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
 
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
-        Plasma::ToolTipContent data;
-        data.setMainText(remoteconnection->connectionName(true));
-        data.setImage(KIcon(remoteconnection->iconName()));
-        Plasma::ToolTipManager::self()->setContent(this, data);
-
         connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
                 SLOT(handleHasDefaultRouteChanged(bool)));
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
