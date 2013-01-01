@@ -332,11 +332,11 @@ QModelIndex ConnectionsListModel::indexFromItem(const ConnectionItem *item) cons
 
 void ConnectionsListModel::setFilter(QVariant tabName)
 {
-    if (tabName == "Connections") {
+    if (tabName == i18n("Connections")) {
         currentFilter = NormalConnections;
-    } else if (tabName == "VPN") {
+    } else if (tabName == i18n("VPN")) {
         currentFilter = VpnConnections;
-    } else if (tabName == "Shared Connections") {
+    } else if (tabName == i18n("Shared Connections")) {
         currentFilter = SharedConnections;
     }
 
