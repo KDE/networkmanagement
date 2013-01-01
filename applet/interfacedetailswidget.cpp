@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // KDE
 #include <KGlobalSettings>
 #include <kdebug.h>
+#include <KIcon>
 
 // Plasma
 #include <Plasma/DataEngineManager>
@@ -145,7 +146,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_traffic, row, 0);
 
     // add pushbutton for "back" action
-    m_backButton = new Plasma::PushButton(this);
+    m_backButton = new Plasma::IconWidget(this);
     m_backButton->setMaximumHeight(22);
     m_backButton->setMaximumWidth(22);
     m_backButton->setIcon(KIcon("go-previous"));

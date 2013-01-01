@@ -1,5 +1,6 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2010-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -28,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmodeminterface.h>
 #include <Plasma/Label>
-#include <Plasma/PushButton>
+#include <Plasma/IconWidget>
 #include <Plasma/SignalPlotter>
 
 #include "types.h"
@@ -80,7 +81,7 @@ Q_OBJECT
         Plasma::SignalPlotter *m_trafficPlotter;
         Plasma::Label* m_traffic;
 
-        Plasma::PushButton* m_backButton;
+        Plasma::IconWidget* m_backButton;
 
         QString m_tx;
         QString m_txSource;
