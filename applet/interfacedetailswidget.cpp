@@ -1,7 +1,7 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2010 Alexander Naumov <posix.ru@gmail.com>
-Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
+Copyright 2010-2013 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // KDE
 #include <KGlobalSettings>
 #include <kdebug.h>
+#include <KIcon>
 
 // Plasma
 #include <Plasma/DataEngineManager>
@@ -171,7 +172,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_disconnectButton, 0, 0, 2, 1, Qt::AlignLeft | Qt::AlignVCenter);
 
     // add pushbutton for "back" action
-    m_backButton = new Plasma::PushButton(this);
+    m_backButton = new Plasma::IconWidget(this);
     int backButtonHeight = QFontMetrics(KGlobalSettings::generalFont()).height() + QFontMetrics(KGlobalSettings::generalFont()).xHeight();
     m_backButton->setMaximumHeight(backButtonHeight);
     m_backButton->setMaximumWidth(backButtonHeight);

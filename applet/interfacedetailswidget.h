@@ -1,6 +1,6 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
-Copyright 2010-2012 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2010-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/modemdevice.h>
 #include <Plasma/Label>
 #include <Plasma/IconWidget>
-#include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
 #include "knmserviceprefs.h"
@@ -81,9 +80,8 @@ Q_OBJECT
         Plasma::SignalPlotter *m_trafficPlotter;
         Plasma::Label* m_traffic;
 
-        //Plasma::PushButton* m_disconnectButton;
         Plasma::IconWidget* m_disconnectButton;
-        Plasma::PushButton* m_backButton;
+        Plasma::IconWidget* m_backButton;
 
         QString m_tx;
         QString m_txSource;
