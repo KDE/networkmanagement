@@ -27,18 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtDeclarative>
 
-#include "activatableitem.h"
+#include <QtNetworkManager/manager.h>
+
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
 #include "remotewirelessinterfaceconnection.h"
 
 // More own includes
 #include "declarativeinterfaceitem.h"
-#include "wirelessinterfaceitem.h"
-#include "vpninterfaceitem.h"
-#include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
-#include "typelistwidget.h"
 #include "uiutils.h"
 #include "paths.h"
 

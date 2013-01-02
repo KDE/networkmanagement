@@ -28,8 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class RemoteActivatable;
 class RemoteWirelessNetwork;
 class RemoteWirelessObject;
-class WirelessInterfaceConnectionItem;
-class WirelessNetworkItem;
 class WirelessStatusPrivate;
 
 /**

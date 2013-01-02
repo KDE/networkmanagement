@@ -57,7 +57,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <uiutils.h>
 
-#include "interfaceitem.h"
 #include "../libs/internals/settings/802-11-wireless.h"
 
 class InterfaceDetails
@@ -94,12 +93,11 @@ class InterfaceDetails
 };
 
 InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0),
-    m_ifaceItem(0), m_iface(0), m_updateEnabled(false)
+    m_iface(0), m_updateEnabled(false)
 {
     m_gridLayout = new QGraphicsGridLayout(this);
 
     int row = 1;
-    m_gridLayout->addItem(m_ifaceItem, row, 0);
     //Info
     row++;
     m_info = new Plasma::Label(this);
@@ -602,24 +600,6 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
         } else
             showDetails();
     }
-}
-
-void InterfaceDetailsWidget::setInterfaceItem(InterfaceItem* item, bool disconnectOld)
-{
-    if (m_ifaceItem) {
-        m_ifaceItem->hide();
-    }
-
-    NetworkManager::Device * iface = 0;
-    m_ifaceItem = item;
-
-    if (item) {
-        iface = item->interface();
-        item->show();
-    }
-
-    m_gridLayout->addItem(m_ifaceItem, 0, 0);
-    setInterface(iface, disconnectOld);
 }
 
 void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool disconnectOld)

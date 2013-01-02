@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionslistmodel.h"
 
 #include <KDebug>
-#include <QtNetworkManager/manager.h>
+#include <KLocale>
 #include <KToolInvocation>
 #include <KStandardDirs>
 
@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotewirelessinterfaceconnection.h"
 #include "remotewirelessnetwork.h"
 #include "remotegsminterfaceconnection.h"
-#include "activatableitem.h"
 
+#include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)

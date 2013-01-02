@@ -9,34 +9,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 
 set(networkmanager_SRCS
     networkmanager.cpp
-
-    nmpopup.cpp
-    activatablelistwidget.cpp
-    typelistwidget.cpp
-    connectionstabbar.cpp
-
     connectionslistmodel.cpp
     connectionitem.cpp
-
     declarativenmpopup.cpp
-
     declarativeinterfaceitem.cpp
-
     interfaceslistmodel.cpp
-
-    interfaceitem.cpp
-    wirelessinterfaceitem.cpp
-    vpninterfaceitem.cpp
     interfacedetailswidget.cpp
-
-    activatableitem.cpp
-    interfaceconnectionitem.cpp
-    wirelessnetworkitem.cpp
-    hiddenwirelessnetworkitem.cpp
-    showmoreitem.cpp
-    wirelessstatus.cpp
-    gsminterfaceconnectionitem.cpp
-
     ../libs/service/events.cpp
     )
 

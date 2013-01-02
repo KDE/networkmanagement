@@ -31,8 +31,7 @@
 #include "remotewirelessnetwork.h"
 #include "remotegsminterfaceconnection.h"
 #include "remotevpninterfaceconnection.h"
-
-#include "../applet/wirelessstatus.h"
+#include "wirelessstatus.h"
 
 
 class NetworkManagementEnginePrivate

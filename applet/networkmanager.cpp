@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "networkmanager.h"
-#include "nmpopup.h"
 #include "declarativenmpopup.h"
 #include "uiutils.h"
 #include "remoteactivatablelist.h"

@@ -10,7 +10,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KDE4_ENABLE_EXCEPTIONS}" )
 
 set(networkmanagement_engine_srcs
-    ../applet/wirelessstatus.cpp
+    wirelessstatus.cpp
     networkmanagementengine.cpp
 )
 

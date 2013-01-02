@@ -39,7 +39,6 @@ class RemoteActivatable;
 class RemoteInterfaceConnection;
 class RemoteInterfaceList;
 class InterfaceDetails;
-class InterfaceItem;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
 {
@@ -48,7 +47,6 @@ Q_OBJECT
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
         void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
-        void setInterfaceItem(InterfaceItem* item, bool disconnectOld = true);
         void resetUi();
         QString getLastIfaceUni();
 
@@ -74,7 +72,6 @@ Q_OBJECT
         void connectSignals();
         void disconnectSignals();
 
-        InterfaceItem * m_ifaceItem;
         NetworkManager::Device* m_iface;
         QString m_ifaceUni;
 

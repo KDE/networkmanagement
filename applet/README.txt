@@ -1,12 +1,10 @@
 The structure of the networkmanager applet is is (roughly):
 
 networkmanager: paint icon, initialize the extenderitem inside it
-nmpopup: holds interfaceitems and the tab-thing for activatables
-activatablelistwidget: scrollwidget holding the list of activatables, used as tabs
-activatableitem: base class for painting activatable
-interfaceconnectionitem: activatableitem for non-wireless connections
-wirelessnetworkitem: specialised activatableitem for wifi
-(wireless)interfaceitem: paint an interface, in the left column
+declarativenmpopup holds interfaceitems and the tab-thing for activatables
+qml/ConnectionsListWidget.qml: scrollwidget holding the list of activatables, used as tabs
+qml/ConnectionItem.qml: base class for painting activatable
+qml/InterfaceItem.qml: paint an interface, in the left column
 interfacedetailswidget: show details of the interface, visible when clicked on interface
 
 

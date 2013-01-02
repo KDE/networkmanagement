@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionitem.h"
 
-#include "activatableitem.h"
 #include <kdebug.h>
 #include "remoteactivatable.h"
 #include "uiutils.h"
@@ -30,7 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSize>
 
 #include <KIcon>
+#include <KLocale>
 #include <KNotification>
+#include <KGlobal>
 #include <KGlobalSettings>
 
 #include <Plasma/Animation>
@@ -45,8 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <remotewirelessnetwork.h>
 #include <remotegsminterfaceconnection.h>
 #include <wirelesssecurityidentifier.h>
-
-#include "wirelessnetworkitem.h"
 
 #include "../libs/service/events.h"
 
