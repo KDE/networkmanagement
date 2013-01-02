@@ -183,7 +183,6 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
 
     QUuid uuid = d->uuidToPath.key(connection->path(), QUuid());
     if (!uuid.isNull() && d->connections.contains(uuid.toString())) {
-        ConnectionDbus temp(new Knm::Connection(QUuid(), Knm::Connection::Wired));
         Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
         ConnectionDbus dbusConverter(con);
         dbusConverter.fromDbusMap(connection->GetSettings());
