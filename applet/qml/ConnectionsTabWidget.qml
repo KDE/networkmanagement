@@ -36,6 +36,9 @@ Column {
         onCurrentTabChanged: {
             connectionsListModel.setFilter(currentTab.text)
         }
+        Component.onCompleted: {
+            connectionsListModel.setFilter(currentTab.text)
+        }
     }
 
     PlasmaComponents.TabGroup {
