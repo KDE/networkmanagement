@@ -134,9 +134,18 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
     } else {
         RemoteConnection * connectionIface = new RemoteConnection(d->iface->service(), path, this);
         makeConnections(connectionIface);
+        const QVariantMapMap settings = connectionIface->GetSettings();
+
+        // Sometimes we get an ghost wired connection (https://bugs.kde.org/show_bug.cgi?id=311032), ignore it. 
+        if (settings.isEmpty()) {
+            qWarning() << "not adding connection with empty setings";
+            delete connectionIface;
+            return;
+        }
+
         Knm::Connection * connection = new Knm::Connection(QUuid(), Knm::Connection::Wired);
         ConnectionDbus dbusConverter(connection);
-        dbusConverter.fromDbusMap(connectionIface->GetSettings());
+        dbusConverter.fromDbusMap(settings);
 
         d->connections.insert(connection->uuid(),connectionIface);
         d->uuidToPath.insert(connection->uuid(), path);
