@@ -57,7 +57,6 @@ void RemoteWirelessInterfaceConnection::wicPropertiesChanged(const QVariantMap &
     it = changedProperties.find(signalStrengthKey);
     if (it != changedProperties.end()) {
         d->signalStrength = it->toInt();
-        kDebug() << "aiei";
         emit strengthChanged(d->signalStrength);
         propKeys.removeOne(signalStrengthKey);
     }

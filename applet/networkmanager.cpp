@@ -603,7 +603,7 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
+    //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     NetworkManager::Device * interface = qobject_cast<NetworkManager::Device *>(sender());
     if (interface) {
         if (m_activeSystrayInterface && m_activeSystrayInterface->uni() != interface->uni()) {
