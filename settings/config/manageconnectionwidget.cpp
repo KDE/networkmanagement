@@ -427,17 +427,19 @@ void ManageConnectionWidget::importClicked()
     //Try to import the connection with each VPN plugin found
     Knm::Connection * con = 0;
     QString pluginError;
-    QString lastErrorMessage;
+    QString vpnErrorMessage;
+    VpnUiPlugin::ErrorType vpnError = VpnUiPlugin::NoError;
     KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
     foreach (const KPluginInfo &pi, vpnServices) {
         QString serviceType = pi.service()->property("X-NetworkManager-Services", QVariant::String).toString();
         VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
         if (pluginError.isEmpty()) {
+            vpnError = VpnUiPlugin::NoError;
+            vpnErrorMessage.clear();
             QVariantList conArgs = vpnUi->importConnectionSettings(impFile);
             if (conArgs.isEmpty()) {
-                if (vpnUi->lastError() != VpnUiPlugin::NotImplemented) {
-                    lastErrorMessage = vpnUi->lastErrorMessage();
-                }
+                vpnError = vpnUi->lastError();
+                vpnErrorMessage = vpnUi->lastErrorMessage();
             } else {
                 conArgs.insert(0, serviceType);        //VPN service
                 con = mEditor->createConnection(false, Knm::Connection::Vpn, conArgs);
@@ -450,19 +452,32 @@ void ManageConnectionWidget::importClicked()
                     delete vpnUi;
                     break;
                 }
+
+                // User has cancelled the create connection dialog.
+                if (vpnError == VpnUiPlugin::NoError) {
+                    delete vpnUi;
+                    break;
+                }
             }
+        } else {
+            kWarning() << "Error loading vpn plugin for" << pi.name() << ":" << pluginError;
         }
         delete vpnUi;
     }
-    if (!con) {
-        kDebug() << "VPN import failed";
-        if (lastErrorMessage.isEmpty()) {
-            KMessageBox::error(this, i18n("None of the supported plugins implement importing operation for file %1.", impFile), i18n("Error importing VPN connection settings")) ;
-        } else {
-            KMessageBox::error(this, lastErrorMessage, i18n("Error importing VPN connection settings")) ;
-        }
-    }
 
+    switch (vpnError) {
+    case VpnUiPlugin::NoError:
+        break;
+
+    case VpnUiPlugin::NotImplemented:
+        KMessageBox::error(this, i18n("None of the supported plugins implement importing operation for file %1.", impFile), i18n("Error importing VPN connection settings")) ;
+        break;
+
+    case VpnUiPlugin::Error:
+        kDebug() << "VPN import failed";
+        KMessageBox::error(this, vpnErrorMessage, i18n("Error importing VPN connection settings")) ;
+        break;
+    }
 }
 
 void ManageConnectionWidget::exportClicked()

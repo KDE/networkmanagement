@@ -63,6 +63,7 @@ QVariantList NovellVpnUiPlugin::importConnectionSettings(const QString &fileName
     Q_UNUSED(fileName);
 
     // TODO : import the Novell VPN connection from file and return settings
+    mError = VpnUiPlugin::NotImplemented;
     return QVariantList();
 }
 
@@ -72,6 +73,7 @@ bool NovellVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, c
     Q_UNUSED(fileName);
 
     // TODO : export Novell VPN connection to file
+    mError = VpnUiPlugin::NotImplemented;
     return false;
 }
 
