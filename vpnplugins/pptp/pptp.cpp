@@ -68,6 +68,7 @@ QVariantList PptpUiPlugin::importConnectionSettings(const QString &fileName)
     Q_UNUSED(fileName);
 
     // TODO : import the PPTP connection from file and return settings
+    mError = VpnUiPlugin::NotImplemented;
     return QVariantList();
 }
 
@@ -77,6 +78,7 @@ bool PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
     Q_UNUSED(fileName);
 
     // TODO : export PPTP connection to file
+    mError = VpnUiPlugin::NotImplemented;
     return false;
 }
 

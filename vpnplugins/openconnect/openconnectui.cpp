@@ -69,12 +69,14 @@ QString OpenconnectUiPlugin::supportedFileExtensions() const
 QVariantList OpenconnectUiPlugin::importConnectionSettings(const QString &fileName)
 {
     // TODO : import the Openconnect connection from file and return settings
+    mError = VpnUiPlugin::NotImplemented;
     return QVariantList();
 }
 
 bool OpenconnectUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export Openconnect connection to file
+    mError = VpnUiPlugin::NotImplemented;
     return false;
 }
 

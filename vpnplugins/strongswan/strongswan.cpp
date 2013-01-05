@@ -69,6 +69,7 @@ QVariantList StrongswanUiPlugin::importConnectionSettings(const QString &fileNam
     Q_UNUSED(fileName);
 
     // TODO : import the StrongSwan connection from file and return settings
+    mError = VpnUiPlugin::NotImplemented;
     return QVariantList();
 }
 
@@ -78,6 +79,7 @@ bool StrongswanUiPlugin::exportConnectionSettings(Knm::Connection * connection, 
     Q_UNUSED(fileName);
 
     // TODO : export StrongSwan connection to file
+    mError = VpnUiPlugin::NotImplemented;
     return false;
 }
 

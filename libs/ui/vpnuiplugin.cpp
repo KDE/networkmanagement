@@ -10,7 +10,7 @@ public:
 
 VpnUiPlugin::VpnUiPlugin(QObject * parent) : QObject(parent), d(new Private)
 {
-    mError = NotImplemented;
+    mError = NoError;
 }
 
 VpnUiPlugin::~VpnUiPlugin()
