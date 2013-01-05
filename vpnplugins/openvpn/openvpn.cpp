@@ -543,20 +543,20 @@ bool OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, con
     // Handle PKCS#12 (all certs are the same file)
     if (!cacert.isEmpty() && !user_cert.isEmpty() && !private_key.isEmpty()
                           && cacert == user_cert && cacert == private_key) {
-        line = QString(PKCS12_TAG) + ' ' + cacert + '\n';
+        line = QString("%1 \"%2\"\n").arg(PKCS12_TAG, cacert);
         expFile.write(line.toLatin1());
     }
     else {
         if (!cacert.isEmpty()) {
-            line = QString(CA_TAG) + ' ' + cacert + '\n';
+            line = QString("%1 \"%2\"\n").arg(CA_TAG, cacert);
             expFile.write(line.toLatin1());
         }
         if (!user_cert.isEmpty()) {
-            line = QString(CERT_TAG) + ' ' + user_cert + '\n';
+            line = QString("%1 \"%2\"\n").arg(CERT_TAG, user_cert);
             expFile.write(line.toLatin1());
         }
         if (!private_key.isEmpty()) {
-            line = QString(KEY_TAG) + ' ' + private_key + '\n';
+            line = QString("%1 \"%2\"\n").arg(KEY_TAG, private_key);
             expFile.write(line.toLatin1());
         }
     }
@@ -565,17 +565,17 @@ bool OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, con
         line = QString(AUTH_USER_PASS_TAG) + '\n';
         expFile.write(line.toLatin1());
         if (!dataMap[NM_OPENVPN_KEY_TLS_REMOTE].isEmpty()) {
-            line = QString(TLS_REMOTE_TAG) + '\"' + dataMap[NM_OPENVPN_KEY_TLS_REMOTE] + "\"\n";
+            line = QString(TLS_REMOTE_TAG) + " \"" + dataMap[NM_OPENVPN_KEY_TLS_REMOTE] + "\"\n";
             expFile.write(line.toLatin1());
         }
         if (!dataMap[NM_OPENVPN_KEY_TA].isEmpty()) {
-            line = QString(TLS_AUTH_TAG) + ' ' + dataMap[NM_OPENVPN_KEY_TA] + (dataMap[NM_OPENVPN_KEY_TA_DIR].isEmpty() ?
+            line = QString(TLS_AUTH_TAG) + " \"" + dataMap[NM_OPENVPN_KEY_TA] + '\"' + (dataMap[NM_OPENVPN_KEY_TA_DIR].isEmpty() ?
                                 "\n" : (' ' + dataMap[NM_OPENVPN_KEY_TA_DIR]) + '\n');
             expFile.write(line.toLatin1());
         }
     }
     if (dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE] == NM_OPENVPN_CONTYPE_STATIC_KEY) {
-        line = QString(SECRET_TAG) + ' ' + dataMap[NM_OPENVPN_KEY_STATIC_KEY] + (dataMap[NM_OPENVPN_KEY_STATIC_KEY_DIRECTION].isEmpty() ?
+        line = QString(SECRET_TAG) + " \"" + dataMap[NM_OPENVPN_KEY_STATIC_KEY] + '\"' + (dataMap[NM_OPENVPN_KEY_STATIC_KEY_DIRECTION].isEmpty() ?
                           "\n" : (' ' + dataMap[NM_OPENVPN_KEY_STATIC_KEY_DIRECTION]) + '\n');
         expFile.write(line.toLatin1());
     }
