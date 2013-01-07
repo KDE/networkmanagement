@@ -148,6 +148,10 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
   } else {
     setting->setMayfail(true);
   }
+  if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IP6_PRIVACY))) {
+    setting->setPrivacy(static_cast<Knm::Ipv6Setting::EnumPrivacy::type>(
+        map.value(QLatin1String(NM_SETTING_IP6_CONFIG_IP6_PRIVACY)).value<int>()));
+  }
 }
 
 Knm::Ipv6Setting::EnumMethod::type Ipv6Dbus::methodStringToEnum(QString method)
@@ -273,6 +277,7 @@ QVariantMap Ipv6Dbus::toMap()
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES, setting->ignoreautoroute());
   insertIfTrue(map, NM_SETTING_IP6_CONFIG_NEVER_DEFAULT, setting->neverdefault());
   insertIfFalse(map, NM_SETTING_IP6_CONFIG_MAY_FAIL, setting->mayfail());
+  map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_IP6_PRIVACY), setting->privacy());
   return map;
 }
 
