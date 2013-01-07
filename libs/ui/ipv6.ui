@@ -117,7 +117,7 @@
            <string>Automatic (addresses only)</string>
           </property>
          </item>
-	 <item>
+         <item>
           <property name="text">
            <string>Automatic (DHCP only)</string>
           </property>
@@ -333,6 +333,32 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="privacy">
+         <item>
+          <property name="text">
+           <string>Disabled</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Enabled (prefer public address)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Enabled (prefer temporary addresses)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Privacy Extensions:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

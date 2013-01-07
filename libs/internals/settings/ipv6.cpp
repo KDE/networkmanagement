@@ -10,7 +10,8 @@ Ipv6Setting::Ipv6Setting() : Setting(Setting::Ipv6),
     mIgnoredhcpdns(false),
     mIgnoreautoroute(false),
     mNeverdefault(false),
-    mMayfail(true)
+    mMayfail(true),
+    mPrivacy(EnumPrivacy::Unknown)
 {
 }
 
@@ -25,6 +26,7 @@ Ipv6Setting::Ipv6Setting(Ipv6Setting *setting) : Setting(setting)
     setNeverdefault(setting->neverdefault());
     setRoutes(setting->routes());
     setMayfail(setting->mayfail());
+    setPrivacy(setting->privacy());
 }
 
 Ipv6Setting::~Ipv6Setting()

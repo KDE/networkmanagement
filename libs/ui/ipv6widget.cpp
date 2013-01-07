@@ -187,6 +187,14 @@ void IpV6Widget::readConfig()
 
     //required or not
     d->ui.cbMayFail->setChecked(!d->setting->mayfail());
+
+    // privacy
+    const Knm::Ipv6Setting::EnumPrivacy::type privacy = d->setting->privacy();
+    if (privacy == Knm::Ipv6Setting::EnumPrivacy::Unknown) {
+        d->ui.privacy->setCurrentIndex(Knm::Ipv6Setting::EnumPrivacy::Disabled); // unknown and disabled seem to behave the same
+    } else {
+        d->ui.privacy->setCurrentIndex(privacy);
+    }
 }
 
 void IpV6Widget::writeConfig()
@@ -274,6 +282,9 @@ void IpV6Widget::writeConfig()
 
     //required or not
     d->setting->setMayfail(!d->ui.cbMayFail->isChecked());
+
+    // privacy
+    d->setting->setPrivacy(static_cast<Knm::Ipv6Setting::EnumPrivacy::type>(d->ui.privacy->currentIndex()));
 }
 
 void IpV6Widget::methodChanged(int currentIndex)

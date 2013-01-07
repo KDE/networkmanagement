@@ -21,6 +21,11 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
       public:
       enum type { Automatic, LinkLocal, Manual, Shared, Ignore, Dhcp, COUNT };
     };
+    class EnumPrivacy
+    {
+      public:
+      enum type { Unknown = -1, Disabled, PreferPublic, PreferTemporary, COUNT };
+    };
 
     Ipv6Setting( );
     Ipv6Setting(Ipv6Setting *);
@@ -168,6 +173,26 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
       return mMayfail;
     }
 
+    /**
+      Set Privacy
+    */
+    void setPrivacy( EnumPrivacy::type i )
+    {
+        if (i >= EnumPrivacy::Unknown && i < EnumPrivacy::COUNT) {
+            mPrivacy = i;
+        } else {
+            mPrivacy = EnumPrivacy::Unknown;
+        }
+    }
+
+    /**
+      Get Privacy
+    */
+    EnumPrivacy::type privacy() const
+    {
+      return mPrivacy;
+    }
+
 
   protected:
 
@@ -181,6 +206,7 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     bool mIgnoreautoroute;
     bool mNeverdefault;
     bool mMayfail;
+    EnumPrivacy::type mPrivacy;
   private:
 };
 
