@@ -95,12 +95,15 @@ Item {
         anchors.rightMargin: 2
         anchors.fill: parent
         visible: false
-        onAccepted: {
-            if (connectionNameEdit.text != "") {
-                enterPressed(connectionNameEdit.text)
-                connectionNameEdit.text = ""
+        Connections {
+            target: connectionNameEdit
+            onAccepted: {
+                if (connectionNameEdit.text != "") {
+                    enterPressed(connectionNameEdit.text)
+                    connectionNameEdit.text = ""
+                }
+                hiddenWirelessItem.state = "InitialState"
             }
-            hiddenWirelessItem.state = "InitialState"
         }
     }
 
