@@ -35,6 +35,7 @@ Name[sr@latin]=Priključak VPN sučelja za upravljanje mrežom
 Name[sv]=Insticksprogram till nätverkshantering med VPN-användargränssnitt
 Name[uk]=Додаток інтерфейсу користувача керування VPN
 Name[x-test]=xxNetwork Management VPN UI Pluginxx
+Name[zh_CN]=网络管理 VPN 用户界面插件
 Name[zh_TW]=網路管理 VPN 使用者介面外掛程式
 Comment=Defines KDE Network Management UI Plugins
 Comment[ar]=تعرف  ملحقات UI لمدير الشبكة
@@ -70,6 +71,7 @@ Comment[sr@latin]=Definiše KDE priključke za upravljanje mrežom
 Comment[sv]=Definierar insticksprogram för KDE:s nätverkshantering
 Comment[uk]=Визначає додатки інтерфейсу користувача керування мережею KDE
 Comment[x-test]=xxDefines KDE Network Management UI Pluginsxx
+Comment[zh_CN]=定义 KDE 网络管理用户界面插件
 Comment[zh_TW]=定義 KDE 網路管理介面外掛程式
 
 [PropertyDef::X-NetworkManager-Services]

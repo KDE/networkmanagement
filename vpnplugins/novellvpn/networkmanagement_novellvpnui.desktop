@@ -48,6 +48,7 @@ Name[sv]=Novell VPN (turnpike)
 Name[tr]=Novell VPN (turnpike)
 Name[uk]=Novell VPN (turnpike)
 Name[x-test]=xxNovell VPN (turnpike)xx
+Name[zh_CN]=Novell VPN (turnpike)
 Name[zh_TW]=Novell VPN (turnpike)
 Comment=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.
 Comment[ar]=تسمح لمدير الشبكة ك بالاتصال إلى شبكات Novell VPN turnpike
@@ -83,5 +84,6 @@ Comment[sr@latin]=Omogućava K‑menadžeru-mreže povezivanje na Novellove (tur
 Comment[sv]=Tillåter nätverkshantering att ansluta till Novell VPN (turnpike).
 Comment[uk]=Надає змогу KNetworkManager з’єднуватися з Novell VPN (turnpike).
 Comment[x-test]=xxAllows KNetworkManager to connect to Novell VPN (turnpike) VPNs.xx
+Comment[zh_CN]=支持网络管理器连接到 Novell VPN (turnpike)。
 Comment[zh_TW]=允許 KNetworkManager 連線到 Novell VPN (turnpike) 的 VPN 網路。
 
