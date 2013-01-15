@@ -38,6 +38,7 @@ public:
     void writeConfig();
     void readSecrets();
 private slots:
+    void emitValid();
     void chkShowPassToggled();
 };
 

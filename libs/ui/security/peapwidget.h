@@ -43,6 +43,7 @@ public:
     void syncWidgetData(const QPair<QString, QString> &widgetData);
     QPair<QString, QString> widgetData();
 private Q_SLOTS:
+    void emitValid();
     void showAltSubjectMatchesEditor();
     void showServersEditor();
 };

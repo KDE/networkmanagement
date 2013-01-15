@@ -41,6 +41,7 @@ public:
 public Q_SLOTS:
     void setShowPasswords(bool b = true);
 private Q_SLOTS:
+    void emitValid();
     void passwordStorageChanged(int);
 };
 

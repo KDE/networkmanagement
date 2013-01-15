@@ -98,6 +98,11 @@ TtlsWidget::~TtlsWidget()
 {
 }
 
+void TtlsWidget::emitValid()
+{
+    emit valid(validate());
+}
+
 bool TtlsWidget::validate() const
 {
     return true;
@@ -138,6 +143,7 @@ void TtlsWidget::readConfig()
     }
 
     d->innerAuth->readConfig();
+    emitValid();
 }
 
 void TtlsWidget::writeConfig()

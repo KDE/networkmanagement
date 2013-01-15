@@ -118,6 +118,7 @@ void WirelessSecurityAuthWidget::readSecrets()
 {
     Q_D(WirelessSecurityAuthWidget);
     d->settingWidget->readSecrets();
+    validate();
 }
 
 void WirelessSecurityAuthWidget::writeConfig()

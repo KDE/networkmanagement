@@ -46,6 +46,8 @@ private:
     class Private;
     Private * d;
     void setupUi();
+private Q_SLOTS:
+    void emitValid();
 };
 
 #endif

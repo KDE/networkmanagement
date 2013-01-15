@@ -69,6 +69,11 @@ void LeapAuthWidget::setupUi()
     d->pw->setFocus(Qt::OtherFocusReason);
 }
 
+void LeapAuthWidget::emitValid()
+{
+    emit valid(validate());
+}
+
 bool LeapAuthWidget::validate() const
 {
     return true;
