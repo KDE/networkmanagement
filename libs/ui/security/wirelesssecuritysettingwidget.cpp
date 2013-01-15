@@ -304,6 +304,7 @@ void WirelessSecuritySettingWidget::readSecrets()
     if (sw) {
         sw->readSecrets();
     }
+    validate();
 }
 
 void WirelessSecuritySettingWidget::writeConfig()

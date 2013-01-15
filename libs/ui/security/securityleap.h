@@ -36,6 +36,7 @@ public:
     void writeConfig();
     void readSecrets();
 private Q_SLOTS:
+    void emitValid();
     void chkShowPassToggled(bool);
     void passwordStorageChanged(int);
 };

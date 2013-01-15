@@ -31,15 +31,22 @@ EapMethodLeap::EapMethodLeap(Knm::Connection* connection, QWidget * parent)
 {
     setupUi(this);
     connect(cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
+    connect(leUsername, SIGNAL(textChanged(QString)), SLOT(emitValid()));
+    connect(lePassword, SIGNAL(textChanged(QString)), SLOT(emitValid()));
 }
 
 EapMethodLeap::~EapMethodLeap()
 {
 }
 
+void EapMethodLeap::emitValid()
+{
+    emit valid(validate());
+}
+
 bool EapMethodLeap::validate() const
 {
-    return true;
+    return !((lePassword->text().isEmpty() && cmbPasswordStorage->currentIndex() == EapMethodPrivate::Store) || leUsername->text().isEmpty());
 }
 
 void EapMethodLeap::readConfig()
@@ -103,6 +110,7 @@ void EapMethodLeap::passwordStorageChanged(int type)
             lePassword->setEnabled(false);
             break;
     }
+    emitValid();
 }
 
 void EapMethodLeap::syncWidgetData(const QPair<QString, QString> &widgetData)

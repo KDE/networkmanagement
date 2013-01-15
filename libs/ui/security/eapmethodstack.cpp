@@ -86,7 +86,9 @@ void EapMethodStack::setCurrentEapMethodInternal(int index)
     eapMethods->setCurrentIndex(index);
 
     // Load data into the chosen epa method.
-    qobject_cast<EapMethod *>(eapMethods->widget(index))->syncWidgetData(pair);
+    EapMethod * eapMethod = qobject_cast<EapMethod *>(eapMethods->widget(index));
+    eapMethod->syncWidgetData(pair);
+    QMetaObject::invokeMethod(eapMethod, "valid", Qt::DirectConnection, Q_ARG(bool, eapMethod->validate()));
 }
 
 EapMethod * EapMethodStack::currentEapMethod() const

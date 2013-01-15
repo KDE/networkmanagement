@@ -58,6 +58,9 @@ LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
     connect(d->ui.cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
     d->ui.lePassword->setPasswordMode(true);
+
+    connect(d->ui.leUserName, SIGNAL(textChanged(QString)), SLOT(emitValid()));
+    connect(d->ui.lePassword, SIGNAL(textChanged(QString)), SLOT(emitValid()));
 }
 
 LeapWidget::~LeapWidget()
@@ -82,12 +85,18 @@ void LeapWidget::passwordStorageChanged(int type)
             d->ui.lePassword->setEnabled(false);
             break;
     }
+    emitValid();
+}
+
+void LeapWidget::emitValid()
+{
+    emit valid(validate());
 }
 
 bool LeapWidget::validate() const
 {
     Q_D(const LeapWidget);
-    return !(d->ui.lePassword->text().isEmpty() || d->ui.leUserName->text().isEmpty());
+    return !((d->ui.lePassword->text().isEmpty() && d->ui.cmbPasswordStorage->currentIndex() == LeapWidgetPrivate::Store) || d->ui.leUserName->text().isEmpty());
 }
 
 void LeapWidget::readConfig()
@@ -131,6 +140,7 @@ void LeapWidget::readSecrets()
     } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotRequired)){
         d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::NotRequired);
     }
+    emitValid();
 }
 
 // vim: sw=4 sts=4 et tw=100

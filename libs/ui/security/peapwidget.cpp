@@ -88,6 +88,11 @@ PeapWidget::~PeapWidget()
 {
 }
 
+void PeapWidget::emitValid()
+{
+    emit valid(validate());
+}
+
 bool PeapWidget::validate() const
 {
     return true;
@@ -132,6 +137,7 @@ void PeapWidget::readConfig()
         cboPeapVersion->setCurrentIndex(1);
     else if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::one)
         cboPeapVersion->setCurrentIndex(2);
+    emitValid();
 }
 
 void PeapWidget::writeConfig()

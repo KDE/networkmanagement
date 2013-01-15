@@ -128,6 +128,7 @@ void SecurityEap::readSecrets()
 {
     // rely on readConfig before readSecrets!
     currentEapMethod()->readSecrets();
+    emit valid(validate());
 }
 
 // vim: sw=4 sts=4 et tw=100

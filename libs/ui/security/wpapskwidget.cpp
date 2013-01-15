@@ -54,6 +54,7 @@ WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
 
+    connect(d->ui.psk, SIGNAL(textChanged(QString)), SLOT(emitValid()));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.psk->setEchoMode(KLineEdit::Password);
 }
@@ -67,6 +68,11 @@ void WpaPskWidget::chkShowPassToggled()
     Q_D(WpaPskWidget);
     bool on = d->ui.chkShowPass->isChecked();
     d->ui.psk->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
+}
+
+void WpaPskWidget::emitValid()
+{
+    emit valid(validate());
 }
 
 bool WpaPskWidget::validate() const
@@ -99,6 +105,7 @@ void WpaPskWidget::readSecrets()
 {
     Q_D(WpaPskWidget);
     d->ui.psk->setText(d->setting->psk());
+    emitValid();
 }
 
 // vim: sw=4 sts=4 et tw=100
