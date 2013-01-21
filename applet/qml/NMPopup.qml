@@ -76,7 +76,6 @@ Item {
         Column {
             id: leftColumn
             anchors.top: parent.top
-            anchors.topMargin: 4
             anchors.leftMargin: 8
             spacing: 4
             visible: false
@@ -131,7 +130,6 @@ Item {
             id: rightColumn
 
             height: leftColumn.visible ? Math.max(tabWidget.height + controls.height + 28, leftColumn.height) : (tabWidget.height + controls.height + 28)
-            anchors.right: parent.right
             spacing: 8
 
             ConnectionsTabWidget {

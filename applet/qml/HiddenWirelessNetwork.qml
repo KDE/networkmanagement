@@ -30,13 +30,12 @@ Item {
 
     signal enterPressed(string connectionName)
 
-    Rectangle {
+    Item {
         id: content
 
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
-        color: "#00000000"
 
         ButtonShadow {
             id: shadow
@@ -64,13 +63,12 @@ Item {
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
 
         Row {
             id: row2
-            height: parent.heght - 20
+            height: parent.height - 20
             anchors.verticalCenter: parent.verticalCenter
             spacing: 5
 

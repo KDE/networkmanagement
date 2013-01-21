@@ -77,7 +77,6 @@ Item {
         anchors.rightMargin: 8
         anchors.left: parent.left
         anchors.leftMargin: 8
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 8
 
@@ -104,7 +103,6 @@ Item {
 
         Row {
             id: row3
-            anchors.right: parent.right
             spacing: 8
             anchors.verticalCenter: parent.verticalCenter
 

@@ -35,11 +35,10 @@ Item {
     signal hoverEnter()
     signal hoverLeft()
 
-    Rectangle {
+    Item {
         anchors.leftMargin: 2
         anchors.rightMargin: 2
         anchors.fill: parent
-        color: "#00000000"
 
         ButtonShadow {
             id: shadow
