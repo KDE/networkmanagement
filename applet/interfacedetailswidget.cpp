@@ -586,7 +586,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
     } else {
         updateIPv4Details();
         details->connectionState = static_cast<NetworkManager::Device::State>(new_state);
-        if (m_iface->type() == NetworkManager::Device::Bluetooth) {
+        if (reason != NetworkManager::Device::Unavailable && m_iface->type() == NetworkManager::Device::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
             if (interfaceName != details->interfaceName) {
                 // Hack to force updating interfaceName and traffic plot source.
