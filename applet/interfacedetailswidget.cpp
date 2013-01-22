@@ -555,7 +555,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
     } else {
         details->ipAddress = currentIpAddress();
         details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(new_state);
-        if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
+        if (reason != Solid::Control::NetworkInterfaceNm09::Unavailable && m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
             if (interfaceName != details->interfaceName) {
                 // Hack to force updating interfaceName and traffic plot source.
