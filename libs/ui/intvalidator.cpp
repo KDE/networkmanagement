@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 
 IntValidator::IntValidator(QObject *parent)
- : QValidator(parent)
+ : QValidator(parent), m_boundary(false)
 {
     m_signed = false;
 }
