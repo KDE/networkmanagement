@@ -175,7 +175,6 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 
     kDebug() << "Sending unlock code";
 
-#if KDE_IS_VERSION(4,6,90)
     {
         QDBusPendingCallWatcher *watcher = 0;
     
@@ -189,13 +188,6 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
     
         connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(onSendPinArrived(QDBusPendingCallWatcher*)));
     }
-#else
-    if (d->dialog.data()->type() == PinDialog::Pin) {
-        modem->sendPin(d->dialog.data()->pin());
-    } else if (d->dialog.data()->type() == PinDialog::PinPuk) {
-        modem->sendPuk(d->dialog.data()->puk(), d->dialog.data()->pin());
-    }
-#endif
 
 OUT:
     if(d->dialog) {
