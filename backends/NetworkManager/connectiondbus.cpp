@@ -288,7 +288,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         autoconnect = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT)).toBool();
 
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP))) {
-        int timestamp = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP)).toInt();
+        quint64 timestamp = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP)).toULongLong();
         QDateTime dateTime;
         dateTime.setTime_t(timestamp);
         m_connection->setTimestamp(dateTime);
