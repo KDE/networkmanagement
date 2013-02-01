@@ -286,7 +286,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
 
     QString uuid = con->uuid();
 
-    if (d->storageMode == PlainText && !(flags & RequestNew)) {
+    if (d->storageMode == PlainText) {
         KSharedConfig::Ptr ptr = secretsFileForUuid(uuid);
         KConfigGroup config(ptr, name);
         QMap<QString,QString> map = config.entryMap();
