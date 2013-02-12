@@ -335,7 +335,7 @@
         </spacer>
        </item>
        <item row="8" column="1">
-        <widget class="QComboBox" name="privacy">
+        <widget class="KComboBox" name="privacy">
          <item>
           <property name="text">
            <string>Disabled</string>
