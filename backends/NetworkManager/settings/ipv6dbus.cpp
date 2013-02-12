@@ -27,14 +27,16 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
       setting->setMethod(methodStringToEnum(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD)).value<QString>())); }
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_DNS))) {
-      QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).value< QDBusArgument>();
       QList<QHostAddress> dbusDns;
+      QList<QByteArray> temp;
+      if (map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).canConvert<QDBusArgument>()) {
+          QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).value< QDBusArgument>();
+          temp = qdbus_cast<QList<QByteArray> >(dnsArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).value<QList<QByteArray> >();
+      }
 
-      dnsArg.beginArray();
-      while(!dnsArg.atEnd())
-      {
-          QByteArray utmp;
-          dnsArg >> utmp;
+      foreach(const QByteArray utmp, temp) {
           Q_IPV6ADDR tmp;
           for (int i = 0; i < 16; i++)
           {
@@ -55,15 +57,16 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES))) {
-      QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value< QDBusArgument>();
+      QList<IpV6AddressMap> temp;
+      if (map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).canConvert<QDBusArgument>()) {
+          QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value< QDBusArgument>();
+          temp = qdbus_cast<QList<IpV6AddressMap> >(addressArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value<QList<IpV6AddressMap> >();
+      }
       QList<NetworkManager::IPv6Address> addresses;
 
-      addressArg.beginArray();
-      while(!addressArg.atEnd())
-      {
-          IpV6AddressMap addressMap;
-          addressArg >> addressMap;
-
+      foreach(const IpV6AddressMap addressMap, temp) {
           if (addressMap.address.isEmpty() || !addressMap.netMask || addressMap.gateway.isEmpty())
           {
             kWarning() << "Invalid address format detected.";
@@ -95,15 +98,16 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)))
   {
-      QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value< QDBusArgument>();
+      QList<IpV6RouteMap> temp;
+      if (map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).canConvert<QDBusArgument>()) {
+          QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value< QDBusArgument>();
+          temp = qdbus_cast<QList<IpV6RouteMap> >(routeArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value<QList<IpV6RouteMap> >();
+      }
       QList<NetworkManager::IPv6Route> routes;
 
-      routeArg.beginArray();
-      while(!routeArg.atEnd())
-      {
-          IpV6RouteMap routeMap;
-          routeArg >> routeMap;
-
+      foreach(const IpV6RouteMap routeMap, temp) {
           if (routeMap.route.isEmpty() || !routeMap.prefix || routeMap.nextHop.isEmpty() || !routeMap.metric)
           {
               kWarning() << "Invalid route format detected.";
