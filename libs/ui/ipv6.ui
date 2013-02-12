@@ -33,7 +33,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="cmbSettingsMode">
+      <widget class="KComboBox" name="cmbSettingsMode">
        <item>
         <property name="text">
          <string>Basic settings</string>
@@ -335,7 +335,7 @@
         </spacer>
        </item>
        <item row="8" column="1">
-        <widget class="QComboBox" name="privacy">
+        <widget class="KComboBox" name="privacy">
          <item>
           <property name="text">
            <string>Disabled</string>

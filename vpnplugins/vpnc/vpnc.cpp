@@ -53,7 +53,7 @@ QString VpncUiPluginPrivate::readStringKeyValue(const KConfigGroup & configGroup
     QString retValue = configGroup.readEntry(key);
     if (retValue.isEmpty()) {
         // String key can also start with "!" in CISCO pcf file.
-        return configGroup.readEntry("!" + key);
+        return configGroup.readEntry('!' + key);
     } else {
         return retValue;
     }
