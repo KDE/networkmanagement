@@ -296,7 +296,6 @@ void NetworkManagerApplet::init()
 
 
     d->m_popup = new DeclarativeNMPopup(m_activatables, this);
-    connect(d->m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
 
     QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
     action->setToolTip(i18nc("@info:tooltip tooltip for the 'Enable networking' checkbox", "Enable or disable the networking system"));
