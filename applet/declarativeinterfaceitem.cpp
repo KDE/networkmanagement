@@ -154,6 +154,7 @@ void DeclarativeInterfaceItem::setNameDisplayMode(NameDisplayMode mode)
     } else {
         m_interfaceTitle = "Unknown Network Interface";
     }
+    emit itemChanged();
 }
 
 void DeclarativeInterfaceItem::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)

@@ -299,10 +299,10 @@ void DeclarativeNMPopup::readConfig()
 
     m_rootContext->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
     m_rootContext->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
-    /**
-    foreach(InterfaceItem * i, m_interfaces) {
-        i->setNameDisplayMode(InterfaceItem::InterfaceName);
-    }*/
+
+    foreach(DeclarativeInterfaceItem * i, m_interfaces) {
+        i->setNameDisplayMode(DeclarativeInterfaceItem::InterfaceName);
+    }
 
     QString version = NetworkManager::version();
     if (version.isEmpty()) {

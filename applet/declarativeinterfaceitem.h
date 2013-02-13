@@ -56,6 +56,7 @@ public:
     bool enabled();
     bool isVisible();
     bool defaultRoute();
+    void setNameDisplayMode(NameDisplayMode mode);
 
 Q_SIGNALS:
     void stateChanged();
@@ -75,7 +76,6 @@ public Q_SLOTS:
     void setConnectionInfo();
 
 private:
-    void setNameDisplayMode(NameDisplayMode mode);
     void setEnabled(bool enabled);
     bool accept(RemoteActivatable* activatable) const;
     void setInterfaceIcon();
