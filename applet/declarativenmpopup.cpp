@@ -60,6 +60,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
 
     m_rootContext->setContextProperty("wirelessVisible", QVariant(false));
     m_rootContext->setContextProperty("mobileVisible", QVariant(false));
+    m_rootContext->setContextProperty("warningLabel", QVariant(QString()));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem*)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem*)));
@@ -286,26 +287,16 @@ void DeclarativeNMPopup::readConfig()
     /**
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
-    }
+    }*/
 
     QString version = NetworkManager::version();
     if (version.isEmpty()) {
-        if (!m_warning) {
-            m_warning = new Plasma::Label(this);
-        }
-        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
-        m_tab1Layout->addItem(m_warning, 10, 0);
-    } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
-        if (!m_warning) {
-            m_warning = new Plasma::Label(this);
-        }
-        m_warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
-        m_tab1Layout->addItem(m_warning, 10, 0);
-    } else if (m_warning) {
-        m_warning->deleteLater();
-        m_warning = 0;
+        m_rootContext->setContextProperty("warningLabel", QVariant(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it.")));
+    } else if (NetworkManager::compareVersion(QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
+        m_rootContext->setContextProperty("warningLabel", QVariant(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version)));
+    } else {
+        m_rootContext->setContextProperty("warningLabel", QVariant(QString()));
     }
-    **/
 }
 
 void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)

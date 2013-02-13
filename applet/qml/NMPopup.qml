@@ -33,7 +33,6 @@ Item {
     property int minimumWidth: Math.max(320, mainRow.width + 2*4)
     property int minimumHeight: Math.max(290, mainRow.height + 2*4)
     property string previousState
-
     property int iconSize: 22
 
     signal enableWireless(bool status)
@@ -43,7 +42,7 @@ Item {
     signal adjustSize(int width, int height)
 
     Component.onCompleted: {
-        main.state = "InitialState"
+        main.state = warningLabel == "" ? "InitialState" : "ShowInterfaceList"
     }
 
     onMinimumWidthChanged: {
@@ -83,9 +82,15 @@ Item {
             PlasmaComponents.Label {
                 id: interfaceTitle
                 visible: false
-                text: i18n("Interfaces")
+                text: warningLabel != "" ? warningLabel : i18n("Interfaces")
                 font.weight: Font.Bold
                 font.pixelSize: theme.defaultFont.pointSize + 6
+
+                onTextChanged: {
+                    if (warningLabel != "") {
+                        main.state = "ShowInterfaceList"
+                    }
+                }
             }
 
             InterfacesListWidget {
