@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
+Copyright 2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -142,8 +143,6 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
         **/
         DeclarativeInterfaceItem* item = m_interfaces.take(uni);
         interfaceListModel->removeItem(item);
-        //connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
-        //item->disappear();
         updateHasWireless();
         updateHasWwan();
     }
@@ -235,15 +234,11 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
     //solid is too slow, we need to see if the checkbox was checked by the user
     if (checked)
         hasWireless = true;
-    kDebug() << "After chckboxn" << hasWireless;
 
     m_hasWirelessInterface = hasWireless;
 
     if (!m_hasWirelessInterface) {
-        kDebug() << "no ifaces";
         hasWireless = false;
-    } else {
-        //listModel->insertHiddenItem();
     }
     m_rootContext->setContextProperty("wirelessVisible", hasWireless);
 }
@@ -253,7 +248,6 @@ void DeclarativeNMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rootContext->setContextProperty("wirelessEnabled", enabled);
-    //if(!enabled) listModel->removeHiddenItem();
 }
 
 void DeclarativeNMPopup::readConfig()
@@ -287,15 +281,9 @@ void DeclarativeNMPopup::readConfig()
     m_rootContext->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
     m_rootContext->setContextProperty("wirelessEnabled", NetworkManager::isWirelessHardwareEnabled());
 
-    /*m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
-                                 NetworkManager::isWirelessEnabled());*/
-
     m_rootContext->setContextProperty("mobileChecked", NetworkManager::isWwanEnabled());
     m_rootContext->setContextProperty("mobileEnabled", NetworkManager::isWwanHardwareEnabled());
     /**
-    m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
-    m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
-
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
     }
@@ -331,28 +319,13 @@ void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
         DeclarativeInterfaceItem * ifaceItem = 0;
         if (iface->type() == NetworkManager::Device::Wifi) {
             // Create the wireless interface item
-            //WirelessInterfaceItem* wifiItem = 0;
-            //wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, m_leftWidget);
             ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
-            //wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
-            //connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         } else {
             // Create the interfaceitem
             kDebug() << "Interface Item added";
             ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
-            //connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         }
-        // connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
-        //connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
-        //       m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));*/
-
-        //connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
-        //connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
-
-        // Catch connection changes
-        connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
-        //m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
         interfaceListModel->appendRow(ifaceItem);
     }
