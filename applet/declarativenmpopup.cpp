@@ -137,13 +137,9 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
     if (m_interfaces.contains(uni)) {
         // To prevent crashes when the interface removed is the one in interfaceDetailsWidget.
         // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
-        /**
-        if (m_interfaceDetailsWidget && uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
-            m_interfaceDetailsWidget->setInterface(0, false);
-            // Since it is invalid go back to "main" window.
-            m_connectionsTabBar->setCurrentIndex(ConnectionsTabIndex);
+        if (m_interfaceDetails && uni == m_interfaceDetails->getLastIfaceUni()) {
+            m_interfaceDetails->setInterface(0, false);
         }
-        **/
         DeclarativeInterfaceItem* item = m_interfaces.take(uni);
         interfaceListModel->removeItem(item);
         updateHasWireless();
