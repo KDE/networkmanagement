@@ -255,7 +255,6 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
 {
     QString label;
     NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
-    Solid::Device* dev = findSolidDevice(uni);
 
     switch (interfaceNamingStyle) {
         case KNetworkManagerServicePrefs::SystemNames:
@@ -263,13 +262,16 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
                 label = iface->interfaceName();
             }
             break;
-        case KNetworkManagerServicePrefs::VendorProductNames:
+        case KNetworkManagerServicePrefs::VendorProductNames: {
+            Solid::Device* dev = findSolidDevice(uni);
             if (dev) {
                 if (!dev->vendor().isEmpty() && !dev->product().isEmpty()) {
                     label = i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product());
                 }
+                delete dev;
             }
             break;
+        }
         case KNetworkManagerServicePrefs::TypeNames:
         default:
             break;
@@ -281,9 +283,6 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
         if (iface) {
             label = UiUtils::interfaceTypeLabel(iface->type(), iface);
         }
-    }
-    if (dev) {
-        delete dev;
     }
     return label;
 }
