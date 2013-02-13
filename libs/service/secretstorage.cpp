@@ -20,8 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "secretstorage.h"
-#include "../internals/settings/802-11-wireless-security.h"
-#include "../internals/settings/802-1x.h"
 
 #include <KConfigGroup>
 #include <kwallet.h>
@@ -166,19 +164,6 @@ void SecretStorage::walletOpenedForRead(bool success)
                 while (i.hasNext()) {
                     if (i.next().key() != con->uuid())
                         continue;
-
-                    Knm::WirelessSecuritySetting * settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(con->setting(Knm::Setting::WirelessSecurity));
-                    if (settingSecurity) {
-                        Knm::Security8021xSetting * setting8021x = static_cast<Knm::Security8021xSetting *>(con->setting(Knm::Setting::Security8021x));
-
-                        if (setting8021x) {
-                            if (settingSecurity->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep ||
-                                settingSecurity->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap) {
-                                kDebug() << "Enabling workaround for DynamicWep and WpaEap";
-                                setting8021x->setEnabled(true); // needed for needSecrets() below, otherwise needSecrets() returns an empty list.
-                            }
-                        }
-                    }
 
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     bool settingsFound = false;
