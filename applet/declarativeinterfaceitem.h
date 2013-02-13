@@ -57,8 +57,6 @@ public:
     bool isVisible();
     bool defaultRoute();
 
-    QWeakPointer<NetworkManager::Device> m_iface;
-
 Q_SIGNALS:
     void stateChanged();
     void itemChanged();
@@ -75,7 +73,6 @@ public Q_SLOTS:
     void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
     void handleHasDefaultRouteChanged(bool);
     void setConnectionInfo();
-    QWeakPointer<NetworkManager::Device> iface();
 
 private:
     void setNameDisplayMode(NameDisplayMode mode);
@@ -84,6 +81,7 @@ private:
     void setInterfaceIcon();
 
     QList<RemoteActivatable*> m_vpnActivatables;
+    QWeakPointer<NetworkManager::Device> m_iface;
 
     RemoteInterfaceConnection* m_currentConnection;
     RemoteActivatableList* m_activatables;

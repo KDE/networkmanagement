@@ -352,11 +352,6 @@ void DeclarativeInterfaceItem::activeConnectionsChanged()
         setConnectionInfo();
 }
 
-QWeakPointer<NetworkManager::Device> DeclarativeInterfaceItem::iface()
-{
-    return m_iface;
-}
-
 QString DeclarativeInterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
