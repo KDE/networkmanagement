@@ -56,6 +56,8 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void readConfig();
+    void managerNetworkingEnabledChanged(bool);
+    void networkingEnabledToggled(bool);
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void managerWwanHardwareEnabledChanged(bool);

@@ -83,6 +83,8 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
             SLOT(interfaceAdded(QString)));
     connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
             SLOT(interfaceRemoved(QString)));
+    connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+            SLOT(managerNetworkingEnabledChanged(bool)));
 
     readConfig();
 
@@ -251,6 +253,24 @@ void DeclarativeNMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     m_rootContext->setContextProperty("wirelessEnabled", enabled);
 }
 
+void DeclarativeNMPopup::managerNetworkingEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed networking enable state" << enabled;
+    networkingEnabledToggled(enabled);
+}
+
+void DeclarativeNMPopup::networkingEnabledToggled(bool checked)
+{
+    if (checked) {
+        m_rootContext->setContextProperty("warningLabel", QVariant(QString()));
+    }
+
+    // Switch networking on / off
+    if (NetworkManager::isNetworkingEnabled() != checked) {
+        NetworkManager::setNetworkingEnabled(checked);
+    }
+}
+
 void DeclarativeNMPopup::readConfig()
 {
     kDebug();
@@ -278,7 +298,6 @@ void DeclarativeNMPopup::readConfig()
         config.sync();
     }
 
-    //m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
     m_rootContext->setContextProperty("wirelessChecked", NetworkManager::isWirelessEnabled());
     m_rootContext->setContextProperty("wirelessEnabled", NetworkManager::isWirelessHardwareEnabled());
 
