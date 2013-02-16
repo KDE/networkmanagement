@@ -624,15 +624,15 @@ void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool di
         showDetails();
         connectSignals();
 
-        QString interfaceName = m_iface->ipInterfaceName();
+        details->interfaceName = m_iface->ipInterfaceName();
         if (details->interfaceName.isEmpty()) {
             details->interfaceName = m_iface->interfaceName();
         }
 
-        m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
-        m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
-        m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(interfaceName);
-        m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(interfaceName);
+        m_rxSource = QString("network/interfaces/%1/receiver/data").arg(details->interfaceName);
+        m_txSource = QString("network/interfaces/%1/transmitter/data").arg(details->interfaceName);
+        m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(details->interfaceName);
+        m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(details->interfaceName);
         m_rxTotal = m_txTotal = 0;
 
         kDebug() << "adjusted sources";
