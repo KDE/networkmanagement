@@ -124,7 +124,7 @@ void VpnSetting::secretsFromMap(QMap<QString,QString> secrets)
     setSecretsAvailable(true);
 }
 
-QStringList VpnSetting::needSecrets() const
+QStringList VpnSetting::needSecrets(const bool /*requestNew*/) const
 {
     // VPN is a bit different from other connection types. We do not need to list the secrets we need,
     // but this list cannot be empty or SecretStorage will not ask for the secrets.

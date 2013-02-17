@@ -111,7 +111,7 @@ void WirelessSecuritySetting::secretsFromMap(QMap<QString,QString> secrets)
     setSecretsAvailable(secretsAvailable);
 }
 
-QStringList WirelessSecuritySetting::needSecrets() const
+QStringList WirelessSecuritySetting::needSecrets(const bool requestNew) const
 {
     QStringList list;
     switch (securityType())
@@ -124,19 +124,19 @@ QStringList WirelessSecuritySetting::needSecrets() const
                 switch (weptxkeyindex())
                 {
                     case 0:
-                        if (wepkey0().isEmpty())
+                        if ((wepkey0().isEmpty() || requestNew))
                             list.append("wepkey0");
                         break;
                     case 1:
-                        if (wepkey1().isEmpty())
+                        if ((wepkey1().isEmpty() || requestNew))
                             list.append("wepkey1");
                         break;
                     case 2:
-                        if (wepkey2().isEmpty())
+                        if ((wepkey2().isEmpty() || requestNew))
                             list.append("wepkey2");
                         break;
                     case 3:
-                        if (wepkey3().isEmpty())
+                        if ((wepkey3().isEmpty() || requestNew))
                             list.append("wepkey3");
                         break;
                 }
@@ -145,11 +145,11 @@ QStringList WirelessSecuritySetting::needSecrets() const
             break;
         case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
         case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
-            if (psk().isEmpty() && !pskflags().testFlag(Setting::NotRequired))
+            if ((psk().isEmpty() || requestNew) && !pskflags().testFlag(Setting::NotRequired))
                 list.append("psk");
             break;
         case WirelessSecuritySetting::EnumSecurityType::Leap:
-            if (leappassword().isEmpty() && !leappasswordflags().testFlag(Setting::NotRequired))
+            if ((leappassword().isEmpty() || requestNew) && !leappasswordflags().testFlag(Setting::NotRequired))
                 list.append("leappassword");
             break;
     }

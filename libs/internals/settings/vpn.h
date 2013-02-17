@@ -28,7 +28,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     static QVariantMap variantMapFromStringList(const QStringList & list);
     static QStringMap stringMapFromStringList(const QStringList & list);
     static QStringList stringMapToStringList(const QStringMap & map);
-    QStringList needSecrets() const;
+    QStringList needSecrets(const bool requestNew = false) const;
     bool hasPersistentSecrets() const;
 
     /**

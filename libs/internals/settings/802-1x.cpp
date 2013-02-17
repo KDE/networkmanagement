@@ -88,18 +88,18 @@ void Security8021xSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPhase2privatekeypassword(secrets.value("phase2-private-key-password"));
 }
 
-QStringList Security8021xSetting::needSecrets() const
+QStringList Security8021xSetting::needSecrets(const bool requestNew) const
 {
     QStringList list;
     if (enabled()) {
         Security8021xSetting::EapMethods eap = eapFlags();
-        if (eap.testFlag(Security8021xSetting::tls) && privatekeypassword().isEmpty() && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
+        if (eap.testFlag(Security8021xSetting::tls) && (privatekeypassword().isEmpty() || requestNew) && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
             list.append("private-key-password");
         } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap))
-            && password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired)) {
+            && (password().isEmpty() || requestNew) && !passwordflags().testFlag(Setting::NotRequired)) {
             list.append("password");
         }
-        if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls) && phase2privatekeypassword().isEmpty()
+        if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls) && (phase2privatekeypassword().isEmpty() || requestNew)
             && !phase2privatekeypasswordflags().testFlag(Setting::NotRequired)) {
             list.append("phase2-private-key-password");
         }

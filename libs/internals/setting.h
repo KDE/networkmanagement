@@ -48,7 +48,7 @@ public:
     virtual bool hasVolatileSecrets() const { return false; }
     virtual QMap<QString,QString> secretsToMap() const;
     virtual void secretsFromMap(QMap<QString,QString>);
-    virtual QStringList needSecrets() const;
+    virtual QStringList needSecrets(const bool requestNew = false) const;
     virtual bool hasPersistentSecrets() const;
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);

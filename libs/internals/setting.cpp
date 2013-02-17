@@ -179,7 +179,7 @@ bool Setting::hasPersistentSecrets() const
     return false;
 }
 
-QStringList Setting::needSecrets() const
+QStringList Setting::needSecrets(const bool /*requestNew*/) const
 {
     return QStringList();
 }
