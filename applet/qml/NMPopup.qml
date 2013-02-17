@@ -42,7 +42,7 @@ Item {
     signal adjustSize(int width, int height)
 
     Component.onCompleted: {
-        main.state = warningLabel == "" ? "InitialState" : "ShowInterfaceList"
+        main.state = warningLabel === "" ? "InitialState" : "ShowInterfaceList"
     }
 
     onMinimumWidthChanged: {
@@ -82,12 +82,12 @@ Item {
             PlasmaComponents.Label {
                 id: interfaceTitle
                 visible: false
-                text: warningLabel != "" ? warningLabel : i18n("Interfaces")
+                text: warningLabel !== "" ? warningLabel : i18n("Interfaces")
                 font.weight: Font.Bold
                 font.pixelSize: theme.defaultFont.pointSize + 6
 
                 onTextChanged: {
-                    if (warningLabel != "") {
+                    if (warningLabel !== "") {
                         main.state = "ShowInterfaceList"
                     }
                 }
@@ -193,7 +193,7 @@ Item {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         onClicked: {
-                            if (main.state != "ShowInterfaceList" && main.state != "ShowInterfaceDetails") {
+                            if (main.state !== "ShowInterfaceList" && main.state !== "ShowInterfaceDetails") {
                                 main.state = "ShowInterfaceList"
                             } else {
                                 main.state = "InitialState"
