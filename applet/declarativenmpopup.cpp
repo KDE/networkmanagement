@@ -56,11 +56,10 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     m_rootContext = engine()->rootContext();
     m_rootContext->setContextProperty("connectionsListModel", listModel);
     m_rootContext->setContextProperty("interfacesListModel", interfaceListModel);
-    setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
-
     m_rootContext->setContextProperty("wirelessVisible", QVariant(false));
     m_rootContext->setContextProperty("mobileVisible", QVariant(false));
     m_rootContext->setContextProperty("warningLabel", QVariant(QString()));
+    setQmlPath(KStandardDirs::locate("data", "networkmanagement/qml/NMPopup.qml"));
 
     connect(listModel, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     connect(interfaceListModel, SIGNAL(updateTraffic(DeclarativeInterfaceItem*)), this, SLOT(manageUpdateTraffic(DeclarativeInterfaceItem*)));
@@ -86,10 +85,6 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             SLOT(managerNetworkingEnabledChanged(bool)));
 
-    readConfig();
-
-    addVpnInterface();
-
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
@@ -103,6 +98,9 @@ void DeclarativeNMPopup::qmlCreationFinished()
     connect(rootObject(), SIGNAL(settingsClicked()), this, SLOT(manageConnections()));
     connect(rootObject(), SIGNAL(noDeviceSelected()), this, SLOT(manageSelection()));
     connect(rootObject(), SIGNAL(adjustSize(int,int)), this, SLOT(changeSize(int,int)));
+    QMetaObject::invokeMethod(rootObject(), "updateSize");
+    readConfig();
+    addVpnInterface();
 }
 
 void DeclarativeNMPopup::changeSize(int width, int height)

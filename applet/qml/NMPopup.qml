@@ -35,6 +35,10 @@ Item {
     property string previousState
     property int iconSize: 22
 
+    function updateSize() {
+        adjustSize(minimumWidth, minimumHeight)
+    }
+
     signal enableWireless(bool status)
     signal enableMobile(bool status)
     signal settingsClicked()
