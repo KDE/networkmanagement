@@ -43,7 +43,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets);
-    QStringList needSecrets() const;
+    QStringList needSecrets(const bool requestNew = false) const;
     bool hasPersistentSecrets() const;
 
     /**

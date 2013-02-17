@@ -40,10 +40,10 @@ void CdmaSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPassword(secrets.value("password"));
 }
 
-QStringList CdmaSetting::needSecrets() const
+QStringList CdmaSetting::needSecrets(const bool requestNew) const
 {
     QStringList list;
-    if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
+    if ((password().isEmpty() || requestNew) && !passwordflags().testFlag(Setting::NotRequired))
         list.append("password");
     return list;
 }
