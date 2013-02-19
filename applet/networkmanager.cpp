@@ -1039,8 +1039,9 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activeVpnConnections.remove(id);
-            if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0)
+            if (oldState >= Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0) {
                 m_totalActiveVpnConnections--;
+            }
             break;
     }
     //kDebug() << newState << m_totalActiveVpnConnections;
