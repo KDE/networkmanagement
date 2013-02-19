@@ -101,6 +101,8 @@ public slots:
 protected:
     OrgFreedesktopNetworkManagerConnectionActiveInterface * m_activeConnectionIface;
     Knm::InterfaceConnection * m_interfaceConnection;
+private:
+    void setState(uint nmState);
 };
 
 class NMDBusVPNConnectionProxy : public NMDBusActiveConnectionProxy

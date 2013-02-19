@@ -48,7 +48,7 @@ NMDBusActiveConnectionProxy::NMDBusActiveConnectionProxy(Knm::InterfaceConnectio
     m_interfaceConnection->setProperty("NMDBusActiveConnectionObject", m_activeConnectionIface->path());
     kDebug() << "default:" << m_activeConnectionIface->getDefault() << "state:" << m_activeConnectionIface->state();
     m_interfaceConnection->setHasDefaultRoute(m_activeConnectionIface->getDefault());
-    m_interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)m_activeConnectionIface->state());
+    setState(m_activeConnectionIface->state());
 }
 
 NMDBusActiveConnectionProxy::~NMDBusActiveConnectionProxy()
@@ -71,8 +71,29 @@ void NMDBusActiveConnectionProxy::handlePropertiesChanged(const QVariantMap & ch
         m_interfaceConnection->setHasDefaultRoute(changedProps[defaultKey].toBool());
     }
     if (changedProps.contains(stateKey)) {
-        m_interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)changedProps[stateKey].toUInt());
+        setState(changedProps[stateKey].toUInt());
     }
+}
+
+void NMDBusActiveConnectionProxy::setState(uint nmState)
+{
+    Knm::InterfaceConnection::ActivationState aState = Knm::InterfaceConnection::Unknown;
+    switch (nmState) {
+        case NM_ACTIVE_CONNECTION_STATE_UNKNOWN:
+            break;
+        case NM_ACTIVE_CONNECTION_STATE_ACTIVATING:
+            aState = Knm::InterfaceConnection::Activating;
+            break;
+        case NM_ACTIVE_CONNECTION_STATE_ACTIVATED:
+            aState = Knm::InterfaceConnection::Activated;
+            break;
+        case NM_ACTIVE_CONNECTION_STATE_DEACTIVATING:
+            break;
+        default:
+            kDebug() << "Unhandled activation state" << nmState;
+    }
+    kDebug() << "state:" << aState;
+    m_interfaceConnection->setActivationState(aState);
 }
 
 NMDBusVPNConnectionProxy::NMDBusVPNConnectionProxy(Knm::InterfaceConnection * interfaceConnection,
