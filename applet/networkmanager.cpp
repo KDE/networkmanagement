@@ -1044,7 +1044,6 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
 {
     RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(sender());
     QUuid id = ic->connectionUuid();
-    qDebug() << "new state - " << newState << " - old state - " << oldState;
     switch (newState)
     {
         case Knm::InterfaceConnection::Activated:
