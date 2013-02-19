@@ -1044,6 +1044,7 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
 {
     RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(sender());
     QUuid id = ic->connectionUuid();
+    qDebug() << "new state - " << newState << " - old state - " << oldState;
     switch (newState)
     {
         case Knm::InterfaceConnection::Activated:
@@ -1061,7 +1062,7 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
         case Knm::InterfaceConnection::Unknown:
             setStatusOverlay(QPixmap());
             m_activeVpnConnections.remove(id);
-            if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0) {
+            if (oldState >= Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0) {
                 m_totalActiveVpnConnections--;
             }
             break;

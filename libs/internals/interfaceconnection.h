@@ -48,7 +48,7 @@ Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute WRITE setHasDefaultRoute)
 public:
     friend class InterfaceConnectionBuilder;
 
-    enum ActivationState { Unknown, Activating, Activated };
+    enum ActivationState { Unknown, Activating, Deactivating, Deactivated };
 
 
     // To create an object of InterfaceConnection class please use
