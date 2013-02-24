@@ -177,7 +177,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                             if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
                                 setting->secretsFromMap(map);
                             }
-                            QStringList needSecretsList = setting->needSecrets();
+                            QStringList needSecretsList = setting->needSecrets(pair.second & RequestNew);
                             kDebug() << "Needed secrets" << needSecretsList;
                             if ((pair.second & RequestNew) || (!needSecretsList.isEmpty() && (pair.second & AllowInteraction))) {
                                 askUser(con, pair.first, needSecretsList);
@@ -277,7 +277,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         QMap<QString,QString> map = config.entryMap();
         Knm::Setting *setting = con->setting(Knm::Setting::typeFromString(name));
         setting->secretsFromMap(map);
-        QStringList needSecretsList = setting->needSecrets();
+        QStringList needSecretsList = setting->needSecrets(flags & RequestNew);
         if ((flags & RequestNew) || (!needSecretsList.isEmpty() && (flags & AllowInteraction))) {
             askUser(con, name, needSecretsList);
         } else {
