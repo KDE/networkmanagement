@@ -22,10 +22,7 @@
 #include "ui_connectiondetaileditor.h"
 #include "wiredconnectionwidget.h"
 
-#include <QtGui/QTreeWidgetItem>
-
 #include <QtNetworkManager/settings.h>
-#include <QtNetworkManager/connection.h>
 #include <QtNetworkManager/activeconnection.h>
 
 using namespace NetworkManager;
@@ -40,11 +37,11 @@ ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* con
     initTabs();
 
     if (connection->id().isEmpty()) {
-        setWindowTitle(i18n("New Connection (%1)").arg(connection->typeAsString(connection->connectionType())));
-        m_detailEditor->connectionName->setText(i18n("New %1 Connection").arg(connection->typeAsString(connection->connectionType())));
+        setWindowTitle(i18n("New Connection (%1)", connection->typeAsString(connection->connectionType())));
+        m_detailEditor->connectionName->setText(i18n("New %1 connection", connection->typeAsString(connection->connectionType())));
     }
     else {
-        setWindowTitle(i18n("Edit Connection '%1'").arg(connection->id()));
+        setWindowTitle(i18n("Edit Connection '%1'", connection->id()));
         m_detailEditor->connectionName->setText(connection->id());
     }
 }
