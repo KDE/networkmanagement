@@ -20,6 +20,7 @@
 
 #include "connectiondetaileditor.h"
 #include "ui_connectiondetaileditor.h"
+#include "connectionwidget.h"
 #include "wiredconnectionwidget.h"
 
 #include <QtNetworkManager/settings.h>
@@ -52,6 +53,9 @@ ConnectionDetailEditor::~ConnectionDetailEditor()
 
 void ConnectionDetailEditor::initTabs()
 {
+    ConnectionWidget * connectionWidget = new ConnectionWidget();
+    m_detailEditor->tabWidget->addTab(connectionWidget, i18n("General"));
+
     foreach (Settings::Setting * setting, m_connection->settings()) {
         addTab(setting->type());
     }
@@ -62,11 +66,14 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
     /*Adsl, Cdma, Gsm, Infiniband, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial,
       Vpn, Wired, Wireless, WirelessSecurity, Bluetooth, OlpcMesh, Vlan, Wimax, Bond, Bridge, BridgePort;*/
 
-    switch (type) {
-        case Settings::Setting::Wired:
-            WiredConnectionWidget * wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
-            m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
-            break;
+    if (type == Settings::Setting::Wired) {
+        WiredConnectionWidget * wiredWidget;
+        if (m_connection->setting(type)->isNull()) {
+            wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
+        } else {
+            wiredWidget = new WiredConnectionWidget();
+        }
+        m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
     }
 }
 

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConnectionWidget</class>
+ <widget class="QWidget" name="ConnectionWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>450</width>
+    <height>320</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>431</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QCheckBox" name="autoconnectVpn">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Automatically connect to &amp;VPN when using this connection</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="vpnCombobox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>170</y>
+     <width>431</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,56">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>&amp;Firewall zone:</string>
+      </property>
+      <property name="buddy">
+       <cstring>firewallZone</cstring>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="firewallZone">
+      <item>
+       <property name="text">
+        <string>Default</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>drop</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>work</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>internal</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>block</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>home</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>dmz</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>public</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>trusted</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>external</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>431</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QCheckBox" name="autoconnect">
+      <property name="text">
+       <string>&amp;Automatically connect to this network when it is available</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="allUsers">
+      <property name="text">
+       <string>All users &amp;may connect to this network</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

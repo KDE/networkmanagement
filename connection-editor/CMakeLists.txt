@@ -29,6 +29,7 @@ set(connectioneditor_SRCS
    connectiontypeitem.cpp
    connectiondetaileditor.cpp
    settingwidget.cpp
+   connectionwidget.cpp
    wiredconnectionwidget.cpp
 )
 
@@ -38,12 +39,14 @@ set(connectioneditor_HDRS
    connectiontypeitem.h
    connectiondetaileditor.h
    settingwidget.h
+   connectionwidget.h
    wiredconnectionwidget.h
 )
 
 kde4_add_ui_files(connectioneditor_SRCS
     ui/connectioneditor.ui
     ui/connectiondetaileditor.ui
+    ui/connectionwidget.ui
     ui/wiredconnectionwidget.ui
 )
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
