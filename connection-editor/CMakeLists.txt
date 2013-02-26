@@ -27,15 +27,17 @@ set(connectioneditor_SRCS
    connectioneditor.cpp
    connectionitem.cpp
    connectiontypeitem.cpp
+   connectiondetaileditor.cpp
 )
 
 set(connectioneditor_HDRS
    connectioneditor.h
    connectionitem.h
    connectiontypeitem.h
+   connectiondetaileditor.h
 )
 
-kde4_add_ui_files(connectioneditor_SRCS ui/connectioneditor.ui)
+kde4_add_ui_files(connectioneditor_SRCS ui/connectioneditor.ui ui/connectiondetaileditor.ui)
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
 
 add_executable(connectioneditor ${connectioneditor_SRCS} ${connectioneditor_HDRS_MOC})

@@ -22,6 +22,7 @@
 #include "ui_connectioneditor.h"
 #include "connectionitem.h"
 #include "connectiontypeitem.h"
+#include "connectiondetaileditor.h"
 
 #include <QtGui/QTreeWidgetItem>
 
@@ -132,6 +133,8 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
 
     connect(m_editor->connectionsWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(m_menu,SIGNAL(triggered(QAction*)),
+            SLOT(addConnection(QAction*)));
 }
 
 ConnectionEditor::~ConnectionEditor()
@@ -247,4 +250,14 @@ void ConnectionEditor::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetI
         m_editor->editButton->setDisabled(true);
         m_editor->deleteButton->setDisabled(true);
     }
+}
+
+void ConnectionEditor::addConnection(QAction* action)
+{
+    Settings::ConnectionSettings::ConnectionType type = (Settings::ConnectionSettings::ConnectionType) action->data().toUInt();
+
+    Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
+
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, 0);
+    editor->show();
 }

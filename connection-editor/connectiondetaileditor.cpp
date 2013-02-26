@@ -18,40 +18,24 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_EDITOR_H
-#define CONNECTION_EDITOR_H
+#include "connectiondetaileditor.h"
+#include "ui_connectiondetaileditor.h"
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
+#include <QtGui/QTreeWidgetItem>
 
-#include <QtNetworkManager/settings/connection.h>
+#include <QtNetworkManager/settings.h>
+#include <QtNetworkManager/connection.h>
+#include <QtNetworkManager/activeconnection.h>
 
-namespace Ui
+using namespace NetworkManager;
+
+ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* settings, QDialog* parent, Qt::WindowFlags f):
+    QDialog(parent, f),
+    m_detailEditor(new Ui::ConnectionDetailEditor)
 {
-class ConnectionEditor;
+    m_detailEditor->setupUi(this);
 }
 
-class QTreeWidgetItem;
-
-class ConnectionEditor : public QMainWindow
+ConnectionDetailEditor::~ConnectionDetailEditor()
 {
-Q_OBJECT
-
-public:
-    explicit ConnectionEditor(QWidget* parent = 0, Qt::WindowFlags flags = 0);
-    virtual ~ConnectionEditor();
-
-private Q_SLOTS:
-    void initializeConnections();
-    void currentItemChanged(QTreeWidgetItem * current, QTreeWidgetItem * previous);
-    void addConnection(QAction * action);
-
-private:
-    Ui::ConnectionEditor * m_editor;
-    QMenu * m_menu;
-
-    QString formatDateRelative(const QDateTime & lastUsed);
-    QTreeWidgetItem * findTopLevelItem(const QString & type);
-};
-
-#endif // CONNECTION_EDITOR_H
+}
