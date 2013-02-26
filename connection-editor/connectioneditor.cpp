@@ -130,7 +130,8 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
 
     initializeConnections();
 
-    connect(m_editor->connectionsWidget, SIGNAL(itemSelectionChanged()), SLOT(onItemSelectionChanged()));
+    connect(m_editor->connectionsWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 }
 
 ConnectionEditor::~ConnectionEditor()
@@ -235,11 +236,11 @@ QTreeWidgetItem* ConnectionEditor::findTopLevelItem(const QString& type)
     return 0;
 }
 
-void ConnectionEditor::onItemSelectionChanged()
+void ConnectionEditor::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    QTreeWidgetItem * item = m_editor->connectionsWidget->currentItem();
+    Q_UNUSED(previous);
 
-    if (item->data(0, Qt::UserRole).toString() == "connection") {
+    if (current->data(0, Qt::UserRole).toString() == "connection") {
         m_editor->editButton->setEnabled(true);
         m_editor->deleteButton->setEnabled(true);
     } else {
