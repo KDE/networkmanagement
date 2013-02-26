@@ -223,14 +223,13 @@ QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed)
 
 QTreeWidgetItem* ConnectionEditor::findTopLevelItem(const QString& type)
 {
-    QTreeWidgetItem * item = 0;
+    QTreeWidgetItemIterator it(m_editor->connectionsWidget);
 
-    for (int i = 0; i < m_editor->connectionsWidget->topLevelItemCount(); i++) {
-        item = m_editor->connectionsWidget->topLevelItem(i);
-
-        if (item->data(0, Qt::UserRole).toString() == type) {
-            return item;
+    while (*it) {
+        if ((*it)->data(0, Qt::UserRole).toString() == type) {
+            return (*it);
         }
+        ++it;
     }
 
     return 0;
