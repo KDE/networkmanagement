@@ -152,15 +152,16 @@ void ConnectionEditor::initializeConnections()
         Settings::ConnectionSettings * settings = new Settings::ConnectionSettings();
         settings->fromMap(con->settings());
 
-        QString name = settings->id();
-        QString lastUsed = formatDateRelative(settings->timestamp());
-        QString type = Settings::ConnectionSettings::typeAsString(settings->connectionType());
-        bool active = actives.contains(settings->uuid());
+        const QString name = settings->id();
+        const QString type = Settings::ConnectionSettings::typeAsString(settings->connectionType());
 
         // Can't continue if name or type are empty
         if (name.isEmpty() || type.isEmpty()) {
             continue;
         }
+
+        const bool active = actives.contains(settings->uuid());
+        const QString lastUsed = formatDateRelative(settings->timestamp());
 
         QStringList params;
         params << name;
