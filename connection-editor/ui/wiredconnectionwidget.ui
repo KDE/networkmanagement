@@ -110,6 +110,9 @@
           <property name="specialValueText">
            <string>Automatic</string>
           </property>
+          <property name="suffix">
+           <string> bytes</string>
+          </property>
          </widget>
         </item>
         <item>
@@ -119,6 +122,9 @@
           </property>
           <property name="specialValueText">
            <string>Automatic</string>
+          </property>
+          <property name="suffix">
+           <string> Mbit/s</string>
           </property>
          </widget>
         </item>
