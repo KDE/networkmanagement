@@ -39,11 +39,11 @@ ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* con
 
     initTabs();
 
-    if (settings->id().isEmpty()) {
-        setWindowTitle(i18n("New Connection (%1)").arg(settings->typeAsString(settings->connectionType())));
+    if (connection->id().isEmpty()) {
+        setWindowTitle(i18n("New Connection (%1)").arg(connection->typeAsString(connection->connectionType())));
     }
     else {
-        setWindowTitle(i18n("Edit Connection '%1'").arg(settings->id()));
+        setWindowTitle(i18n("Edit Connection '%1'").arg(connection->id()));
     }
 }
 

@@ -262,7 +262,7 @@ void ConnectionEditor::addConnection(QAction* action)
 
     Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
 
-    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, this);
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection);
     if (editor->exec() == QDialog::Accepted) {
         // TODO
     }
