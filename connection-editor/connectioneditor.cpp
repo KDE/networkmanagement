@@ -26,6 +26,8 @@
 
 #include <QtGui/QTreeWidgetItem>
 
+#include <KLocale>
+
 #include <QtNetworkManager/settings.h>
 #include <QtNetworkManager/connection.h>
 #include <QtNetworkManager/activeconnection.h>
@@ -191,7 +193,7 @@ void ConnectionEditor::initializeConnections()
     }
 }
 
-QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed)
+QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed) const
 {
     QString lastUsedText;
     if (lastUsed.isValid()) {
@@ -243,6 +245,8 @@ void ConnectionEditor::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetI
 {
     Q_UNUSED(previous);
 
+    qDebug() << "Current item" << current->text(0);
+
     if (current->data(0, Qt::UserRole).toString() == "connection") {
         m_editor->editButton->setEnabled(true);
         m_editor->deleteButton->setEnabled(true);
@@ -258,6 +262,8 @@ void ConnectionEditor::addConnection(QAction* action)
 
     Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
 
-    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, 0);
-    editor->show();
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, this);
+    if (editor->exec() == QDialog::Accepted) {
+        // TODO
+    }
 }

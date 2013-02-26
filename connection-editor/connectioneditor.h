@@ -50,7 +50,7 @@ private:
     Ui::ConnectionEditor * m_editor;
     QMenu * m_menu;
 
-    QString formatDateRelative(const QDateTime & lastUsed);
+    QString formatDateRelative(const QDateTime & lastUsed) const;
     QTreeWidgetItem * findTopLevelItem(const QString & type);
 };
 

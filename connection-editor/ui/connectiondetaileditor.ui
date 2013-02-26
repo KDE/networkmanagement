@@ -28,7 +28,10 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Connection name:</string>
+         <string>Connection &amp;name:</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit</cstring>
         </property>
        </widget>
       </item>
@@ -62,7 +65,10 @@
          <item>
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Firewall zone:</string>
+            <string>&amp;Firewall zone:</string>
+           </property>
+           <property name="buddy">
+            <cstring>firewallZone</cstring>
            </property>
           </widget>
          </item>
@@ -135,7 +141,7 @@
          <item>
           <widget class="QCheckBox" name="autoconnect">
            <property name="text">
-            <string>Automatically connect to this network when it is available</string>
+            <string>&amp;Automatically connect to this network when it is available</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -145,7 +151,7 @@
          <item>
           <widget class="QCheckBox" name="allUsers">
            <property name="text">
-            <string>All users may connect to this network</string>
+            <string>All users &amp;may connect to this network</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -170,7 +176,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Automatically connect to VPN when using this connection</string>
+            <string>Automatically connect to &amp;VPN when using this connection</string>
            </property>
           </widget>
          </item>
@@ -199,6 +205,16 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>autoconnect</tabstop>
+  <tabstop>allUsers</tabstop>
+  <tabstop>autoconnectVpn</tabstop>
+  <tabstop>vpnCombobox</tabstop>
+  <tabstop>firewallZone</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
