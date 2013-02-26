@@ -43,11 +43,9 @@ public:
     void loadConfig(NetworkManager::Settings::Setting * setting);
 
     QVariantMap setting() const;
-    QString type() const;
 
 private:
     Ui::WiredConnectionWidget * m_widget;
-    QString m_type;
 };
 
 #endif // WIRED_CONNECTION_WIDGET_H

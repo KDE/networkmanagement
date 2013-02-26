@@ -38,7 +38,10 @@ public:
     virtual void readSecrets();
 
     virtual QVariantMap setting() const = 0;
-    virtual QString type() const = 0;
+    QString type() const;
+
+private:
+    QString m_type;
 
 };
 
