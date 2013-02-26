@@ -66,6 +66,8 @@ if (NETWORKMANAGER_FOUND)
         add_subdirectory(vpnplugins)
         add_subdirectory(kded)
 
+        add_subdirectory(connection-editor)
+        
         install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
     else()
         message(FATAL_ERROR "ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")

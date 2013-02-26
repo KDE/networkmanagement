@@ -1,0 +1,261 @@
+/*
+    Copyright 2012-2013  Jan Grulich <jgrulich@redhat.com>
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) version 3, or any
+    later version accepted by the membership of KDE e.V. (or its
+    successor approved by the membership of KDE e.V.), which shall
+    act as a proxy defined in Section 6 of version 3 of the license.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "connectioneditor.h"
+#include "ui_connectioneditor.h"
+#include "connectionitem.h"
+#include "connectiontypeitem.h"
+
+#include <QtGui/QTreeWidgetItem>
+
+#include <QtNetworkManager/settings.h>
+#include <QtNetworkManager/connection.h>
+#include <QtNetworkManager/activeconnection.h>
+
+using namespace NetworkManager;
+
+ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
+    QMainWindow(parent, flags),
+    m_editor(new Ui::ConnectionEditor)
+{
+    m_editor->setupUi(this);
+    m_editor->addButton->setIcon(KIcon("list-add"));
+    m_editor->editButton->setIcon(KIcon("configure"));
+    m_editor->deleteButton->setIcon(KIcon("edit-delete"));
+
+    m_menu = new QMenu(this);
+    m_menu->setSeparatorsCollapsible(false);
+
+    QAction * action = m_menu->addSeparator();
+    action->setText("Hardware");
+
+    action = new QAction("DSL", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Adsl);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("InfiniBand", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Infiniband);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Mobile Broadband", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Gsm);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Wired", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Wired);
+    m_menu->addAction(action);
+    action = new QAction("Wireless", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Wireless);
+    m_menu->addAction(action);
+    action = new QAction("WiMAX", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Wimax);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+
+    action = m_menu->addSeparator();
+    action->setText("Virtual");
+
+    action = new QAction("Bond", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Bond);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Bridge", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Bridge);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("VLAN", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vlan);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+
+    action = m_menu->addSeparator();
+    action->setText("VPN");
+
+    action = new QAction("Cisco AnyConnected Compatible VPN (openconnect)", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Cisco VPN (vpnc)", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("IPSec based VPN", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Layer 2 Tunneling Protocol (l2tp)", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("OpenVPN", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+    action = new QAction("Point-to-Point Tunneling Protocol VPN (PPTP)", this);
+    action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
+    // TODO: disabled for now
+    action->setDisabled(true);
+    m_menu->addAction(action);
+
+    m_editor->addButton->setMenu(m_menu);
+
+    initializeConnections();
+
+    connect(m_editor->connectionsWidget, SIGNAL(itemSelectionChanged()), SLOT(onItemSelectionChanged()));
+}
+
+ConnectionEditor::~ConnectionEditor()
+{
+}
+
+void ConnectionEditor::initializeConnections()
+{
+    m_editor->connectionsWidget->clear();
+
+    QList<QString> actives;
+
+    foreach(NetworkManager::ActiveConnection * active, NetworkManager::activeConnections()) {
+        actives << active->connection()->uuid();
+    }
+
+    foreach (Settings::Connection * con, Settings::listConnections()) {
+
+        Settings::ConnectionSettings * settings = new Settings::ConnectionSettings();
+        settings->fromMap(con->settings());
+
+        QString name = settings->id();
+        QString lastUsed = formatDateRelative(settings->timestamp());
+        QString type = Settings::ConnectionSettings::typeAsString(settings->connectionType());
+        bool active = actives.contains(settings->uuid()) ? true : false;
+
+        // Can't continue if name or type are empty
+        if (name.isEmpty() || type.isEmpty()) {
+            continue;
+        }
+
+        QStringList params;
+        params << name;
+        params << lastUsed;
+
+        // Create a root item if this type doesn't exist
+        if (!findTopLevelItem(type)) {
+            ConnectionTypeItem * rootItem = new ConnectionTypeItem(m_editor->connectionsWidget, type);
+            rootItem->setData(0, Qt::UserRole, type);
+            m_editor->connectionsWidget->addTopLevelItem(rootItem);
+        }
+
+        QTreeWidgetItem * item = findTopLevelItem(type);
+        ConnectionItem * connectionItem = new ConnectionItem(item, params, active);
+        connectionItem->setData(0, Qt::UserRole, "connection");
+        connectionItem->setData(0, ConnectionItem::ConnectionIdRole, settings->uuid());
+        connectionItem->setData(1, ConnectionItem::ConnectionLastUsedRole, lastUsed);
+        item->addChild(connectionItem);
+
+        m_editor->connectionsWidget->resizeColumnToContents(0);
+
+        delete settings;
+    }
+}
+
+QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed)
+{
+    QString lastUsedText;
+    if (lastUsed.isValid()) {
+        QDateTime now = QDateTime::currentDateTime();
+        if (lastUsed.daysTo(now) == 0 ) {
+            int secondsAgo = lastUsed.secsTo(now);
+            if (secondsAgo < (60 * 60 )) {
+                int minutesAgo = secondsAgo / 60;
+                lastUsedText = i18ncp(
+                        "Label for last used time for a network connection used in the last hour, as the number of minutes since usage",
+                        "One minute ago",
+                        "%1 minutes ago",
+                        minutesAgo);
+            } else {
+                int hoursAgo = secondsAgo / (60 * 60);
+                lastUsedText = i18ncp(
+                        "Label for last used time for a network connection used in the last day, as the number of hours since usage",
+                        "One hour ago",
+                        "%1 hours ago",
+                        hoursAgo);
+            }
+        } else if (lastUsed.daysTo(now) == 1) {
+            lastUsedText = i18nc("Label for last used time for a network connection used the previous day", "Yesterday");
+        } else {
+            lastUsedText = KGlobal::locale()->formatDate(lastUsed.date(), KLocale::ShortDate);
+        }
+    } else {
+        lastUsedText =  i18nc("Label for last used time for a "
+                "network connection that has never been used", "Never");
+    }
+    return lastUsedText;
+}
+
+QTreeWidgetItem* ConnectionEditor::findTopLevelItem(const QString& type)
+{
+    QTreeWidgetItem * item = 0;
+
+    for (int i = 0; i < m_editor->connectionsWidget->topLevelItemCount(); i++) {
+        item = m_editor->connectionsWidget->topLevelItem(i);
+
+        if (item->data(0, Qt::UserRole).toString() == type) {
+            return item;
+        }
+    }
+
+    return 0;
+}
+
+void ConnectionEditor::onItemSelectionChanged()
+{
+    QTreeWidgetItem * item = selectedItem();
+
+    if (item->data(0, Qt::UserRole).toString() == "connection") {
+        m_editor->editButton->setEnabled(true);
+        m_editor->deleteButton->setEnabled(true);
+    } else {
+        m_editor->editButton->setDisabled(true);
+        m_editor->deleteButton->setDisabled(true);
+    }
+}
+
+QTreeWidgetItem* ConnectionEditor::selectedItem()
+{
+    QTreeWidgetItem * item = 0;
+    QList<QTreeWidgetItem*> selectedItems = m_editor->connectionsWidget->selectedItems();
+
+    if (!selectedItems.isEmpty()) {
+        item = selectedItems.takeFirst();
+    }
+
+    return item;
+}
