@@ -20,6 +20,7 @@
 
 #include "connectiondetaileditor.h"
 #include "ui_connectiondetaileditor.h"
+#include "wiredconnectionwidget.h"
 
 #include <QtGui/QTreeWidgetItem>
 
@@ -29,13 +30,38 @@
 
 using namespace NetworkManager;
 
-ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* settings, QDialog* parent, Qt::WindowFlags f):
+ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* connection, QDialog* parent, Qt::WindowFlags f):
     QDialog(parent, f),
-    m_detailEditor(new Ui::ConnectionDetailEditor)
+    m_detailEditor(new Ui::ConnectionDetailEditor),
+    m_connection(connection)
 {
     m_detailEditor->setupUi(this);
+
+    initTabs();
 }
 
 ConnectionDetailEditor::~ConnectionDetailEditor()
 {
 }
+
+void ConnectionDetailEditor::initTabs()
+{
+    foreach (Settings::Setting * setting, m_connection->settings()) {
+        addTab(setting->type());
+    }
+}
+
+void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
+{
+    /*Adsl, Cdma, Gsm, Infiniband, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial,
+      Vpn, Wired, Wireless, WirelessSecurity, Bluetooth, OlpcMesh, Vlan, Wimax, Bond, Bridge, BridgePort;*/
+
+    switch (type) {
+        case Settings::Setting::Wired:
+            WiredConnectionWidget * wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
+            m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
+            break;
+    }
+}
+
+

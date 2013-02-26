@@ -18,34 +18,36 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_DETAIL_EDITOR_H
-#define CONNECTION_DETAIL_EDITOR_H
+#ifndef WIRED_CONNECTION_WIDGET_H
+#define WIRED_CONNECTION_WIDGET_H
 
-#include <QtGui/QDialog>
+#include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/connection.h>
+#include <QtNetworkManager/settings/setting.h>
+
+#include "settingwidget.h"
 
 namespace Ui
 {
-class ConnectionDetailEditor;
+class WiredConnectionWidget;
 }
 
-class ConnectionDetailEditor : public QDialog
+class WiredConnectionWidget : public SettingWidget
 {
 Q_OBJECT
 
 public:
-    explicit ConnectionDetailEditor(NetworkManager::Settings::ConnectionSettings * connection, QDialog* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~ConnectionDetailEditor();
+    explicit WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~WiredConnectionWidget();
 
-private Q_SLOTS:
+    void readConfig();
+    void writeConfig();
+
+    NetworkManager::Settings::Setting * setting() const;
 
 private:
-    Ui::ConnectionDetailEditor * m_detailEditor;
-    NetworkManager::Settings::ConnectionSettings * m_connection;
-
-    void initTabs();
-    void addTab(NetworkManager::Settings::Setting::SettingType type);
+    Ui::WiredConnectionWidget * m_widget;
+    NetworkManager::Settings::Setting * m_setting;
 };
 
-#endif // CONNECTION_DETAIL_EDITOR_H
+#endif // WIRED_CONNECTION_WIDGET_H

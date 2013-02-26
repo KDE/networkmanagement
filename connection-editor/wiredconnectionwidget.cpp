@@ -18,34 +18,34 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_DETAIL_EDITOR_H
-#define CONNECTION_DETAIL_EDITOR_H
+#include "wiredconnectionwidget.h"
+#include "ui_wiredconnectionwidget.h"
 
-#include <QtGui/QDialog>
-
-#include <QtNetworkManager/settings/connection.h>
-
-namespace Ui
+WiredConnectionWidget::WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
+    SettingWidget(setting, parent, f),
+    m_widget(new Ui::WiredConnectionWidget),
+    m_setting(setting)
 {
-class ConnectionDetailEditor;
+    m_widget->setupUi(this);
+    m_widget->speedLabel->setHidden(true);
+    m_widget->speed->setHidden(true);
+    m_widget->duplexLabel->setHidden(true);
+    m_widget->duplex->setHidden(true);
 }
 
-class ConnectionDetailEditor : public QDialog
+WiredConnectionWidget::~WiredConnectionWidget()
 {
-Q_OBJECT
+}
 
-public:
-    explicit ConnectionDetailEditor(NetworkManager::Settings::ConnectionSettings * connection, QDialog* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~ConnectionDetailEditor();
+NetworkManager::Settings::Setting* WiredConnectionWidget::setting() const
+{
+    return m_setting;
+}
 
-private Q_SLOTS:
+void WiredConnectionWidget::readConfig()
+{
+}
 
-private:
-    Ui::ConnectionDetailEditor * m_detailEditor;
-    NetworkManager::Settings::ConnectionSettings * m_connection;
-
-    void initTabs();
-    void addTab(NetworkManager::Settings::Setting::SettingType type);
-};
-
-#endif // CONNECTION_DETAIL_EDITOR_H
+void WiredConnectionWidget::writeConfig()
+{
+}

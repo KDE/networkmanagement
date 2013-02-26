@@ -28,6 +28,8 @@ set(connectioneditor_SRCS
    connectionitem.cpp
    connectiontypeitem.cpp
    connectiondetaileditor.cpp
+   settingwidget.cpp
+   wiredconnectionwidget.cpp
 )
 
 set(connectioneditor_HDRS
@@ -35,9 +37,15 @@ set(connectioneditor_HDRS
    connectionitem.h
    connectiontypeitem.h
    connectiondetaileditor.h
+   settingwidget.h
+   wiredconnectionwidget.h
 )
 
-kde4_add_ui_files(connectioneditor_SRCS ui/connectioneditor.ui ui/connectiondetaileditor.ui)
+kde4_add_ui_files(connectioneditor_SRCS
+    ui/connectioneditor.ui
+    ui/connectiondetaileditor.ui
+    ui/wiredconnectionwidget.ui
+)
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
 
 add_executable(connectioneditor ${connectioneditor_SRCS} ${connectioneditor_HDRS_MOC})
