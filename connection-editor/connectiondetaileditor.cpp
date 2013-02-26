@@ -29,11 +29,17 @@
 
 using namespace NetworkManager;
 
-ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* settings, QDialog* parent, Qt::WindowFlags f):
+ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* settings, QWidget* parent, Qt::WindowFlags f):
     QDialog(parent, f),
     m_detailEditor(new Ui::ConnectionDetailEditor)
 {
     m_detailEditor->setupUi(this);
+    if (settings->id().isEmpty()) {
+        setWindowTitle(i18n("New Connection (%1)").arg(settings->typeAsString(settings->connectionType())));
+    }
+    else {
+        setWindowTitle(i18n("Edit Connection '%1'").arg(settings->id()));
+    }
 }
 
 ConnectionDetailEditor::~ConnectionDetailEditor()
