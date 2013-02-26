@@ -23,25 +23,40 @@
 
 #include <QtNetworkManager/settings/802-3-ethernet.h>
 
-ConnectionWidget::ConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
-    SettingWidget(setting, parent, f),
+ConnectionWidget::ConnectionWidget(NetworkManager::Settings::ConnectionSettings* settings, QWidget* parent, Qt::WindowFlags f):
+    QWidget(parent, f),
     m_widget(new Ui::ConnectionWidget)
 {
     m_widget->setupUi(this);
 
-    if (setting)
-        loadConfig(setting);
+    //TODO: populate firewall zones
+
+    if (settings)
+        loadConfig(settings);
 }
 
 ConnectionWidget::~ConnectionWidget()
 {
 }
 
-void ConnectionWidget::loadConfig(NetworkManager::Settings::Setting * setting)
+void ConnectionWidget::loadConfig(NetworkManager::Settings::ConnectionSettings * settings)
 {
+    //TODO
 }
 
-QVariantMap ConnectionWidget::setting() const
+QVariantMapMap ConnectionWidget::setting() const
 {
-    return QVariantMap();
+    NetworkManager::Settings::ConnectionSettings settings;
+
+    settings.setAutoconnect(m_widget->autoconnect->isChecked());
+
+    if (m_widget->allUsers->isChecked()) {
+        settings.setPermissions(QHash<QString, QString>());
+    } else {
+        // TODO: ??
+    }
+
+    //TODO: zones
+
+    return settings.toMap();
 }

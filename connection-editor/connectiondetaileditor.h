@@ -39,6 +39,7 @@ public:
     virtual ~ConnectionDetailEditor();
 
 private Q_SLOTS:
+    void saveSetting();
 
 private:
     Ui::ConnectionDetailEditor * m_detailEditor;
@@ -46,6 +47,7 @@ private:
 
     void initTabs();
     void addTab(NetworkManager::Settings::Setting::SettingType type);
+
 };
 
 #endif // CONNECTION_DETAIL_EDITOR_H

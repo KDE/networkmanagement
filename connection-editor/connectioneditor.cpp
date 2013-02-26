@@ -264,6 +264,6 @@ void ConnectionEditor::addConnection(QAction* action)
 
     ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection);
     if (editor->exec() == QDialog::Accepted) {
-        // TODO
+        newConnection->printSetting();
     }
 }

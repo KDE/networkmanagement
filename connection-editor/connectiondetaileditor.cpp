@@ -45,6 +45,8 @@ ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* con
         setWindowTitle(i18n("Edit Connection '%1'", connection->id()));
         m_detailEditor->connectionName->setText(connection->id());
     }
+
+    connect(this, SIGNAL(accepted()), SLOT(saveSetting()));
 }
 
 ConnectionDetailEditor::~ConnectionDetailEditor()
@@ -68,13 +70,24 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
 
     if (type == Settings::Setting::Wired) {
         WiredConnectionWidget * wiredWidget;
-        if (m_connection->setting(type)->isNull()) {
-            wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
-        } else {
-            wiredWidget = new WiredConnectionWidget();
-        }
+        wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
         m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
     }
 }
 
+void ConnectionDetailEditor::saveSetting()
+{
+    ConnectionWidget * connectionWidget = static_cast<ConnectionWidget*>(m_detailEditor->tabWidget->widget(0));
+
+    QVariantMapMap settings = connectionWidget->setting();
+
+    for (int i = 1; i < m_detailEditor->tabWidget->count(); i++) {
+        SettingWidget * widget = static_cast<SettingWidget*>(m_detailEditor->tabWidget->widget(i));
+        settings.insert(widget->type(), widget->setting());
+    }
+
+    m_connection->fromMap(settings);
+    m_connection->setId(m_detailEditor->connectionName->text());
+    m_connection->setUuid(QUuid::createUuid().toString().mid(1, QUuid::createUuid().toString().length() - 2));
+}
 

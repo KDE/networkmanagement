@@ -25,7 +25,8 @@
 
 WiredConnectionWidget::WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_widget(new Ui::WiredConnectionWidget)
+    m_widget(new Ui::WiredConnectionWidget),
+    m_type(setting->name())
 {
     m_widget->setupUi(this);
     m_widget->speedLabel->setHidden(true);
@@ -103,4 +104,10 @@ QVariantMap WiredConnectionWidget::setting() const
     }
 
     return wiredSetting.toMap();
+}
+
+
+QString WiredConnectionWidget::type() const
+{
+    return m_type;
 }

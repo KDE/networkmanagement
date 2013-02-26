@@ -23,26 +23,24 @@
 
 #include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/802-3-ethernet.h>
-
-#include "settingwidget.h"
+#include <QtNetworkManager/settings/connection.h>
 
 namespace Ui
 {
 class ConnectionWidget;
 }
 
-class ConnectionWidget : public SettingWidget
+class ConnectionWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-    ConnectionWidget(NetworkManager::Settings::Setting* setting = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    ConnectionWidget(NetworkManager::Settings::ConnectionSettings* settings = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~ConnectionWidget();
 
-    void loadConfig(NetworkManager::Settings::Setting * setting);
+    void loadConfig(NetworkManager::Settings::ConnectionSettings * settings);
 
-    QVariantMap setting() const;
+    QVariantMapMap setting() const;
 
 private:
     Ui::ConnectionWidget * m_widget;
