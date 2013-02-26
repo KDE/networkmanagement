@@ -21,18 +21,18 @@
 #include "settingwidget.h"
 
 SettingWidget::SettingWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
-    QWidget(parent, f),
-    m_setting(setting)
+    QWidget(parent, f)
 {
+    Q_UNUSED(setting);
 }
 
 SettingWidget::~SettingWidget()
 {
 }
 
-NetworkManager::Settings::Setting* SettingWidget::setting() const
+void SettingWidget::loadConfig(NetworkManager::Settings::Setting* setting)
 {
-    return m_setting;
+    Q_UNUSED(setting);
 }
 
 void SettingWidget::readSecrets()

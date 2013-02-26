@@ -31,17 +31,14 @@ class SettingWidget : public QWidget
 Q_OBJECT
 
 public:
-    explicit SettingWidget(NetworkManager::Settings::Setting * setting, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    SettingWidget(NetworkManager::Settings::Setting * setting, QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~SettingWidget();
 
-    virtual void readConfig() = 0;
-    virtual void writeConfig() = 0;
+    virtual void loadConfig(NetworkManager::Settings::Setting * setting);
     virtual void readSecrets();
 
-    NetworkManager::Settings::Setting * setting() const;
+    virtual QVariantMap setting() const = 0;
 
-private:
-    NetworkManager::Settings::Setting * m_setting;
 };
 
 #endif // SETTING_WIDGET_H
