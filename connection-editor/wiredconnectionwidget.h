@@ -23,7 +23,7 @@
 
 #include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/setting.h>
+#include <QtNetworkManager/settings/802-3-ethernet.h>
 
 #include "settingwidget.h"
 
@@ -37,17 +37,15 @@ class WiredConnectionWidget : public SettingWidget
 Q_OBJECT
 
 public:
-    explicit WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    WiredConnectionWidget(NetworkManager::Settings::Setting* setting = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~WiredConnectionWidget();
 
-    void readConfig();
-    void writeConfig();
+    void loadConfig(NetworkManager::Settings::Setting * setting);
 
-    NetworkManager::Settings::Setting * setting() const;
+    QVariantMap setting() const;
 
 private:
     Ui::WiredConnectionWidget * m_widget;
-    NetworkManager::Settings::Setting * m_setting;
 };
 
 #endif // WIRED_CONNECTION_WIDGET_H

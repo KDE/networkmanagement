@@ -21,31 +21,86 @@
 #include "wiredconnectionwidget.h"
 #include "ui_wiredconnectionwidget.h"
 
+#include <QtNetworkManager/settings/802-3-ethernet.h>
+
 WiredConnectionWidget::WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_widget(new Ui::WiredConnectionWidget),
-    m_setting(setting)
+    m_widget(new Ui::WiredConnectionWidget)
 {
     m_widget->setupUi(this);
     m_widget->speedLabel->setHidden(true);
     m_widget->speed->setHidden(true);
     m_widget->duplexLabel->setHidden(true);
     m_widget->duplex->setHidden(true);
+
+    if (setting)
+        loadConfig(setting);
 }
 
 WiredConnectionWidget::~WiredConnectionWidget()
 {
 }
 
-NetworkManager::Settings::Setting* WiredConnectionWidget::setting() const
+void WiredConnectionWidget::loadConfig(NetworkManager::Settings::Setting * setting)
 {
-    return m_setting;
+    NetworkManager::Settings::WiredSetting * wiredSetting = static_cast<NetworkManager::Settings::WiredSetting*>(setting);
+
+    if (!wiredSetting->macAddress().isEmpty()) {
+        m_widget->macAddress->setText(QString(wiredSetting->macAddress()));
+    }
+
+    if (!wiredSetting->clonedMacAddress().isEmpty()) {
+        m_widget->clonedMacAddress->setText(QString(wiredSetting->clonedMacAddress()));
+    }
+
+    if (wiredSetting->mtu()) {
+        m_widget->mtu->setValue(wiredSetting->mtu());
+    }
+
+    if (!wiredSetting->autoNegotiate()) {
+        if (wiredSetting->speed()) {
+            m_widget->speed->setValue(wiredSetting->speed());
+        }
+
+        if (wiredSetting->duplexType() == NetworkManager::Settings::WiredSetting::Full) {
+            m_widget->duplex->setCurrentIndex(0);
+        } else {
+            m_widget->duplex->setCurrentIndex(1);
+        }
+    }
 }
 
-void WiredConnectionWidget::readConfig()
+QVariantMap WiredConnectionWidget::setting() const
 {
-}
+    NetworkManager::Settings::WiredSetting wiredSetting;
 
-void WiredConnectionWidget::writeConfig()
-{
+    if (!m_widget->macAddress->text().isEmpty()) {
+        wiredSetting.setMacAddress(m_widget->macAddress->text().toLatin1());
+    }
+
+    if (!m_widget->clonedMacAddress->text().isEmpty()) {
+        wiredSetting.setClonedMacAddress(m_widget->clonedMacAddress->text().toLatin1());
+    }
+
+    if (m_widget->mtu->value()) {
+        wiredSetting.setMtu(m_widget->mtu->value());
+    }
+
+    if (m_widget->autonegotiate->isChecked()) {
+        wiredSetting.setAutoNegotiate(true);
+    } else {
+        wiredSetting.setAutoNegotiate(false);
+
+        if (m_widget->speed->value()) {
+            wiredSetting.setSpeed(m_widget->speed->value());
+        }
+
+        if (m_widget->duplex->currentIndex() == 0) {
+            wiredSetting.setDuplexType(NetworkManager::Settings::WiredSetting::Full);
+        } else {
+            wiredSetting.setDuplexType(NetworkManager::Settings::WiredSetting::Half);
+        }
+    }
+
+    return wiredSetting.toMap();
 }
