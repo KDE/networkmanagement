@@ -45,6 +45,7 @@ private Q_SLOTS:
     void initializeConnections();
     void currentItemChanged(QTreeWidgetItem * current, QTreeWidgetItem * previous);
     void addConnection(QAction * action);
+    void editConnection();
 
 private:
     Ui::ConnectionEditor * m_editor;

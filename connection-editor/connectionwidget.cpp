@@ -42,6 +42,7 @@ ConnectionWidget::~ConnectionWidget()
 void ConnectionWidget::loadConfig(NetworkManager::Settings::ConnectionSettings * settings)
 {
     //TODO
+    Q_UNUSED(settings);
 }
 
 QVariantMapMap ConnectionWidget::setting() const

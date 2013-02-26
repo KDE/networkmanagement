@@ -137,6 +137,8 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
             SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
     connect(m_menu,SIGNAL(triggered(QAction*)),
             SLOT(addConnection(QAction*)));
+    connect(m_editor->editButton, SIGNAL(pressed()),
+            SLOT(editConnection()));
 }
 
 ConnectionEditor::~ConnectionEditor()
@@ -264,6 +266,22 @@ void ConnectionEditor::addConnection(QAction* action)
 
     ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection);
     if (editor->exec() == QDialog::Accepted) {
+        //TODO
         newConnection->printSetting();
+    }
+}
+
+void ConnectionEditor::editConnection()
+{
+    QTreeWidgetItem * currentItem = m_editor->connectionsWidget->currentItem();
+
+    Settings::Connection * connection = Settings::findConnection(currentItem->data(0, ConnectionItem::ConnectionIdRole).toString());
+    Settings::ConnectionSettings * connectionSetting = new Settings::ConnectionSettings();
+    connectionSetting->fromMap(connection->settings());
+
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(connectionSetting);
+    if (editor->exec() == QDialog::Accepted) {
+        //TODO
+        connectionSetting->printSetting();
     }
 }
