@@ -191,7 +191,7 @@ void ConnectionEditor::initializeConnections()
     }
 }
 
-QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed)
+QString ConnectionEditor::formatDateRelative(const QDateTime & lastUsed) const
 {
     QString lastUsedText;
     if (lastUsed.isValid()) {
@@ -259,5 +259,7 @@ void ConnectionEditor::addConnection(QAction* action)
     Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
 
     ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, 0);
-    editor->show();
+    if (editor->exec() == QDialog::Accepted) {
+        // TODO
+    }
 }
