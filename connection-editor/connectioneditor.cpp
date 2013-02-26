@@ -44,83 +44,83 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
     m_menu->setSeparatorsCollapsible(false);
 
     QAction * action = m_menu->addSeparator();
-    action->setText("Hardware");
+    action->setText(i18n("Hardware"));
 
-    action = new QAction("DSL", this);
+    action = new QAction(i18n("DSL"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Adsl);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("InfiniBand", this);
+    action = new QAction(i18n("InfiniBand"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Infiniband);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Mobile Broadband", this);
+    action = new QAction(i18n("Mobile Broadband"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Gsm);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Wired", this);
+    action = new QAction(i18n("Wired"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Wired);
     m_menu->addAction(action);
-    action = new QAction("Wireless", this);
+    action = new QAction(i18n("Wireless"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Wireless);
     m_menu->addAction(action);
-    action = new QAction("WiMAX", this);
+    action = new QAction(i18n("WiMAX"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Wimax);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
 
     action = m_menu->addSeparator();
-    action->setText("Virtual");
+    action->setText(i18n("Virtual"));
 
-    action = new QAction("Bond", this);
+    action = new QAction(i18n("Bond"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Bond);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Bridge", this);
+    action = new QAction(i18n("Bridge"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Bridge);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("VLAN", this);
+    action = new QAction(i18n("VLAN"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vlan);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
 
     action = m_menu->addSeparator();
-    action->setText("VPN");
+    action->setText(i18n("VPN"));
 
-    action = new QAction("Cisco AnyConnected Compatible VPN (openconnect)", this);
+    action = new QAction(i18n("Cisco AnyConnected Compatible VPN (openconnect)"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Cisco VPN (vpnc)", this);
+    action = new QAction(i18n("Cisco VPN (vpnc)"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("IPSec based VPN", this);
+    action = new QAction(i18n("IPSec based VPN"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Layer 2 Tunneling Protocol (l2tp)", this);
+    action = new QAction(i18n("Layer 2 Tunneling Protocol (l2tp)"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("OpenVPN", this);
+    action = new QAction(i18n("OpenVPN"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
     m_menu->addAction(action);
-    action = new QAction("Point-to-Point Tunneling Protocol VPN (PPTP)", this);
+    action = new QAction(i18n("Point-to-Point Tunneling Protocol VPN (PPTP)"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
@@ -141,7 +141,7 @@ void ConnectionEditor::initializeConnections()
 {
     m_editor->connectionsWidget->clear();
 
-    QList<QString> actives;
+    QStringList actives;
 
     foreach(NetworkManager::ActiveConnection * active, NetworkManager::activeConnections()) {
         actives << active->connection()->uuid();
@@ -155,7 +155,7 @@ void ConnectionEditor::initializeConnections()
         QString name = settings->id();
         QString lastUsed = formatDateRelative(settings->timestamp());
         QString type = Settings::ConnectionSettings::typeAsString(settings->connectionType());
-        bool active = actives.contains(settings->uuid()) ? true : false;
+        bool active = actives.contains(settings->uuid());
 
         // Can't continue if name or type are empty
         if (name.isEmpty() || type.isEmpty()) {
