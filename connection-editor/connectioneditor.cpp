@@ -261,7 +261,6 @@ void ConnectionEditor::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetI
 void ConnectionEditor::addConnection(QAction* action)
 {
     Settings::ConnectionSettings::ConnectionType type = (Settings::ConnectionSettings::ConnectionType) action->data().toUInt();
-
     Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
 
     ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection);

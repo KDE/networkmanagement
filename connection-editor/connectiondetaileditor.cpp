@@ -56,7 +56,7 @@ ConnectionDetailEditor::~ConnectionDetailEditor()
 
 void ConnectionDetailEditor::initTabs()
 {
-    ConnectionWidget * connectionWidget = new ConnectionWidget();
+    ConnectionWidget * connectionWidget = new ConnectionWidget(m_connection);
     m_detailEditor->tabWidget->addTab(connectionWidget, i18n("General"));
 
     foreach (Settings::Setting * setting, m_connection->settings()) {
@@ -68,7 +68,6 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
 {
     /*Adsl, Cdma, Gsm, Infiniband, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial,
       Vpn, Wired, Wireless, WirelessSecurity, Bluetooth, OlpcMesh, Vlan, Wimax, Bond, Bridge, BridgePort;*/
-
     if (type == Settings::Setting::Wired) {
         WiredConnectionWidget * wiredWidget = new WiredConnectionWidget(m_connection->setting(type), this);
         m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));

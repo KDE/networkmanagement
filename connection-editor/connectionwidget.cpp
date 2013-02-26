@@ -25,7 +25,8 @@
 
 ConnectionWidget::ConnectionWidget(NetworkManager::Settings::ConnectionSettings* settings, QWidget* parent, Qt::WindowFlags f):
     QWidget(parent, f),
-    m_widget(new Ui::ConnectionWidget)
+    m_widget(new Ui::ConnectionWidget),
+    m_type(settings->connectionType())
 {
     m_widget->setupUi(this);
 
@@ -49,6 +50,7 @@ QVariantMapMap ConnectionWidget::setting() const
 {
     NetworkManager::Settings::ConnectionSettings settings;
 
+    settings.setConnectionType(m_type);
     settings.setAutoconnect(m_widget->autoconnect->isChecked());
 
     if (m_widget->allUsers->isChecked()) {

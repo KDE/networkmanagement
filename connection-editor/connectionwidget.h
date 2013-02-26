@@ -44,6 +44,7 @@ public:
 
 private:
     Ui::ConnectionWidget * m_widget;
+    NetworkManager::Settings::ConnectionSettings::ConnectionType m_type;
 };
 
 #endif // CONNECTION_WIDGET_H
