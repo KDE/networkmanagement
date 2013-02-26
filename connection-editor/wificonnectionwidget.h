@@ -1,5 +1,5 @@
 /*
-    Copyright 2012-2013  Jan Grulich <jgrulich@redhat.com>
+    Copyright (c) 2013 Lukas Tinkl <ltinkl@redhat.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -18,36 +18,34 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_DETAIL_EDITOR_H
-#define CONNECTION_DETAIL_EDITOR_H
+#ifndef WIFI_CONNECTION_WIDGET_H
+#define WIFI_CONNECTION_WIDGET_H
 
-#include <QtGui/QDialog>
+#include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/connection.h>
+#include <QtNetworkManager/settings/802-11-wireless.h>
+
+#include "settingwidget.h"
 
 namespace Ui
 {
-class ConnectionDetailEditor;
+class WifiConnectionWidget;
 }
 
-class ConnectionDetailEditor : public QDialog
+class WifiConnectionWidget : public SettingWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    ConnectionDetailEditor(NetworkManager::Settings::ConnectionSettings * connection, QDialog* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~ConnectionDetailEditor();
+    WifiConnectionWidget(NetworkManager::Settings::Setting* setting = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~WifiConnectionWidget();
 
-private Q_SLOTS:
-    void saveSetting();
+    void loadConfig(NetworkManager::Settings::Setting * setting);
+
+    QVariantMap setting() const;
 
 private:
-    Ui::ConnectionDetailEditor * m_detailEditor;
-    NetworkManager::Settings::ConnectionSettings * m_connection;
-
-    void initTabs();
-    void addTab(NetworkManager::Settings::Setting::SettingType type);
-
+    Ui::WifiConnectionWidget * m_ui;
 };
 
-#endif // CONNECTION_DETAIL_EDITOR_H
+#endif // WIFI_CONNECTION_WIDGET_H

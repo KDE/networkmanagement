@@ -22,6 +22,7 @@
 #include "ui_connectiondetaileditor.h"
 #include "connectionwidget.h"
 #include "wiredconnectionwidget.h"
+#include "wificonnectionwidget.h"
 
 #include <QtNetworkManager/settings.h>
 #include <QtNetworkManager/activeconnection.h>
@@ -69,9 +70,11 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
       Vpn, Wired, Wireless, WirelessSecurity, Bluetooth, OlpcMesh, Vlan, Wimax, Bond, Bridge, BridgePort;*/
 
     if (type == Settings::Setting::Wired) {
-        WiredConnectionWidget * wiredWidget;
-        wiredWidget = new WiredConnectionWidget(m_connection->setting(type));
+        WiredConnectionWidget * wiredWidget = new WiredConnectionWidget(m_connection->setting(type), this);
         m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
+    } else if (type == Settings::Setting::Wireless) {
+        WifiConnectionWidget * wifiWidget = new WifiConnectionWidget(m_connection->setting(type), this);
+        m_detailEditor->tabWidget->addTab(wifiWidget, i18n("Wireless"));
     }
 }
 
@@ -81,7 +84,7 @@ void ConnectionDetailEditor::saveSetting()
 
     QVariantMapMap settings = connectionWidget->setting();
 
-    for (int i = 1; i < m_detailEditor->tabWidget->count(); i++) {
+    for (int i = 1; i < m_detailEditor->tabWidget->count(); ++i) {
         SettingWidget * widget = static_cast<SettingWidget*>(m_detailEditor->tabWidget->widget(i));
         settings.insert(widget->type(), widget->setting());
     }

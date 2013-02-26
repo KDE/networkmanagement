@@ -24,7 +24,6 @@ SettingWidget::SettingWidget(NetworkManager::Settings::Setting* setting, QWidget
     QWidget(parent, f),
     m_type(setting->name())
 {
-    Q_UNUSED(setting);
 }
 
 SettingWidget::~SettingWidget()
