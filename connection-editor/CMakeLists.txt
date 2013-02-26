@@ -8,7 +8,7 @@ include(FindPkgConfig)
 
 pkg_check_modules(QTNETWORKMANAGER REQUIRED QtNetworkManager)
 if (NOT QTNETWORKMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: QtNetworkManager not found. http://projects.kde.org/search?q=networkmanager&scope=all&all_words=1&projects=1&submit=Submit")
+    message(FATAL_ERROR "ERROR: QtNetworkManager not found. http://projects.kde.org/libnm-qt")
 endif (NOT QTNETWORKMANAGER_FOUND)
 
 pkg_check_modules(QTNETWORK REQUIRED QtNetwork)
