@@ -31,12 +31,12 @@
          <string>Connection &amp;name:</string>
         </property>
         <property name="buddy">
-         <cstring>lineEdit</cstring>
+         <cstring>connectionName</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="connectionName"/>
       </item>
      </layout>
     </item>
@@ -206,7 +206,7 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>lineEdit</tabstop>
+  <tabstop>connectionName</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>autoconnect</tabstop>
   <tabstop>allUsers</tabstop>

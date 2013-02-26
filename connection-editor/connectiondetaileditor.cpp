@@ -41,9 +41,11 @@ ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* con
 
     if (connection->id().isEmpty()) {
         setWindowTitle(i18n("New Connection (%1)").arg(connection->typeAsString(connection->connectionType())));
+        m_detailEditor->connectionName->setText(i18n("New %1 Connection").arg(connection->typeAsString(connection->connectionType())));
     }
     else {
         setWindowTitle(i18n("Edit Connection '%1'").arg(connection->id()));
+        m_detailEditor->connectionName->setText(connection->id());
     }
 }
 
