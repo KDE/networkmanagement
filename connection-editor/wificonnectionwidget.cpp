@@ -68,8 +68,8 @@ QVariantMap WifiConnectionWidget::setting() const
 {
     NetworkManager::Settings::WirelessSetting wifiSetting;
 
-    if (!m_ui->SSIDLabel->text().isEmpty()) {
-        wifiSetting.setSsid(m_ui->SSIDLabel->text().toUtf8());
+    if (!m_ui->SSIDLineEdit->text().isEmpty()) {
+        wifiSetting.setSsid(m_ui->SSIDLineEdit->text().toUtf8());
     }
 
     if (m_ui->modeComboBox->currentIndex() != 0) {
