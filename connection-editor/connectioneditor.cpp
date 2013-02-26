@@ -237,7 +237,7 @@ QTreeWidgetItem* ConnectionEditor::findTopLevelItem(const QString& type)
 
 void ConnectionEditor::onItemSelectionChanged()
 {
-    QTreeWidgetItem * item = selectedItem();
+    QTreeWidgetItem * item = m_editor->connectionsWidget->currentItem();
 
     if (item->data(0, Qt::UserRole).toString() == "connection") {
         m_editor->editButton->setEnabled(true);
@@ -246,16 +246,4 @@ void ConnectionEditor::onItemSelectionChanged()
         m_editor->editButton->setDisabled(true);
         m_editor->deleteButton->setDisabled(true);
     }
-}
-
-QTreeWidgetItem* ConnectionEditor::selectedItem()
-{
-    QTreeWidgetItem * item = 0;
-    QList<QTreeWidgetItem*> selectedItems = m_editor->connectionsWidget->selectedItems();
-
-    if (!selectedItems.isEmpty()) {
-        item = selectedItems.takeFirst();
-    }
-
-    return item;
 }

@@ -53,8 +53,6 @@ private:
 
     QString formatDateRelative(const QDateTime & lastUsed);
     QTreeWidgetItem * findTopLevelItem(const QString & type);
-    QTreeWidgetItem * selectedItem();
-
 };
 
 #endif // CONNECTION_EDITOR_H
