@@ -22,10 +22,7 @@
 #include "ui_connectiondetaileditor.h"
 #include "wiredconnectionwidget.h"
 
-#include <QtGui/QTreeWidgetItem>
-
 #include <QtNetworkManager/settings.h>
-#include <QtNetworkManager/connection.h>
 #include <QtNetworkManager/activeconnection.h>
 
 using namespace NetworkManager;
