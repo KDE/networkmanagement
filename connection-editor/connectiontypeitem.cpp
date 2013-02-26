@@ -22,6 +22,7 @@
 
 #include <QtCore/QDateTime>
 #include <KIcon>
+#include <KLocale>
 
 ConnectionTypeItem::ConnectionTypeItem(QTreeWidget * parent, const QString & type):
     QTreeWidgetItem(parent, QStringList(type))
@@ -29,39 +30,39 @@ ConnectionTypeItem::ConnectionTypeItem(QTreeWidget * parent, const QString & typ
     QString text;
 
     if (type == QLatin1String("adsl")) {
-        text = "Adsl";
+        text = i18n("Adsl");
         setIcon(0, KIcon("modem"));
     } else if (type == QLatin1String("bluetooth")) {
-        text = "Bluetooth";
+        text = i18n("Bluetooth");
         setIcon(0, KIcon("bluetooth"));
     } else if (type == QLatin1String("bond")) {
-        text = "Bond";
+        text = i18n("Bond");
     } else if (type == QLatin1String("bridge")) {
-        text = "Bridge";
+        text = i18n("Bridge");
     } else if (type == QLatin1String("cdma")) {
-        text = "Mobile broadband";
+        text = i18n("Mobile broadband");
         setIcon(0, KIcon("phone"));
     } else if (type == QLatin1String("gsm")) {
-        text = "Mobile broadband";
+        text = i18n("Mobile broadband");
         setIcon(0, KIcon("phone"));
     } else if (type == QLatin1String("infiniband")) {
-        text = "InfiniBand";
+        text = i18n("InfiniBand");
     } else if (type == QLatin1String("802-11-olpc-mesh")) {
-        text = "Olpc mesh";
+        text = i18n("Olpc mesh");
     } else if (type == QLatin1String("pppoe")) {
-        text = "Pppoe";
+        text = i18n("Pppoe");
     } else if (type == QLatin1String("vlan")) {
-        text = "VLAN";
+        text = i18n("VLAN");
     } else if (type == QLatin1String("vpn")) {
-        text = "Vpn";
+        text = i18n("Vpn");
         setIcon(0, KIcon("secure-card"));
     } else if (type == QLatin1String("wimax")) {
-        text = "WiMAX";
+        text = i18n("WiMAX");
     } else if (type == QLatin1String("802-3-ethernet")) {
-        text = "Ethernet";
+        text = i18n("Ethernet");
         setIcon(0, KIcon("network-wired"));
     } else if (type == QLatin1String("802-11-wireless")) {
-        text = "Wi-Fi";
+        text = i18n("Wi-Fi");
         setIcon(0, KIcon("network-wireless"));
     }
 
