@@ -135,9 +135,11 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
 
     connect(m_editor->connectionsWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
-    connect(m_menu,SIGNAL(triggered(QAction*)),
+    connect(m_menu, SIGNAL(triggered(QAction*)),
             SLOT(addConnection(QAction*)));
-    connect(m_editor->editButton, SIGNAL(pressed()),
+    connect(m_editor->editButton, SIGNAL(clicked()),
+            SLOT(editConnection()));
+    connect(m_editor->connectionsWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             SLOT(editConnection()));
 }
 
