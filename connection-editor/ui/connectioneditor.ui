@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Connection Editor</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -37,8 +37,11 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
       <property name="alternatingRowColors">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="indentation">
        <number>15</number>
@@ -77,7 +80,7 @@
        <bool>true</bool>
       </attribute>
       <attribute name="headerStretchLastSection">
-       <bool>false</bool>
+       <bool>true</bool>
       </attribute>
       <column>
        <property name="text">
