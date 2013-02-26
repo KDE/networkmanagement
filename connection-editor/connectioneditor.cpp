@@ -275,7 +275,7 @@ void ConnectionEditor::editConnection()
 {
     QTreeWidgetItem * currentItem = m_editor->connectionsWidget->currentItem();
 
-    Settings::Connection * connection = Settings::findConnection(currentItem->data(0, ConnectionItem::ConnectionIdRole).toString());
+    Settings::Connection * connection = Settings::findConnectionByUuid(currentItem->data(0, ConnectionItem::ConnectionIdRole).toString());
     Settings::ConnectionSettings * connectionSetting = new Settings::ConnectionSettings();
     connectionSetting->fromMap(connection->settings());
 
