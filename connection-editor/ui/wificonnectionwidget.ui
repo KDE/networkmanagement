@@ -171,6 +171,9 @@
      <property name="prefix">
       <string/>
      </property>
+     <property name="maximum">
+      <number>9999</number>
+     </property>
     </widget>
    </item>
   </layout>

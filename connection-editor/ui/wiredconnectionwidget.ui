@@ -81,6 +81,9 @@
      <property name="suffix">
       <string> bytes</string>
      </property>
+     <property name="maximum">
+      <number>9999</number>
+     </property>
     </widget>
    </item>
    <item row="3" column="0">
@@ -106,6 +109,9 @@
      </property>
      <property name="suffix">
       <string> Mbit/s</string>
+     </property>
+     <property name="maximum">
+      <number>9999</number>
      </property>
     </widget>
    </item>
