@@ -41,6 +41,7 @@ public:
     void setNeverDefault(bool checked);
     bool neverdefault();
     void setIgnoreAutoRoutes(bool checked);
+    void setIgnoreAutoRoutesCheckboxEnabled(bool enabled);
     bool ignoreautoroutes();
 
 protected slots:

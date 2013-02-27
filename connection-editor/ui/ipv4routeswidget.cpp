@@ -54,7 +54,6 @@ IpV4RoutesWidget::IpV4RoutesWidget(QWidget * parent)
     : QDialog(parent), d(new IpV4RoutesWidget::Private())
 {
     d->ui.setupUi(this);
-    layout()->setMargin(0);
     d->ui.tableViewAddresses->setModel(&d->model);
     d->ui.tableViewAddresses->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     d->ui.tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
@@ -96,6 +95,11 @@ bool IpV4RoutesWidget::neverdefault()
 void IpV4RoutesWidget::setIgnoreAutoRoutes(bool checked)
 {
     d->ui.cbIgnoreAutoRoutes->setChecked(checked);
+}
+
+void IpV4RoutesWidget::setIgnoreAutoRoutesCheckboxEnabled(bool enabled)
+{
+    d->ui.cbIgnoreAutoRoutes->setEnabled(enabled);
 }
 
 bool IpV4RoutesWidget::ignoreautoroutes()

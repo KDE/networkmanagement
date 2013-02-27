@@ -153,6 +153,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Use this field to specify one or more DNS domains to search. Use ',' to separate entries.</string>
+       </property>
       </widget>
      </item>
      <item>

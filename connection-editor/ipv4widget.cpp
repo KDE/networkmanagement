@@ -326,7 +326,11 @@ void IPv4Widget::slotRoutesDialog()
     IpV4RoutesWidget * dlg = new IpV4RoutesWidget(this);
     dlg->setRoutes(m_ipv4Setting->routes());
     dlg->setNeverDefault(m_ipv4Setting->neverDefault());
-    dlg->setIgnoreAutoRoutes(m_ipv4Setting->ignoreAutoRoutes());
+    if (m_ui->method->currentIndex() == 1) {  // manual
+        dlg->setIgnoreAutoRoutesCheckboxEnabled(false);
+    } else {
+        dlg->setIgnoreAutoRoutes(m_ipv4Setting->ignoreAutoRoutes());
+    }
     if (dlg->exec() == QDialog::Accepted) {
         m_ipv4Setting->setRoutes(dlg->routes());
         m_ipv4Setting->setNeverDefault(dlg->neverdefault());
