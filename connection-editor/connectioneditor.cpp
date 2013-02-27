@@ -278,6 +278,11 @@ void ConnectionEditor::editConnection()
 {
     QTreeWidgetItem * currentItem = m_editor->connectionsWidget->currentItem();
 
+    if (currentItem->data(0, Qt::UserRole).toString() != "connection") {
+        qDebug() << "clicked on the root item which is not editable";
+        return;
+    }
+
     Settings::Connection * connection = Settings::findConnectionByUuid(currentItem->data(0, ConnectionItem::ConnectionIdRole).toString());
     Settings::ConnectionSettings * connectionSetting = new Settings::ConnectionSettings();
     connectionSetting->fromMap(connection->settings());
