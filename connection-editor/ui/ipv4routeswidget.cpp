@@ -66,9 +66,6 @@ IpV4RoutesWidget::IpV4RoutesWidget(QWidget * parent)
     d->ui.tableViewAddresses->setItemDelegateForColumn(2, ipDelegate);
     d->ui.tableViewAddresses->setItemDelegateForColumn(3, metricDelegate);
 
-    d->ui.pushButtonAdd->setIcon(KIcon("list-add"));
-    d->ui.pushButtonRemove->setIcon(KIcon("list-remove"));
-
     connect(d->ui.pushButtonAdd, SIGNAL(clicked()), this, SLOT(addRoute()));
     connect(d->ui.pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeRoute()));
 
@@ -181,7 +178,7 @@ void IpV4RoutesWidget::removeRoute()
         QModelIndexList indexes = selectionModel->selectedIndexes();
         d->model.takeRow(indexes[0].row());
     }
-    d->ui.pushButtonRemove->setEnabled(false);
+    d->ui.pushButtonRemove->setEnabled(d->ui.tableViewAddresses->selectionModel()->hasSelection());
 }
 
 void IpV4RoutesWidget::selectionChanged(const QItemSelection & selected)

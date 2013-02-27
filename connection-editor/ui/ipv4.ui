@@ -19,12 +19,47 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>&amp;Method:</string>
      </property>
      <property name="buddy">
       <cstring>method</cstring>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="KComboBox" name="method">
+     <item>
+      <property name="text">
+       <string>Automatic (DHCP)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string comment="like in use Manual configuration">Manual</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Link-Local</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Shared to other computers</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string comment="like in this setting is Disabled">Disabled</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="1" column="1">
@@ -45,6 +80,12 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="dnsLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string comment="@info">&amp;DNS Servers:</string>
      </property>
@@ -88,6 +129,12 @@
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="dnsSearchLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string comment="@info">&amp;Search Domains:</string>
      </property>
@@ -135,6 +182,12 @@
    </item>
    <item row="5" column="0">
     <widget class="QLabel" name="labelDhcpClientId">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>DHCP &amp;Client ID:</string>
      </property>
@@ -159,30 +212,55 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="labelAddresses">
-     <property name="text">
-      <string>&amp;Addresses:</string>
-     </property>
-     <property name="buddy">
-      <cstring>IPTable</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1" rowspan="2" colspan="2">
+   <item row="7" column="0" colspan="3">
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="btnRemove">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-remove">
+         <normaloff/>
+        </iconset>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QPushButton" name="btnAdd">
        <property name="text">
         <string>Add</string>
        </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff/>
+        </iconset>
+       </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="btnDelete">
-       <property name="text">
-        <string>Delete</string>
+     <item row="0" column="0" rowspan="3">
+      <widget class="QTableView" name="tableViewAddresses">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Addresses</string>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
       </widget>
      </item>
      <item row="2" column="1">
@@ -201,35 +279,19 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="0" rowspan="3">
-      <widget class="QTableView" name="IPTable">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
-   <item row="8" column="0">
-    <spacer name="verticalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="8" column="0" colspan="2">
+    <widget class="QCheckBox" name="ipv4RequiredCB">
+     <property name="text">
+      <string>IPv4 is required for this connection</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>172</height>
-      </size>
+     <property name="checked">
+      <bool>true</bool>
      </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="10" column="2">
+   <item row="9" column="2">
     <widget class="QPushButton" name="btnRoutes">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -242,17 +304,14 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0" colspan="3">
-    <widget class="QCheckBox" name="ipv4RequiredCB">
-     <property name="text">
-      <string>IPv4 is required for this connection</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
+   <item row="5" column="1" colspan="2">
+    <widget class="KLineEdit" name="dhcpClientId">
+     <property name="toolTip">
+      <string>Use this field to specify the DHCP client ID which is a string sent to the DHCP server to identify the local machine that the DHCP server may use to customize the DHCP lease and options.</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="2">
+   <item row="9" column="0" colspan="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -264,42 +323,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <widget class="KLineEdit" name="dhcpClientId">
-     <property name="toolTip">
-      <string>Use this field to specify the DHCP client ID which is a string sent to the DHCP server to identify the local machine that the DHCP server may use to customize the DHCP lease and options.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="KComboBox" name="method">
-     <item>
-      <property name="text">
-       <string>Automatic (DHCP)</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string comment="like in use Manual configuration">Manual</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Link-Local</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Shared to other computers</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string comment="like in this setting is Disabled">Disabled</string>
-      </property>
-     </item>
-    </widget>
    </item>
   </layout>
  </widget>
@@ -327,9 +350,9 @@
   <tabstop>dnsSearch</tabstop>
   <tabstop>dnsSearchMorePushButton</tabstop>
   <tabstop>dhcpClientId</tabstop>
-  <tabstop>IPTable</tabstop>
+  <tabstop>tableViewAddresses</tabstop>
   <tabstop>btnAdd</tabstop>
-  <tabstop>btnDelete</tabstop>
+  <tabstop>btnRemove</tabstop>
   <tabstop>ipv4RequiredCB</tabstop>
   <tabstop>btnRoutes</tabstop>
  </tabstops>

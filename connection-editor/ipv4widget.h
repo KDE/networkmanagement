@@ -22,7 +22,6 @@
 #define IPV4_WIDGET_H
 
 #include <QtGui/QWidget>
-
 #include <QtNetworkManager/settings/ipv4.h>
 
 #include "settingwidget.h"
@@ -35,7 +34,7 @@ class IPv4Widget;
 
 class IPv4Widget : public SettingWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     IPv4Widget(NetworkManager::Settings::Setting* setting = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
@@ -49,9 +48,18 @@ private slots:
     void slotModeComboChanged(int index);
     void slotRoutesDialog();
 
+    void slotAddIPAddress();
+    void slotRemoveIPAddress();
+
+    void selectionChanged(const QItemSelection & selected);
+    void tableViewItemChanged(QStandardItem * item);
+
 private:
     Ui::IPv4Widget * m_ui;
     NetworkManager::Settings::Ipv4Setting* m_ipv4Setting;
+
+    class Private;
+    Private *d;
 };
 
 #endif // IPV4_WIDGET_H
