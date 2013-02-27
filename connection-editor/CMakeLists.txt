@@ -32,6 +32,7 @@ set(connectioneditor_SRCS
    connectionwidget.cpp
    wiredconnectionwidget.cpp
    wificonnectionwidget.cpp
+   ipv4widget.cpp
 )
 
 set(connectioneditor_HDRS
@@ -43,6 +44,7 @@ set(connectioneditor_HDRS
    connectionwidget.h
    wiredconnectionwidget.h
    wificonnectionwidget.h
+   ipv4widget.h
 )
 
 kde4_add_ui_files(connectioneditor_SRCS
@@ -51,6 +53,7 @@ kde4_add_ui_files(connectioneditor_SRCS
     ui/connectionwidget.ui
     ui/wiredconnectionwidget.ui
     ui/wificonnectionwidget.ui
+    ui/ipv4.ui
 )
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
 
