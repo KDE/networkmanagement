@@ -29,7 +29,7 @@
 
 using namespace NetworkManager;
 
-ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* connection, QDialog* parent, Qt::WindowFlags f):
+ConnectionDetailEditor::ConnectionDetailEditor(Settings::ConnectionSettings* connection, QWidget* parent, Qt::WindowFlags f):
     QDialog(parent, f),
     m_detailEditor(new Ui::ConnectionDetailEditor),
     m_connection(connection)

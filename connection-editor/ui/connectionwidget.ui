@@ -154,6 +154,13 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>autoconnect</tabstop>
+  <tabstop>allUsers</tabstop>
+  <tabstop>autoconnectVpn</tabstop>
+  <tabstop>vpnCombobox</tabstop>
+  <tabstop>firewallZone</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

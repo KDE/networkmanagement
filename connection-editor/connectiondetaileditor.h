@@ -35,7 +35,7 @@ class ConnectionDetailEditor : public QDialog
     Q_OBJECT
 
 public:
-    ConnectionDetailEditor(NetworkManager::Settings::ConnectionSettings * connection, QDialog* parent = 0, Qt::WindowFlags f = 0);
+    ConnectionDetailEditor(NetworkManager::Settings::ConnectionSettings * connection, QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~ConnectionDetailEditor();
 
 private Q_SLOTS:

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <widget class="QCheckBox" name="autonegotiate">
    <property name="geometry">
@@ -88,14 +88,14 @@
         <item>
          <widget class="QLineEdit" name="macAddress">
           <property name="inputMask">
-           <string>HH:HH:HH:HH:HH:HH;_</string>
+           <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLineEdit" name="clonedMacAddress">
           <property name="inputMask">
-           <string>HH:HH:HH:HH:HH:HH;_</string>
+           <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -169,6 +169,14 @@
    <header>knuminput.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>macAddress</tabstop>
+  <tabstop>clonedMacAddress</tabstop>
+  <tabstop>mtu</tabstop>
+  <tabstop>speed</tabstop>
+  <tabstop>duplex</tabstop>
+  <tabstop>autonegotiate</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

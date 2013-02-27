@@ -18,6 +18,8 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtNetworkManager/settings/802-11-wireless.h>
+
 #include "wificonnectionwidget.h"
 #include "ui_wificonnectionwidget.h"
 
@@ -76,15 +78,15 @@ QVariantMap WifiConnectionWidget::setting() const
         wifiSetting.setMode(static_cast<NetworkManager::Settings::WirelessSetting::NetworkMode>(m_ui->modeComboBox->currentIndex()));
     }
 
-    if (!m_ui->BSSIDLineEdit->text().isEmpty()) {
+    if (!m_ui->BSSIDLineEdit->text().isEmpty() && m_ui->BSSIDLineEdit->text() != ":::::") {
         wifiSetting.setBssid(m_ui->BSSIDLineEdit->text().toLatin1());
     }
 
-    if (!m_ui->macAddress->text().isEmpty()) {
+    if (!m_ui->macAddress->text().isEmpty() && m_ui->macAddress->text() != ":::::") {
         wifiSetting.setMacAddress(m_ui->macAddress->text().toLatin1());
     }
 
-    if (!m_ui->clonedMacAddress->text().isEmpty()) {
+    if (!m_ui->clonedMacAddress->text().isEmpty() && m_ui->clonedMacAddress->text() != ":::::") {
         wifiSetting.setClonedMacAddress(m_ui->clonedMacAddress->text().toLatin1());
     }
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
@@ -65,7 +65,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Device &amp;MAC address:</string>
+      <string>&amp;Device MAC address:</string>
      </property>
      <property name="buddy">
       <cstring>macAddress</cstring>
@@ -75,7 +75,7 @@
    <item row="3" column="1">
     <widget class="QLineEdit" name="macAddress">
      <property name="inputMask">
-      <string>HH:HH:HH:HH:HH:HH;_</string>
+      <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
     </widget>
    </item>
@@ -92,7 +92,7 @@
    <item row="4" column="1">
     <widget class="QLineEdit" name="clonedMacAddress">
      <property name="inputMask">
-      <string>HH:HH:HH:HH:HH:HH;_</string>
+      <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -102,7 +102,7 @@
    <item row="5" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>&amp;MTU:</string>
+      <string>M&amp;TU:</string>
      </property>
      <property name="buddy">
       <cstring>mtu</cstring>
@@ -122,7 +122,7 @@
    <item row="2" column="1">
     <widget class="QLineEdit" name="BSSIDLineEdit">
      <property name="inputMask">
-      <string>HH:HH:HH:HH:HH:HH;_</string>
+      <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
     </widget>
    </item>
@@ -141,7 +141,7 @@
       <string>Automatic</string>
      </property>
      <property name="suffix">
-      <string>bytes</string>
+      <string> bytes</string>
      </property>
      <property name="prefix">
       <string/>
@@ -150,6 +150,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>SSIDLineEdit</tabstop>
+  <tabstop>modeComboBox</tabstop>
+  <tabstop>BSSIDLineEdit</tabstop>
+  <tabstop>macAddress</tabstop>
+  <tabstop>clonedMacAddress</tabstop>
+  <tabstop>mtu</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

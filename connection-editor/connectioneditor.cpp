@@ -265,11 +265,13 @@ void ConnectionEditor::addConnection(QAction* action)
     Settings::ConnectionSettings::ConnectionType type = (Settings::ConnectionSettings::ConnectionType) action->data().toUInt();
     Settings::ConnectionSettings * newConnection = new Settings::ConnectionSettings(type);
 
-    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection);
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(newConnection, this);
     if (editor->exec() == QDialog::Accepted) {
         //TODO
         newConnection->printSetting();
     }
+
+    delete newConnection;
 }
 
 void ConnectionEditor::editConnection()
@@ -280,9 +282,11 @@ void ConnectionEditor::editConnection()
     Settings::ConnectionSettings * connectionSetting = new Settings::ConnectionSettings();
     connectionSetting->fromMap(connection->settings());
 
-    ConnectionDetailEditor * editor = new ConnectionDetailEditor(connectionSetting);
+    ConnectionDetailEditor * editor = new ConnectionDetailEditor(connectionSetting, this);
     if (editor->exec() == QDialog::Accepted) {
         //TODO
         connectionSetting->printSetting();
     }
+
+    delete connectionSetting;
 }

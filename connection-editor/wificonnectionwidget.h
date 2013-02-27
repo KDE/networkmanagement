@@ -23,8 +23,6 @@
 
 #include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/802-11-wireless.h>
-
 #include "settingwidget.h"
 
 namespace Ui

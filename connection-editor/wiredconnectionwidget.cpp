@@ -18,10 +18,11 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtNetworkManager/settings/802-3-ethernet.h>
+
 #include "wiredconnectionwidget.h"
 #include "ui_wiredconnectionwidget.h"
 
-#include <QtNetworkManager/settings/802-3-ethernet.h>
 
 WiredConnectionWidget::WiredConnectionWidget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
@@ -74,11 +75,11 @@ QVariantMap WiredConnectionWidget::setting() const
 {
     NetworkManager::Settings::WiredSetting wiredSetting;
 
-    if (!m_widget->macAddress->text().isEmpty()) {
+    if (!m_widget->macAddress->text().isEmpty() && m_widget->macAddress->text() != ":::::") {
         wiredSetting.setMacAddress(m_widget->macAddress->text().toLatin1());
     }
 
-    if (!m_widget->clonedMacAddress->text().isEmpty()) {
+    if (!m_widget->clonedMacAddress->text().isEmpty() && m_widget->clonedMacAddress->text() != ":::::") {
         wiredSetting.setClonedMacAddress(m_widget->clonedMacAddress->text().toLatin1());
     }
 
