@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>322</height>
+    <width>359</width>
+    <height>260</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,14 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="SSIDLineEdit"/>
+    <widget class="QLineEdit" name="SSIDLineEdit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="modeLabel">
@@ -74,6 +81,12 @@
    </item>
    <item row="3" column="1">
     <widget class="QLineEdit" name="macAddress">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="inputMask">
       <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
@@ -91,6 +104,12 @@
    </item>
    <item row="4" column="1">
     <widget class="QLineEdit" name="clonedMacAddress">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="inputMask">
       <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
@@ -121,6 +140,12 @@
    </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="BSSIDLineEdit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="inputMask">
       <string notr="true">HH:HH:HH:HH:HH:HH;_</string>
      </property>
