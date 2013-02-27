@@ -6,153 +6,167 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
+    <width>399</width>
     <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>431</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <item>
-     <widget class="QCheckBox" name="autoconnectVpn">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QCheckBox" name="autoconnect">
+     <property name="text">
+      <string>&amp;Automatically connect to this network when it is available</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QCheckBox" name="allUsers">
+     <property name="text">
+      <string>All users &amp;may connect to this network</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Minimum</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>18</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QCheckBox" name="autoconnectVpn">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Automatically connect to &amp;VPN when using this connection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QComboBox" name="vpnCombobox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Minimum</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>28</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>&amp;Firewall zone:</string>
+     </property>
+     <property name="buddy">
+      <cstring>firewallZone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="firewallZone">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
       <property name="text">
-       <string>Automatically connect to &amp;VPN when using this connection</string>
+       <string>Default</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="vpnCombobox">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>170</y>
-     <width>431</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,56">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetDefaultConstraint</enum>
-    </property>
-    <item>
-     <widget class="QLabel" name="label_2">
+     </item>
+     <item>
       <property name="text">
-       <string>&amp;Firewall zone:</string>
+       <string notr="true">drop</string>
       </property>
-      <property name="buddy">
-       <cstring>firewallZone</cstring>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="firewallZone">
-      <item>
-       <property name="text">
-        <string>Default</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>drop</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>work</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>internal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>block</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>home</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>dmz</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>public</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>trusted</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>external</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>431</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QCheckBox" name="autoconnect">
+     </item>
+     <item>
       <property name="text">
-       <string>&amp;Automatically connect to this network when it is available</string>
+       <string notr="true">work</string>
       </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="allUsers">
+     </item>
+     <item>
       <property name="text">
-       <string>All users &amp;may connect to this network</string>
+       <string notr="true">internal</string>
       </property>
-      <property name="checked">
-       <bool>true</bool>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">block</string>
       </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">home</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">dmz</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">public</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">trusted</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string notr="true">external</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>118</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>autoconnect</tabstop>
