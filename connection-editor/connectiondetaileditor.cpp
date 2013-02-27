@@ -97,4 +97,3 @@ void ConnectionDetailEditor::saveSetting()
     m_connection->setId(m_detailEditor->connectionName->text());
     m_connection->setUuid(QUuid::createUuid().toString().mid(1, QUuid::createUuid().toString().length() - 2));
 }
-

@@ -26,6 +26,7 @@
 #include <QtNetworkManager/settings/ipv4.h>
 
 #include "settingwidget.h"
+#include "ui/ipv4routeswidget.h"
 
 namespace Ui
 {
@@ -46,6 +47,7 @@ public:
 
 private slots:
     void slotModeComboChanged(int index);
+    void slotRoutesDialog();
 
 private:
     Ui::IPv4Widget * m_ui;

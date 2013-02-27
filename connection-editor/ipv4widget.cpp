@@ -18,13 +18,16 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDialog>
+
 #include "ipv4widget.h"
 #include "ui_ipv4.h"
 
 
 IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_ui(new Ui::IPv4Widget), m_ipv4Setting(0)
+    m_ui(new Ui::IPv4Widget),
+    m_ipv4Setting(0)
 {
     m_ui->setupUi(this);
 
@@ -36,6 +39,9 @@ IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* pare
     connect(m_ui->method, SIGNAL(currentIndexChanged(int)),
             SLOT(slotModeComboChanged(int)));
     slotModeComboChanged(m_ui->method->currentIndex());
+
+    connect(m_ui->btnRoutes, SIGNAL(clicked()),
+            SLOT(slotRoutesDialog()));
 }
 
 IPv4Widget::~IPv4Widget()
@@ -59,16 +65,12 @@ void IPv4Widget::loadConfig(NetworkManager::Settings::Setting * setting)
 
     // TODO addresses
 
-    // TODO routes
-
     m_ui->ipv4RequiredCB->setChecked(!m_ipv4Setting->mayFail());
 }
 
 QVariantMap IPv4Widget::setting() const
 {
-    NetworkManager::Settings::Ipv4Setting ipv4Setting;
-
-    ipv4Setting.setMethod(static_cast<NetworkManager::Settings::Ipv4Setting::ConfigMethod>(m_ui->method->currentIndex()));
+    m_ipv4Setting->setMethod(static_cast<NetworkManager::Settings::Ipv4Setting::ConfigMethod>(m_ui->method->currentIndex()));
 
     if (!m_ui->dns->text().isEmpty()) {
         QStringList tmp = m_ui->dns->text().split(',');
@@ -78,23 +80,21 @@ QVariantMap IPv4Widget::setting() const
             if (!addr.isNull())
                 tmpAddrList.append(addr);
         }
-        ipv4Setting.setDns(tmpAddrList);
+        m_ipv4Setting->setDns(tmpAddrList);
     }
     if (!m_ui->dnsSearch->text().isEmpty()) {
-        ipv4Setting.setDnsSearch(m_ui->dnsSearch->text().split(','));
+        m_ipv4Setting->setDnsSearch(m_ui->dnsSearch->text().split(','));
     }
 
     if (!m_ui->dhcpClientId->text().isEmpty()) {
-        ipv4Setting.setDhcpClientId(m_ui->dhcpClientId->text());
+        m_ipv4Setting->setDhcpClientId(m_ui->dhcpClientId->text());
     }
 
     // TODO addresses
 
-    // TODO routes
+    m_ipv4Setting->setMayFail(!m_ui->ipv4RequiredCB->isChecked());
 
-    ipv4Setting.setMayFail(!m_ui->ipv4RequiredCB->isChecked());
-
-    return ipv4Setting.toMap();
+    return m_ipv4Setting->toMap();
 }
 
 void IPv4Widget::slotModeComboChanged(int index)
@@ -154,3 +154,43 @@ void IPv4Widget::slotModeComboChanged(int index)
     }
 }
 
+void IPv4Widget::slotRoutesDialog()
+{
+    IpV4RoutesWidget * dlg = new IpV4RoutesWidget(this);
+    dlg->setRoutes(m_ipv4Setting->routes());
+    dlg->setNeverDefault(m_ipv4Setting->neverDefault());
+    dlg->setIgnoreAutoRoutes(m_ipv4Setting->ignoreAutoRoutes());
+    if (dlg->exec() == QDialog::Accepted) {
+        m_ipv4Setting->setRoutes(dlg->routes());
+        m_ipv4Setting->setNeverDefault(dlg->neverdefault());
+        m_ipv4Setting->setIgnoreAutoRoutes(dlg->ignoreautoroutes());
+    }
+    delete dlg;
+}
+
+quint32 suggestNetmask(quint32 ip)
+{
+    /*
+        A   0       0.0.0.0 <-->127.255.255.255  255.0.0.0 <--->/8
+        B   10      128.0.0.0 <>191.255.255.255  255.255.0.0 <->/16
+        C   110     192.0.0.0 <>223.255.255.255  255.255.255.0 >/24
+        D   1110    224.0.0.0 <>239.255.255.255  not defined <->not defined
+        E   1111    240.0.0.0 <>255.255.255.254  not defined <->not defined
+    */
+    quint32 netmask = 0;
+
+    if (!(ip & 0x80000000)) {
+        // test 0 leading bit
+        netmask = 0xFF000000;
+    }
+    else if (!(ip & 0x40000000)) {
+        // test 10 leading bits
+        netmask = 0xFFFF0000;
+    }
+    else if (!(ip & 0x20000000)) {
+        // test 110 leading bits
+        netmask = 0xFFFFFF00;
+    }
+
+    return netmask;
+}

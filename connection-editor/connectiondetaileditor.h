@@ -47,7 +47,6 @@ private:
 
     void initTabs();
     void addTab(NetworkManager::Settings::Setting::SettingType type);
-
 };
 
 #endif // CONNECTION_DETAIL_EDITOR_H

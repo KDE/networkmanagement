@@ -33,6 +33,12 @@ set(connectioneditor_SRCS
    wiredconnectionwidget.cpp
    wificonnectionwidget.cpp
    ipv4widget.cpp
+   ui/ipv4routeswidget.cpp
+   ui/delegate.cpp
+   ui/intdelegate.cpp
+   ui/intvalidator.cpp
+   ui/ipv4delegate.cpp
+   ui/simpleipv4addressvalidator.cpp
 )
 
 set(connectioneditor_HDRS
@@ -45,6 +51,12 @@ set(connectioneditor_HDRS
    wiredconnectionwidget.h
    wificonnectionwidget.h
    ipv4widget.h
+   ui/ipv4routeswidget.h
+   ui/delegate.h
+   ui/intdelegate.h
+   ui/intvalidator.h
+   ui/ipv4delegate.h
+   ui/simpleipv4addressvalidator.h
 )
 
 kde4_add_ui_files(connectioneditor_SRCS
@@ -54,6 +66,7 @@ kde4_add_ui_files(connectioneditor_SRCS
     ui/wiredconnectionwidget.ui
     ui/wificonnectionwidget.ui
     ui/ipv4.ui
+    ui/ipv4routes.ui
 )
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
 
