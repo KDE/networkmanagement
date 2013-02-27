@@ -56,7 +56,6 @@ IpV4RoutesWidget::IpV4RoutesWidget(QWidget * parent)
     d->ui.setupUi(this);
     d->ui.tableViewAddresses->setModel(&d->model);
     d->ui.tableViewAddresses->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    d->ui.tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
 
     IpV4Delegate *ipDelegate = new IpV4Delegate(this);
     IntDelegate *metricDelegate = new IntDelegate(this);

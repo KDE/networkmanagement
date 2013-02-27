@@ -36,7 +36,6 @@ set(connectioneditor_SRCS
    ui/ipv4routeswidget.cpp
    ui/delegate.cpp
    ui/intdelegate.cpp
-   ui/intvalidator.cpp
    ui/ipv4delegate.cpp
    ui/simpleipv4addressvalidator.cpp
 )
@@ -54,7 +53,6 @@ set(connectioneditor_HDRS
    ui/ipv4routeswidget.h
    ui/delegate.h
    ui/intdelegate.h
-   ui/intvalidator.h
    ui/ipv4delegate.h
    ui/simpleipv4addressvalidator.h
 )

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "intdelegate.h"
-#include "intvalidator.h"
+#include <QIntValidator>
 
 #include <KLineEdit>
 
@@ -31,9 +31,9 @@ QWidget * IntDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem 
 {
     KLineEdit *editor = new KLineEdit(parent);
     if (m_boundary)
-        editor->setValidator(new IntValidator(m_min, m_max, editor));
+        editor->setValidator(new QIntValidator(m_min, m_max, editor));
     else
-        editor->setValidator(new IntValidator(editor));
+        editor->setValidator(new QIntValidator(editor));
 
     return editor;
 }

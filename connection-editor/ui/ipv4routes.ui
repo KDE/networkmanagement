@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>463</width>
+    <width>477</width>
     <height>342</height>
    </rect>
   </property>
@@ -71,7 +71,9 @@
       <string comment="Remove a selected row">R&amp;emove</string>
      </property>
      <property name="icon">
-      <iconset theme="list-remove"/>
+      <iconset theme="list-remove">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
@@ -115,7 +117,9 @@
       <string comment="Insert a row">Add</string>
      </property>
      <property name="icon">
-      <iconset theme="list-add"/>
+      <iconset theme="list-add">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
