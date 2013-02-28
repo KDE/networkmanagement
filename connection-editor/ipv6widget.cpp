@@ -23,58 +23,45 @@
 #include <QItemSelection>
 #include <QNetworkAddressEntry>
 
-#include "ipv4widget.h"
-#include "ui_ipv4.h"
-#include "ui/ipv4delegate.h"
+#include "ipv6widget.h"
+#include "ui_ipv6.h"
+#include "ui/ipv6delegate.h"
+#include "ui/intdelegate.h"
 
-quint32 suggestNetmask(quint32 ip)
+quint32 suggestNetmask(Q_IPV6ADDR ip)
 {
-    /*
-        A   0       0.0.0.0 <-->127.255.255.255  255.0.0.0 <--->/8
-        B   10      128.0.0.0 <>191.255.255.255  255.255.0.0 <->/16
-        C   110     192.0.0.0 <>223.255.255.255  255.255.255.0 >/24
-        D   1110    224.0.0.0 <>239.255.255.255  not defined <->not defined
-        E   1111    240.0.0.0 <>255.255.255.254  not defined <->not defined
-    */
-    quint32 netmask = 0;
+    Q_UNUSED(ip);
 
-    if (!(ip & 0x80000000)) {
-        // test 0 leading bit
-        netmask = 0xFF000000;
-    }
-    else if (!(ip & 0x40000000)) {
-        // test 10 leading bits
-        netmask = 0xFFFF0000;
-    }
-    else if (!(ip & 0x20000000)) {
-        // test 110 leading bits
-        netmask = 0xFFFFFF00;
-    }
+    /*
+    TODO: find out common IPv6-netmasks and make a complete function
+
+    */
+    quint32 netmask = 64;
 
     return netmask;
 }
 
-class IPv4Widget::Private
+class IPv6Widget::Private
 {
 public:
     Private() : model(0,3)
     {
-        QStandardItem * headerItem = new QStandardItem(i18nc("Header text for IPv4 address", "Address"));
+        QStandardItem * headerItem = new QStandardItem(i18nc("Header text for IPv6 address", "Address"));
         model.setHorizontalHeaderItem(0, headerItem);
-        headerItem = new QStandardItem(i18nc("Header text for IPv4 netmask", "Netmask"));
+        headerItem = new QStandardItem(i18nc("Header text for IPv6 prefix", "Prefix"));
         model.setHorizontalHeaderItem(1, headerItem);
-        headerItem = new QStandardItem(i18nc("Header text for IPv4 gateway", "Gateway"));
+        headerItem = new QStandardItem(i18nc("Header text for IPv6 gateway", "Gateway"));
         model.setHorizontalHeaderItem(2, headerItem);
     }
     QStandardItemModel model;
 };
 
 
-IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
+IPv6Widget::IPv6Widget(NetworkManager::Settings::Setting* setting, QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_ui(new Ui::IPv4Widget),
-    m_ipv4Setting(0),
-    d(new IPv4Widget::Private())
+    m_ui(new Ui::IPv6Widget),
+    m_ipv6Setting(0),
+    d(new IPv6Widget::Private())
 {
     m_ui->setupUi(this);
 
@@ -82,9 +69,10 @@ IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* pare
     m_ui->tableViewAddresses->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     m_ui->tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
 
-    IpV4Delegate *ipDelegate = new IpV4Delegate(this);
+    IpV6Delegate *ipDelegate = new IpV6Delegate(this);
+    IntDelegate *prefixDelegate = new IntDelegate (0, 128, this);
     m_ui->tableViewAddresses->setItemDelegateForColumn(0, ipDelegate);
-    m_ui->tableViewAddresses->setItemDelegateForColumn(1, ipDelegate);
+    m_ui->tableViewAddresses->setItemDelegateForColumn(1, prefixDelegate);
     m_ui->tableViewAddresses->setItemDelegateForColumn(2, ipDelegate);
 
     connect(m_ui->btnAdd, SIGNAL(clicked()), this, SLOT(slotAddIPAddress()));
@@ -97,8 +85,8 @@ IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* pare
             this, SLOT(tableViewItemChanged(QStandardItem*)));
 
     if (setting) {
-        m_ipv4Setting = static_cast<NetworkManager::Settings::Ipv4Setting *>(setting);
-        loadConfig(m_ipv4Setting);
+        m_ipv6Setting = static_cast<NetworkManager::Settings::Ipv6Setting *>(setting);
+        loadConfig(m_ipv6Setting);
     }
 
     connect(m_ui->method, SIGNAL(currentIndexChanged(int)),
@@ -109,41 +97,38 @@ IPv4Widget::IPv4Widget(NetworkManager::Settings::Setting* setting, QWidget* pare
             SLOT(slotRoutesDialog()));
 }
 
-IPv4Widget::~IPv4Widget()
+IPv6Widget::~IPv6Widget()
 {
     delete d;
 }
 
-void IPv4Widget::loadConfig(NetworkManager::Settings::Setting * setting)
+void IPv6Widget::loadConfig(NetworkManager::Settings::Setting * setting)
 {
     Q_UNUSED(setting)
 
     // method
-    m_ui->method->setCurrentIndex(static_cast<int>(m_ipv4Setting->method()));
+    m_ui->method->setCurrentIndex(static_cast<int>(m_ipv6Setting->method()));
 
     // dns
     QStringList tmp;
-    foreach (const QHostAddress & addr, m_ipv4Setting->dns()) {
+    foreach (const QHostAddress & addr, m_ipv6Setting->dns()) {
         tmp.append(addr.toString());
     }
     m_ui->dns->setText(tmp.join(","));
-    m_ui->dnsSearch->setText(m_ipv4Setting->dnsSearch().join(","));
-
-    m_ui->dhcpClientId->setText(m_ipv4Setting->dhcpClientId());
+    m_ui->dnsSearch->setText(m_ipv6Setting->dnsSearch().join(","));
 
     // addresses
-    foreach (const NetworkManager::IPv4Address &addr, m_ipv4Setting->addresses()) {
+    foreach (const NetworkManager::IPv6Address &addr, m_ipv6Setting->addresses()) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
         // we need to set up IP before prefix/netmask manipulation
         entry.setIp(QHostAddress(addr.address()));
-        entry.setPrefixLength(addr.netMask());
 
         item << new QStandardItem(entry.ip().toString())
-             << new QStandardItem(entry.netmask().toString());
+             << new QStandardItem(QString::number(addr.netMask(),10));
 
         QString gateway;
-        if (addr.gateway()) {
+        if (!QHostAddress(addr.gateway()).isNull()) {
             gateway = QHostAddress(addr.gateway()).toString();
         }
         item << new QStandardItem(gateway);
@@ -152,13 +137,18 @@ void IPv4Widget::loadConfig(NetworkManager::Settings::Setting * setting)
     }
 
     // may-fail
-    m_ui->ipv4RequiredCB->setChecked(!m_ipv4Setting->mayFail());
+    m_ui->ipv6RequiredCB->setChecked(!m_ipv6Setting->mayFail());
+
+    // privacy
+    if (m_ipv6Setting->privacy() != NetworkManager::Settings::Ipv6Setting::Unknown) {
+        m_ui->privacyCombo->setCurrentIndex(static_cast<int>(m_ipv6Setting->privacy()));
+    }
 }
 
-QVariantMap IPv4Widget::setting() const
+QVariantMap IPv6Widget::setting() const
 {
     // method
-    m_ipv4Setting->setMethod(static_cast<NetworkManager::Settings::Ipv4Setting::ConfigMethod>(m_ui->method->currentIndex()));
+    m_ipv6Setting->setMethod(static_cast<NetworkManager::Settings::Ipv6Setting::ConfigMethod>(m_ui->method->currentIndex()));
 
     // dns
     if (m_ui->dns->isEnabled() && !m_ui->dns->text().isEmpty()) {
@@ -169,92 +159,89 @@ QVariantMap IPv4Widget::setting() const
             if (!addr.isNull())
                 tmpAddrList.append(addr);
         }
-        m_ipv4Setting->setDns(tmpAddrList);
+        m_ipv6Setting->setDns(tmpAddrList);
     }
     if (m_ui->dnsSearch->isEnabled() && !m_ui->dnsSearch->text().isEmpty()) {
-        m_ipv4Setting->setDnsSearch(m_ui->dnsSearch->text().split(','));
-    }
-
-    // dhcp id
-    if (m_ui->dhcpClientId->isEnabled() && !m_ui->dhcpClientId->text().isEmpty()) {
-        m_ipv4Setting->setDhcpClientId(m_ui->dhcpClientId->text());
+        m_ipv6Setting->setDnsSearch(m_ui->dnsSearch->text().split(','));
     }
 
     // addresses
     if (m_ui->tableViewAddresses->isEnabled()) {
-        QList<NetworkManager::IPv4Address> list;
+        QList<NetworkManager::IPv6Address> list;
         for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
-            QHostAddress ip, mask, gw;
+            QHostAddress ip, gw;
             QNetworkAddressEntry entry;
 
             ip.setAddress(d->model.item(i, 0)->text());
             entry.setIp(ip);
-            mask.setAddress(d->model.item(i, 1)->text());
-            entry.setNetmask(mask);
+            entry.setPrefixLength(d->model.item(i, 1)->text().toInt());
             gw.setAddress(d->model.item(i, 2)->text());
 
-            list.append(NetworkManager::IPv4Address(ip.toIPv4Address(),
+            list.append(NetworkManager::IPv6Address(ip.toIPv6Address(),
                                                     entry.prefixLength(),
-                                                    gw.toIPv4Address()));
+                                                    gw.toIPv6Address()));
         }
-        if (!list.isEmpty()) {
-            m_ipv4Setting->setAddresses(list);
-        }
+        m_ipv6Setting->setAddresses(list);
     }
 
     // may-fail
-    if (m_ui->ipv4RequiredCB->isEnabled()) {
-        m_ipv4Setting->setMayFail(!m_ui->ipv4RequiredCB->isChecked());
+    if (m_ui->ipv6RequiredCB->isEnabled()) {
+        m_ipv6Setting->setMayFail(!m_ui->ipv6RequiredCB->isChecked());
     }
 
-    return m_ipv4Setting->toMap();
+    // privacy
+    if (m_ui->privacyCombo->isEnabled()) {
+        m_ipv6Setting->setPrivacy(static_cast<NetworkManager::Settings::Ipv6Setting::IPv6Privacy>(m_ui->privacyCombo->currentIndex()));
+    }
+
+    return m_ipv6Setting->toMap();
 }
 
-void IPv4Widget::slotModeComboChanged(int index)
+void IPv6Widget::slotModeComboChanged(int index)
 {
     if (index == 0) {  // Automatic
         m_ui->dns->setEnabled(true);
         m_ui->dnsMorePushButton->setEnabled(true);
         m_ui->dnsSearch->setEnabled(true);
         m_ui->dnsSearchMorePushButton->setEnabled(true);
-        m_ui->dhcpClientId->setEnabled(true);
-        m_ui->ipv4RequiredCB->setEnabled(true);
+        m_ui->ipv6RequiredCB->setEnabled(true);
+        m_ui->privacyCombo->setEnabled(true);
         m_ui->btnRoutes->setEnabled(true);
 
         m_ui->tableViewAddresses->setVisible(false);
         m_ui->btnAdd->setVisible(false);
         m_ui->btnRemove->setVisible(false);
-    } else if (index == 2) {  // Manual
+    } else if (index == 3) {  // Manual
         m_ui->dns->setEnabled(true);
         m_ui->dnsMorePushButton->setEnabled(true);
         m_ui->dnsSearch->setEnabled(true);
         m_ui->dnsSearchMorePushButton->setEnabled(true);
-        m_ui->dhcpClientId->setEnabled(false);
-        m_ui->ipv4RequiredCB->setEnabled(true);
+        m_ui->ipv6RequiredCB->setEnabled(true);
+        m_ui->privacyCombo->setEnabled(true);
         m_ui->btnRoutes->setEnabled(true);
 
         m_ui->tableViewAddresses->setVisible(true);
         m_ui->btnAdd->setVisible(true);
         m_ui->btnRemove->setVisible(true);
-    } else if (index == 1 || index == 3) {  // Link-local or Shared
+    } else if (index == 1 || index == 2) {  // Link-local or DHCP
         m_ui->dns->setEnabled(false);
         m_ui->dnsMorePushButton->setEnabled(false);
         m_ui->dnsSearch->setEnabled(false);
         m_ui->dnsSearchMorePushButton->setEnabled(false);
-        m_ui->dhcpClientId->setEnabled(false);
-        m_ui->ipv4RequiredCB->setEnabled(true);
+        m_ui->ipv6RequiredCB->setEnabled(true);
+        m_ui->privacyCombo->setEnabled(true);
         m_ui->btnRoutes->setEnabled(false);
 
         m_ui->tableViewAddresses->setVisible(false);
         m_ui->btnAdd->setVisible(false);
         m_ui->btnRemove->setVisible(false);
-    } else if (index == 4) {  // Disabled
+    } else if (index == 4) {  // Ignored
         m_ui->dns->setEnabled(false);
         m_ui->dnsMorePushButton->setEnabled(false);
         m_ui->dnsSearch->setEnabled(false);
         m_ui->dnsSearchMorePushButton->setEnabled(false);
-        m_ui->dhcpClientId->setEnabled(false);
-        m_ui->ipv4RequiredCB->setEnabled(false);
+        m_ui->ipv6RequiredCB->setEnabled(false);
+        m_ui->privacyCombo->setEnabled(false);
         m_ui->btnRoutes->setEnabled(false);
 
         m_ui->tableViewAddresses->setVisible(false);
@@ -263,7 +250,7 @@ void IPv4Widget::slotModeComboChanged(int index)
     }
 }
 
-void IPv4Widget::slotAddIPAddress()
+void IPv6Widget::slotAddIPAddress()
 {
     QList<QStandardItem *> item;
     item << new QStandardItem << new QStandardItem << new QStandardItem;
@@ -275,7 +262,7 @@ void IPv4Widget::slotAddIPAddress()
 
         QItemSelectionModel * selectionModel = m_ui->tableViewAddresses->selectionModel();
         QModelIndexList list = selectionModel->selectedIndexes();
-        if (!list.isEmpty()) {
+        if (list.size()) {
             // QTableView is configured to select only rows.
             // So, list[0] - IP address.
             m_ui->tableViewAddresses->edit(list[0]);
@@ -283,7 +270,7 @@ void IPv4Widget::slotAddIPAddress()
     }
 }
 
-void IPv4Widget::slotRemoveIPAddress()
+void IPv6Widget::slotRemoveIPAddress()
 {
     QItemSelectionModel * selectionModel = m_ui->tableViewAddresses->selectionModel();
     if (selectionModel->hasSelection()) {
@@ -293,47 +280,46 @@ void IPv4Widget::slotRemoveIPAddress()
     m_ui->btnRemove->setEnabled(m_ui->tableViewAddresses->selectionModel()->hasSelection());
 }
 
-void IPv4Widget::selectionChanged(const QItemSelection & selected)
+void IPv6Widget::selectionChanged(const QItemSelection & selected)
 {
     m_ui->btnRemove->setEnabled(!selected.isEmpty());
 }
 
-void IPv4Widget::tableViewItemChanged(QStandardItem *item)
+void IPv6Widget::tableViewItemChanged(QStandardItem *item)
 {
     if (item->text().isEmpty()) {
-         return;
-     }
+        return;
+    }
 
-     int column = item->column();
-     if (column == 0) { // ip
-         int row = item->row();
+    int column = item->column();
+    if (column == 0) { // ip
+        int row = item->row();
 
-         QStandardItem *netmaskItem = d->model.item(row, column + 1); // netmask
-         if (netmaskItem && netmaskItem->text().isEmpty()) {
-             QHostAddress addr(item->text());
-             quint32 netmask = suggestNetmask(addr.toIPv4Address());
-             if (netmask) {
-                 QHostAddress v(netmask);
-                 netmaskItem->setText(v.toString());
-             }
-         }
-     }
+        QStandardItem *netmaskItem = d->model.item(row, column + 1); // netmask
+        if (netmaskItem && netmaskItem->text().isEmpty()) {
+            QHostAddress addr(item->text());
+            quint32 netmask = suggestNetmask(addr.toIPv6Address());
+            if (netmask) {
+                netmaskItem->setText(QString::number(netmask,10));
+            }
+        }
+    }
 }
 
-void IPv4Widget::slotRoutesDialog()
+void IPv6Widget::slotRoutesDialog()
 {
-    IpV4RoutesWidget * dlg = new IpV4RoutesWidget(this);
-    dlg->setRoutes(m_ipv4Setting->routes());
-    dlg->setNeverDefault(m_ipv4Setting->neverDefault());
-    if (m_ui->method->currentIndex() == 2) {  // manual
+    IpV6RoutesWidget * dlg = new IpV6RoutesWidget(this);
+    dlg->setRoutes(m_ipv6Setting->routes());
+    dlg->setNeverDefault(m_ipv6Setting->neverDefault());
+    if (m_ui->method->currentIndex() == 3) {  // manual
         dlg->setIgnoreAutoRoutesCheckboxEnabled(false);
     } else {
-        dlg->setIgnoreAutoRoutes(m_ipv4Setting->ignoreAutoRoutes());
+        dlg->setIgnoreAutoRoutes(m_ipv6Setting->ignoreAutoRoutes());
     }
     if (dlg->exec() == QDialog::Accepted) {
-        m_ipv4Setting->setRoutes(dlg->routes());
-        m_ipv4Setting->setNeverDefault(dlg->neverDefault());
-        m_ipv4Setting->setIgnoreAutoRoutes(dlg->ignoreautoroutes());
+        m_ipv6Setting->setRoutes(dlg->routes());
+        m_ipv6Setting->setNeverDefault(dlg->neverDefault());
+        m_ipv6Setting->setIgnoreAutoRoutes(dlg->ignoreautoroutes());
     }
     delete dlg;
 }

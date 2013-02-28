@@ -24,6 +24,7 @@
 #include "wiredconnectionwidget.h"
 #include "wificonnectionwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 
 #include <QtNetworkManager/settings.h>
 #include <QtNetworkManager/activeconnection.h>
@@ -74,11 +75,15 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
         m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
         IPv4Widget * ipv4Widget = new IPv4Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv4), this);
         m_detailEditor->tabWidget->addTab(ipv4Widget, i18n("IPv4"));
+        IPv6Widget * ipv6Widget = new IPv6Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv6), this);
+        m_detailEditor->tabWidget->addTab(ipv6Widget, i18n("IPv6"));
     } else if (type == Settings::Setting::Wireless) {
         WifiConnectionWidget * wifiWidget = new WifiConnectionWidget(m_connection->setting(type), this);
         m_detailEditor->tabWidget->addTab(wifiWidget, i18n("Wireless"));
         IPv4Widget * ipv4Widget = new IPv4Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv4), this);
         m_detailEditor->tabWidget->addTab(ipv4Widget, i18n("IPv4"));
+        IPv6Widget * ipv6Widget = new IPv6Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv6), this);
+        m_detailEditor->tabWidget->addTab(ipv6Widget, i18n("IPv6"));
     }
 }
 
