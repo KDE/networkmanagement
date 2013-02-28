@@ -225,7 +225,7 @@ void IPv4Widget::slotModeComboChanged(int index)
         m_ui->tableViewAddresses->setVisible(false);
         m_ui->btnAdd->setVisible(false);
         m_ui->btnRemove->setVisible(false);
-    } else if (index == 1) {  // Manual
+    } else if (index == 2) {  // Manual
         m_ui->dns->setEnabled(true);
         m_ui->dnsMorePushButton->setEnabled(true);
         m_ui->dnsSearch->setEnabled(true);
@@ -237,7 +237,7 @@ void IPv4Widget::slotModeComboChanged(int index)
         m_ui->tableViewAddresses->setVisible(true);
         m_ui->btnAdd->setVisible(true);
         m_ui->btnRemove->setVisible(true);
-    } else if (index == 2 || index == 3) {  // Link-local or Shared
+    } else if (index == 1|| index == 3) {  // Link-local or Shared
         m_ui->dns->setEnabled(false);
         m_ui->dnsMorePushButton->setEnabled(false);
         m_ui->dnsSearch->setEnabled(false);

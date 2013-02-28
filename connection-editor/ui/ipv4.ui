@@ -42,12 +42,12 @@
      </item>
      <item>
       <property name="text">
-       <string comment="like in use Manual configuration">Manual</string>
+       <string>Link-Local</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Link-Local</string>
+       <string comment="like in use Manual configuration">Manual</string>
       </property>
      </item>
      <item>

@@ -28,8 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Delegate::Delegate(QObject * parent) : QStyledItemDelegate(parent) {}
 Delegate::~Delegate() {}
 
-QWidget * Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &,
-        const QModelIndex &) const
+QWidget * Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &) const
 {
     KLineEdit *editor = new KLineEdit(parent);
 
@@ -44,17 +43,14 @@ void Delegate::setEditorData(QWidget *editor, const QModelIndex &index) const
     le->setText(value);
 }
 
-void Delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-        const QModelIndex &index) const
+void Delegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     KLineEdit *le = static_cast<KLineEdit*>(editor);
 
     model->setData(index, le->text(), Qt::EditRole);
 }
 
-void Delegate::updateEditorGeometry(QWidget *editor,
-        const QStyleOptionViewItem &option, const QModelIndex &) const
+void Delegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const
 {
     editor->setGeometry(option.rect);
-
 }
