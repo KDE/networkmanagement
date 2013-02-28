@@ -98,7 +98,7 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
     action = m_menu->addSeparator();
     action->setText(i18n("VPN"));
 
-    action = new QAction(i18n("Cisco AnyConnected Compatible VPN (openconnect)"), this);
+    action = new QAction(i18n("Cisco AnyConnect Compatible VPN (openconnect)"), this);
     action->setData(NetworkManager::Settings::ConnectionSettings::Vpn);
     // TODO: disabled for now
     action->setDisabled(true);
@@ -131,7 +131,9 @@ ConnectionEditor::ConnectionEditor(QWidget* parent, Qt::WindowFlags flags):
 
     m_editor->addButton->setMenu(m_menu);
 
+    m_editor->connectionsWidget->setSortingEnabled(false);
     initializeConnections();
+    m_editor->connectionsWidget->setSortingEnabled(true);
 
     connect(m_editor->connectionsWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
@@ -158,7 +160,6 @@ void ConnectionEditor::initializeConnections()
     }
 
     foreach (Settings::Connection * con, Settings::listConnections()) {
-
         Settings::ConnectionSettings * settings = new Settings::ConnectionSettings();
         settings->fromMap(con->settings());
 
@@ -179,9 +180,8 @@ void ConnectionEditor::initializeConnections()
 
         // Create a root item if this type doesn't exist
         if (!findTopLevelItem(type)) {
-            ConnectionTypeItem * rootItem = new ConnectionTypeItem(m_editor->connectionsWidget, type);
-            rootItem->setData(0, Qt::UserRole, type);
-            m_editor->connectionsWidget->addTopLevelItem(rootItem);
+            qDebug() << "creating toplevel item" << type;
+            (void) new ConnectionTypeItem(m_editor->connectionsWidget, type);
         }
 
         QTreeWidgetItem * item = findTopLevelItem(type);
@@ -189,7 +189,6 @@ void ConnectionEditor::initializeConnections()
         connectionItem->setData(0, Qt::UserRole, "connection");
         connectionItem->setData(0, ConnectionItem::ConnectionIdRole, settings->uuid());
         connectionItem->setData(1, ConnectionItem::ConnectionLastUsedRole, lastUsed);
-        item->addChild(connectionItem);
 
         m_editor->connectionsWidget->resizeColumnToContents(0);
 
@@ -237,11 +236,13 @@ QTreeWidgetItem* ConnectionEditor::findTopLevelItem(const QString& type)
 
     while (*it) {
         if ((*it)->data(0, Qt::UserRole).toString() == type) {
+            qDebug() << "found:" << type;
             return (*it);
         }
         ++it;
     }
 
+    qWarning() << "didn't find type" << type;
     return 0;
 }
 
@@ -249,7 +250,7 @@ void ConnectionEditor::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetI
 {
     Q_UNUSED(previous);
 
-    qDebug() << "Current item" << current->text(0);
+    qDebug() << "Current item" << current->text(0) << "type:" << current->data(0, Qt::UserRole).toString();
 
     if (current->data(0, Qt::UserRole).toString() == "connection") {
         m_editor->editButton->setEnabled(true);

@@ -24,9 +24,10 @@
 #include <KIcon>
 #include <KLocale>
 
-ConnectionTypeItem::ConnectionTypeItem(QTreeWidget * parent, const QString & type):
-    QTreeWidgetItem(parent, QStringList(type))
+ConnectionTypeItem::ConnectionTypeItem(QTreeWidget * parent, const QString &type):
+    QTreeWidgetItem(parent)
 {
+    setData(0, Qt::UserRole, type);
     QString text;
 
     if (type == QLatin1String("adsl")) {
@@ -59,7 +60,7 @@ ConnectionTypeItem::ConnectionTypeItem(QTreeWidget * parent, const QString & typ
     } else if (type == QLatin1String("wimax")) {
         text = i18n("WiMAX");
     } else if (type == QLatin1String("802-3-ethernet")) {
-        text = i18n("Ethernet");
+        text = i18n("Wired");
         setIcon(0, KIcon("network-wired"));
     } else if (type == QLatin1String("802-11-wireless")) {
         text = i18n("Wi-Fi");

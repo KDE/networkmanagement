@@ -24,7 +24,7 @@
 #include <KIcon>
 
 ConnectionItem::ConnectionItem(QTreeWidgetItem * parent, const QStringList & strings, bool active):
-    QTreeWidgetItem(parent, strings)
+    QTreeWidgetItem(parent, strings, UserType)
 {
     if (active) {
        setIcon(0, KIcon("user-online"));
