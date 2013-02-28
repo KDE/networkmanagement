@@ -86,7 +86,7 @@ void IpV4RoutesWidget::setNeverDefault(bool checked)
     d->ui.cbNeverDefault->setChecked(checked);
 }
 
-bool IpV4RoutesWidget::neverdefault()
+bool IpV4RoutesWidget::neverDefault() const
 {
     return d->ui.cbNeverDefault->isChecked();
 }
@@ -101,7 +101,7 @@ void IpV4RoutesWidget::setIgnoreAutoRoutesCheckboxEnabled(bool enabled)
     d->ui.cbIgnoreAutoRoutes->setEnabled(enabled);
 }
 
-bool IpV4RoutesWidget::ignoreautoroutes()
+bool IpV4RoutesWidget::ignoreautoroutes() const
 {
     return d->ui.cbIgnoreAutoRoutes->isChecked();
 }

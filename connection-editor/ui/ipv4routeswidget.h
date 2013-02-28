@@ -39,10 +39,10 @@ public:
     void setRoutes(const QList<NetworkManager::IPv4Route> &list);
     QList<NetworkManager::IPv4Route> routes();
     void setNeverDefault(bool checked);
-    bool neverdefault();
+    bool neverDefault() const;
     void setIgnoreAutoRoutes(bool checked);
     void setIgnoreAutoRoutesCheckboxEnabled(bool enabled);
-    bool ignoreautoroutes();
+    bool ignoreautoroutes() const;
 
 protected slots:
     void addRoute();
