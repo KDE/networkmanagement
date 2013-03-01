@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
+Copyright 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -97,7 +98,7 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
         NetworkManager::AccessPoint::WpaFlags wpaFlags = 0;
         NetworkManager::AccessPoint::WpaFlags rsnFlags = 0;
         NetworkManager::WirelessDevice::OperationMode mode
-            = NetworkManager::WirelessDevice::Master;
+            = NetworkManager::WirelessDevice::Infra;
 
         // show connections where the network is present OR adhoc connections
         if (apEnvironment->networks().contains(wirelessSetting->ssid())) {
@@ -115,8 +116,9 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
                 }
             }
         }
-        else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
-                mode = NetworkManager::WirelessDevice::Adhoc;
+        else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
+                 wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode) {
+                mode = (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) ? NetworkManager::WirelessDevice::Adhoc : NetworkManager::WirelessDevice::ApMode;
                 Knm::WirelessSecuritySetting * wirelessSecuritySetting = dynamic_cast<Knm::WirelessSecuritySetting *>(m_connection->setting(Knm::Setting::WirelessSecurity));
                 switch( wirelessSecuritySetting->securityType())
                 {

@@ -352,20 +352,17 @@ QString UiUtils::operationModeToString(NetworkManager::WirelessDevice::Operation
 {
     QString modeString;
     switch (mode) {
-        case NetworkManager::WirelessDevice::Unassociated:
-            modeString = i18nc("wireless network operation mode", "Unassociated");
+        case NetworkManager::WirelessDevice::Unknown:
+            modeString = i18nc("wireless network operation mode", "Unknown");
             break;
         case NetworkManager::WirelessDevice::Adhoc:
             modeString = i18nc("wireless network operation mode", "Adhoc");
             break;
-        case NetworkManager::WirelessDevice::Managed:
-            modeString = i18nc("wireless network operation mode", "Managed");
+        case NetworkManager::WirelessDevice::Infra:
+            modeString = i18nc("wireless network operation mode", "Infrastructure");
             break;
-        case NetworkManager::WirelessDevice::Master:
-            modeString = i18nc("wireless network operation mode", "Master");
-            break;
-        case NetworkManager::WirelessDevice::Repeater:
-            modeString = i18nc("wireless network operation mode", "Repeater");
+        case NetworkManager::WirelessDevice::ApMode:
+            modeString = i18nc("wireless network operation mode", "Ap mode");
             break;
         default:
             modeString = I18N_NOOP("INCORRECT MODE FIX ME");

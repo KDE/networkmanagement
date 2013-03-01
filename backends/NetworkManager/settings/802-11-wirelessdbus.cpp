@@ -25,6 +25,10 @@ void WirelessDbus::fromMap(const QVariantMap & map)
           setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
       else if (mode == QLatin1String(NM_SETTING_WIRELESS_MODE_INFRA))
           setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
+#if NM_CHECK_VERSION(0, 9, 7)
+      else if (mode == QLatin1String(NM_SETTING_WIRELESS_MODE_AP))
+          setting->setMode(Knm::WirelessSetting::EnumMode::apMode);
+#endif
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_BAND))) {
       QString band = map.value(QLatin1String(NM_SETTING_WIRELESS_BAND)).value<QString>();
@@ -76,6 +80,12 @@ QVariantMap WirelessDbus::toMap()
       break;
     case Knm::WirelessSetting::EnumMode::adhoc:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MODE), QLatin1String(NM_SETTING_WIRELESS_MODE_ADHOC));
+#if NM_CHECK_VERSION(0, 9, 7)
+    case Knm::WirelessSetting::EnumMode::apMode:
+      if (setting->mode() == Knm::WirelessSetting::EnumMode::apMode) {
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_MODE), QLatin1String(NM_SETTING_WIRELESS_MODE_AP));
+      }
+#endif
       if (setting->band() != Knm::WirelessSetting::EnumBand::automatic) {
         switch (setting->band()) {
           case Knm::WirelessSetting::EnumBand::a:

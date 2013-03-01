@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -145,7 +146,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 }
 
                 // create WirelessInterfaceConnections only where the network is present
-                if (!ourWicFound && (d->environment->networks().contains(wirelessSetting->ssid()) || addedConnection->isShared() || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)) {
+                if (!ourWicFound && (d->environment->networks().contains(wirelessSetting->ssid()) || addedConnection->isShared() || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode)) {
                     kDebug() << "Adding WIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni() << wirelessSetting->channel();
 
                     Knm::WirelessInterfaceConnection * ifaceConnection =
@@ -157,7 +158,8 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                     if (network) {
                         connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
                     }
-                    else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
+                    else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
+                             wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode) {
                         ifaceConnection->setStrength(-1);
                         ourHiddenWicFound = true;
                     }
@@ -296,7 +298,8 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
         foreach (const QString &uuid, d->connectionList->connections()) {
             Knm::Connection * connection = d->connectionList->findConnection(uuid);
             Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-            if (wirelessSetting && wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)
+            if (wirelessSetting && (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
+                                    wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode))
             {
                 handleRemove(connection);
             }
@@ -307,7 +310,8 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
         foreach (const QString &uuid, d->connectionList->connections()) {
             Knm::Connection * connection = d->connectionList->findConnection(uuid);
             Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-            if (wirelessSetting && wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)
+            if (wirelessSetting && (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
+                                    wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode))
             {
                 handleAdd(connection);
             }
