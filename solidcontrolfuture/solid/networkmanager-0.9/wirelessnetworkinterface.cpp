@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright (C) 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -203,6 +204,13 @@ Solid::Control::WirelessNetworkInterfaceNm09::OperationMode NMWirelessNetworkInt
         case NM_802_11_MODE_INFRA:
             ourMode = Solid::Control::WirelessNetworkInterfaceNm09::Managed;
             break;
+#if NM_CHECK_VERSION(0, 9, 7)
+        case NM_802_11_MODE_AP:
+            ourMode = Solid::Control::WirelessNetworkInterfaceNm09::ApMode;
+            break;
+#endif
+        default:
+            kDebug() << "Unhandled mode" << theirMode;
     }
     return ourMode;
 }

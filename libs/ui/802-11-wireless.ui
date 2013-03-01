@@ -70,7 +70,7 @@
       <string>Operating mode of the wireless network</string>
      </property>
      <property name="whatsThis">
-      <string>Infrastructure mode is the most common setting.  To form a peer-to-peer wireless network with another computer when there is no infrastructure, choose Ad-hoc.</string>
+      <string>Infrastructure mode is the most common setting.  To form a peer-to-peer wireless network with another computer when there is no infrastructure, choose Ap-mode (requires NetworkManager >= 0.9.8 and a suitable wifi driver) or Ad-hoc. Also read https://bugs.kde.org/show_bug.cgi?id=311705.</string>
      </property>
      <item>
       <property name="text">
@@ -80,6 +80,11 @@
      <item>
       <property name="text">
        <string>Ad-hoc</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ap-mode</string>
       </property>
      </item>
     </widget>

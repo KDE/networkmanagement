@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -48,9 +49,9 @@ namespace Ifaces
         Q_DECLARE_PRIVATE(WirelessNetworkInterfaceNm09)
 
     public:
-        enum OperationMode { Unassociated, Adhoc, Managed, Master, Repeater };
+        enum OperationMode { Unassociated, Adhoc, Managed, Master, Repeater, ApMode };
         // corresponding to 802.11 capabilities defined in NetworkManager.h
-        enum Capability { NoCapability = 0x0, Wep40 = 0x1, Wep104 = 0x2, Tkip = 0x4, Ccmp = 0x8, Wpa = 0x10, Rsn = 0x20 };
+        enum Capability { NoCapability = 0x0, Wep40 = 0x1, Wep104 = 0x2, Tkip = 0x4, Ccmp = 0x8, Wpa = 0x10, Rsn = 0x20, ApCap = 0x40, AdhocCap = 0x80 };
         Q_DECLARE_FLAGS(Capabilities, Capability)
 
         /**

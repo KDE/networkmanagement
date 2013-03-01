@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2010-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -93,6 +94,9 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                     case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
                         setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
                         break;
+                    case Solid::Control::WirelessNetworkInterfaceNm09::ApMode:
+                        setting->setMode(Knm::WirelessSetting::EnumMode::apMode);
+                        break;
                     default:
                         setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
                     }
@@ -100,6 +104,26 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                     ssid = apUni;
                 }
             }
+        }
+    } else if (shared) {
+        // FIXME: we need to check the correct wifi device associated to this connection when creating it.
+        // If there is only one wifi card in the system then the code below is correct but it may test the
+        // wrong device if there is more than one.
+        Solid::Control::WirelessNetworkInterfaceNm09 * w = 0;
+        foreach (Solid::Control::NetworkInterfaceNm09 *d, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+            if (d->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                w = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(d);
+                if (w->wirelessCapabilities().testFlag(Solid::Control::WirelessNetworkInterfaceNm09::ApCap)) {
+                    Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
+                    setting->setMode(Knm::WirelessSetting::EnumMode::apMode);
+                    iface = w;
+                    break;
+                }
+            }
+        }
+        if (!iface) {
+            Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
+            setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
         }
     }
 

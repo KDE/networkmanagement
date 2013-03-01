@@ -54,6 +54,10 @@
          <string>Ad-hoc</string>
         </property>
        </item>
+        <property name="text">
+         <string>Ap-mode</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="2" column="0">

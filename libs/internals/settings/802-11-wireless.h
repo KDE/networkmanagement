@@ -16,7 +16,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     class EnumMode
     {
       public:
-      enum type { infrastructure, adhoc, COUNT };
+      enum type { infrastructure, adhoc, apMode, COUNT };
     };
     class EnumBand
     {

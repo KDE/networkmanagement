@@ -1,5 +1,6 @@
 /*
 Copyright 2008,2010 Will Stephenson <wstephenson@kde.org>
+Copyright 2010-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -45,7 +46,7 @@ public:
     QString proposedSsid;
 
     enum BandIndex { AutoIndex = 0, AIndex, BGIndex};
-    enum ModeIndex { InfrastructureIndex = 0, AdhocIndex};
+    enum ModeIndex { InfrastructureIndex = 0, AdhocIndex, ApModeIndex};
 };
 
 Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, bool shared, QWidget * parent)
@@ -84,11 +85,6 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
         d->ui.label_8->hide();
         d->ui.clonedMacAddress->hide();
         d->ui.clonedMacAddressRandom->hide();
-        d->ui.cmbMode->setCurrentIndex(1); // Ad-hoc mode
-
-        // To prevent Wireless80211Widget::readConfig() to change the mode
-        // back to infrastructure.
-        d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
     } else {
         modeChanged(d->ui.cmbMode->currentIndex());
     }
@@ -106,6 +102,9 @@ void Wireless80211Widget::readConfig()
     {
         case Knm::WirelessSetting::EnumMode::adhoc:
             d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
+            break;
+        case Knm::WirelessSetting::EnumMode::apMode:
+            d->ui.cmbMode->setCurrentIndex(d->ApModeIndex);
             break;
         case Knm::WirelessSetting::EnumMode::infrastructure:
         default:
@@ -162,6 +161,10 @@ void Wireless80211Widget::writeConfig()
             break;
         case Wireless80211WidgetPrivate::AdhocIndex:
             d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
+        case Wireless80211WidgetPrivate::ApModeIndex:
+            if (d->ui.cmbMode->currentIndex() == Wireless80211WidgetPrivate::ApModeIndex) {
+                d->setting->setMode(Knm::WirelessSetting::EnumMode::apMode);
+            }
             switch (d->ui.band->currentIndex())
             {
                 case Wireless80211WidgetPrivate::AIndex:
@@ -238,6 +241,10 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
     switch (ap->mode()) {
         case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
             d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
+        case Solid::Control::WirelessNetworkInterfaceNm09::ApMode:
+            if (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::ApMode) {
+                d->ui.cmbMode->setCurrentIndex(d->ApModeIndex);
+            }
 
             // This one has to go after the d->ui.band->setCurrentIndex() above;
             d->ui.channel->setValue(d->ui.channel->posFromChannel(bandAndChannel.second));
