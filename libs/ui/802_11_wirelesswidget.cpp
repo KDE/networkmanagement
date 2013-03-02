@@ -101,30 +101,30 @@ void Wireless80211Widget::readConfig()
     switch(d->setting->mode())
     {
         case Knm::WirelessSetting::EnumMode::adhoc:
-            d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
+            d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::AdhocIndex);
             break;
         case Knm::WirelessSetting::EnumMode::apMode:
-            d->ui.cmbMode->setCurrentIndex(d->ApModeIndex);
+            d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::ApModeIndex);
             break;
         case Knm::WirelessSetting::EnumMode::infrastructure:
         default:
-            d->ui.cmbMode->setCurrentIndex(d->InfrastructureIndex);
+            d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::InfrastructureIndex);
     }
     switch(d->setting->band())
     {
         case Knm::WirelessSetting::EnumBand::automatic:
-            d->ui.band->setCurrentIndex(d->AutoIndex);
-            d->ui.channel->setBand(d->AutoIndex);
+            d->ui.band->setCurrentIndex(Wireless80211WidgetPrivate::AutoIndex);
+            d->ui.channel->setBand(Wireless80211WidgetPrivate::AutoIndex);
             break;
         case Knm::WirelessSetting::EnumBand::a:
-            d->ui.band->setCurrentIndex(d->AIndex);
+            d->ui.band->setCurrentIndex(Wireless80211WidgetPrivate::AIndex);
             d->ui.channel->setBand(d->AIndex);
             d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
             break;
         case Knm::WirelessSetting::EnumBand::bg:
         default:
-            d->ui.band->setCurrentIndex(d->BGIndex);
-            d->ui.channel->setBand(d->BGIndex);
+            d->ui.band->setCurrentIndex(Wireless80211WidgetPrivate::BGIndex);
+            d->ui.channel->setBand(Wireless80211WidgetPrivate::BGIndex);
             d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
             break;
     }
@@ -230,27 +230,27 @@ void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevic
     switch(bandAndChannel.first)
     {
         case Knm::WirelessSetting::EnumBand::a:
-            d->ui.band->setCurrentIndex(d->AIndex);
+            d->ui.band->setCurrentIndex(Wireless80211WidgetPrivate::AIndex);
             break;
         case Knm::WirelessSetting::EnumBand::bg:
         default:
-            d->ui.band->setCurrentIndex(d->BGIndex);
+            d->ui.band->setCurrentIndex(Wireless80211WidgetPrivate::BGIndex);
             break;
     }
 
     switch (ap->mode()) {
         case NetworkManager::WirelessDevice::Adhoc:
-            d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
+            d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::AdhocIndex);
         case NetworkManager::WirelessDevice::ApMode:
             if (ap->mode() == NetworkManager::WirelessDevice::ApMode) {
-                d->ui.cmbMode->setCurrentIndex(d->ApModeIndex);
+                d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::ApModeIndex);
             }
 
             // This one has to go after the d->ui.band->setCurrentIndex() above;
             d->ui.channel->setValue(d->ui.channel->posFromChannel(bandAndChannel.second));
             break;
         default:
-            d->ui.cmbMode->setCurrentIndex(d->InfrastructureIndex);
+            d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::InfrastructureIndex);
             // Channel defaults to "automatic" in this case.
             break;
     }
