@@ -15,8 +15,6 @@ if (OPENCONNECT_FOUND)
 
     if (${OPENCONNECT_VERSION} VERSION_GREATER ${MINIMUM_OPENCONNECT_VERSION_REQUIRED} OR
         ${OPENCONNECT_VERSION} VERSION_EQUAL ${MINIMUM_OPENCONNECT_VERSION_REQUIRED})
-
-        macro_log_feature(OPENCONNECT_FOUND "OpenConnect headers and library" "Cisco AnyConnect compatible VPN client" "http://www.infradead.org/openconnect.html" FALSE ${MINIMUM_OPENCONNECT_VERSION_REQUIRED} "Needed for OpenConnect support in Network Management")
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
@@ -39,7 +37,10 @@ if (OPENCONNECT_FOUND)
     else()
         message("ERROR: OpenConnection version '${OPENCONNECT_VERSION}' does not match minimum required (${MINIMUM_OPENCONNECT_VERSION_REQUIRED})")
         message("OpenConnect plugin will not be built")
+        set(OPENCONNECT_FOUND False)
     endif()
 else (OPENCONNECT_FOUND)
     message("OpenConnect plugin will not be built")
 endif (OPENCONNECT_FOUND)
+
+macro_log_feature(OPENCONNECT_FOUND "OpenConnect headers and library" "Cisco AnyConnect compatible VPN client" "http://www.infradead.org/openconnect.html" FALSE ${MINIMUM_OPENCONNECT_VERSION_REQUIRED} "Needed for OpenConnect support in Network Management")
