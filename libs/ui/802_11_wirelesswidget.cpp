@@ -301,14 +301,15 @@ void Wireless80211Widget::modeChanged(int index)
 {
     Q_D(Wireless80211Widget);
     switch (index) {
-        case 1:
+        case Wireless80211WidgetPrivate::AdhocIndex:
+        case Wireless80211WidgetPrivate::ApModeIndex:
             d->ui.channel->setBand(d->ui.band->currentIndex());
             d->ui.band->setVisible(true);
             d->ui.label_3->setVisible(true);
             d->ui.channel->setVisible(true);
             d->ui.label_4->setVisible(true);
             break;
-        case 0:
+        case Wireless80211WidgetPrivate::InfrastructureIndex:
         default:
             d->ui.band->setVisible(false);
             d->ui.label_3->setVisible(false);
