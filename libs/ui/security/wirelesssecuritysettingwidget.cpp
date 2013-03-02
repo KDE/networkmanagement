@@ -333,10 +333,10 @@ void WirelessSecuritySettingWidget::writeConfig()
         d->setting8021x->setEnabled(false);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk); // FIXME
         if (d->settingWireless->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
-            d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPANone);
-            d->settingSecurity->setProto(QStringList() << "wpa");
-            d->settingSecurity->setPairwise(QStringList() << "none");
-            d->settingSecurity->setGroup(QStringList() << "tkip");
+            d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+            d->settingSecurity->setProto(QStringList() << "rsn");
+            d->settingSecurity->setPairwise(QStringList() << "ccmp");
+            d->settingSecurity->setGroup(QStringList() << "ccmp");
         } else {
             d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
         }
