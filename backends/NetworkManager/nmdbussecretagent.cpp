@@ -143,6 +143,7 @@ void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
 void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, bool failed, bool needsSaving)
 {
     Q_D(NMDBusSecretAgent);
+    kDebug();
     QPair<QString, QDBusMessage> pair = d->connectionsToRead.take(con->uuid() + name);
     if (d->objectPaths.removeOne(pair.first + name)) {
         QDBusMessage reply;
@@ -161,6 +162,8 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, 
         } else {
             delete con;
         }
+    } else {
+        kWarning() << "Unexpected secrets arrived for" << pair.first << name;
     }
 }
 

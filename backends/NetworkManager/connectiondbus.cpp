@@ -352,6 +352,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 
 void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
 {
+    kDebug();
     QVariantMapMap origs = toDbusMap();
 
     // WARNING: those debug messages print secrets, do not commit them uncommented.
