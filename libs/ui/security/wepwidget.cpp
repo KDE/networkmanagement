@@ -101,12 +101,12 @@ void WepWidget::keyTypeChanged(int index)
         case 0: //passphrase
             d->ui.keyLabel->setText(i18n("&Passphrase:"));
             d->format = WepWidget::Passphrase;
-            d->ui.key->setValidator(0); // Clear the validator
+            d->ui.key->setMaxLength(64);
             break;
         case 1: //hex/ascii key
             d->ui.keyLabel->setText(i18n("&Key:"));
             d->format = WepWidget::Hex;
-            d->ui.key->setValidator(d->wepKeyValidator);
+            d->ui.key->setMaxLength(26);
             break;
     }
     // Ensure any existing key is validated too
@@ -139,9 +139,10 @@ bool WepWidget::validate() const
 {
     Q_D(const WepWidget);
     if (d->ui.keyType->currentIndex() == 1) {   // Hex/ASCII key
-        return d->ui.key->hasAcceptableInput();
-    }
-    else {  // Passphrase
+        QString key = d->ui.key->text();
+        int keyLength = key.length();
+        return (d->wepKeyValidator->validate(key, keyLength) == QValidator::Acceptable);
+    } else {  // Passphrase
         return (!d->ui.key->text().isEmpty() && d->ui.key->text().length() <= 64);
     }
 }
