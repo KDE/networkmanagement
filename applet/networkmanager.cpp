@@ -209,7 +209,10 @@ QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
                     case ModemManager::ModemInterface::Hspa:
                         return QString("network-mobile-%1-hspa").arg(strength);
                     default:
-                        return QString("network-mobile-%1-none").arg(strength);
+                        // FIXME: this icon exists but it is invisible, we need
+                        // to create a better one.
+                        //return QString("network-mobile-%1-none").arg(strength);
+                        return QString();
                 }
             }
         }
