@@ -81,7 +81,9 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
     } else if (type == Settings::Setting::Wireless) {
         WifiConnectionWidget * wifiWidget = new WifiConnectionWidget(m_connection->setting(type), this);
         m_detailEditor->tabWidget->addTab(wifiWidget, i18n("Wireless"));
-        WifiSecurity * wifiSecurity = new WifiSecurity(m_connection->setting(NetworkManager::Settings::Setting::WirelessSecurity), this);
+        WifiSecurity * wifiSecurity = new WifiSecurity(m_connection->setting(NetworkManager::Settings::Setting::WirelessSecurity),
+                                                       static_cast<NetworkManager::Settings::Security8021xSetting *>(m_connection->setting(NetworkManager::Settings::Setting::Security8021x)),
+                                                       this);
         m_detailEditor->tabWidget->addTab(wifiSecurity, i18n("Wi-Fi Security"));
         IPv4Widget * ipv4Widget = new IPv4Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv4), this);
         m_detailEditor->tabWidget->addTab(ipv4Widget, i18n("IPv4"));

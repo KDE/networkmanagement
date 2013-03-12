@@ -24,8 +24,10 @@
 #include <QtGui/QWidget>
 
 #include <QtNetworkManager/settings/802-11-wireless-security.h>
+#include <QtNetworkManager/settings/802-1x.h>
 
 #include "settingwidget.h"
+#include "security802-1x.h"
 
 namespace Ui
 {
@@ -37,11 +39,10 @@ class WifiSecurity : public SettingWidget
 Q_OBJECT
 
 public:
-    WifiSecurity(NetworkManager::Settings::Setting* setting = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    WifiSecurity(NetworkManager::Settings::Setting* setting = 0, NetworkManager::Settings::Security8021xSetting * setting8021x = 0,
+                 QWidget* parent = 0, Qt::WindowFlags f = 0);
     virtual ~WifiSecurity();
-
     void loadConfig(NetworkManager::Settings::Setting * setting);
-
     QVariantMap setting() const;
 private slots:
     void slotShowWepKeyPasswordChecked(bool checked);
@@ -51,7 +52,10 @@ private slots:
 
 private:
     Ui::WifiSecurity * m_ui;
+    Security8021x * m_8021xWidget;
+    Security8021x * m_WPA2Widget;
     NetworkManager::Settings::WirelessSecuritySetting * m_wifiSecurity;
+    NetworkManager::Settings::Security8021xSetting * m_8021xSetting;
 };
 
 #endif // WIFI_SECURITY

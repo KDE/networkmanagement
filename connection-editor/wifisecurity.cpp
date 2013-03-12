@@ -21,13 +21,20 @@
 #include "wifisecurity.h"
 #include "ui_wifisecurity.h"
 
-WifiSecurity::WifiSecurity(NetworkManager::Settings::Setting * setting, QWidget* parent, Qt::WindowFlags f):
+WifiSecurity::WifiSecurity(NetworkManager::Settings::Setting * setting, NetworkManager::Settings::Security8021xSetting * setting8021x,
+                           QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_ui(new Ui::WifiSecurity)
+    m_ui(new Ui::WifiSecurity),
+    m_8021xSetting(setting8021x)
 {
     m_wifiSecurity = static_cast<NetworkManager::Settings::WirelessSecuritySetting*>(setting);
 
     m_ui->setupUi(this);
+
+    m_8021xWidget = new Security8021x(m_8021xSetting, this);  // Dynamic WEP
+    m_WPA2Widget = new Security8021x(m_8021xSetting, this);   // WPA(2) Enterprise
+    m_ui->stackedWidget->insertWidget(3, m_8021xWidget);
+    m_ui->stackedWidget->insertWidget(5, m_WPA2Widget);
 
     connect(m_ui->cbShowWepKey, SIGNAL(toggled(bool)), SLOT(slotShowWepKeyPasswordChecked(bool)));
     connect(m_ui->cbShowLeapPassword, SIGNAL(toggled(bool)), SLOT(slotShowLeapPasswordChecked(bool)));
@@ -49,6 +56,7 @@ void WifiSecurity::loadConfig(NetworkManager::Settings::Setting * setting)
 
     const NetworkManager::Settings::WirelessSecuritySetting::KeyMgmt keyMgmt = m_wifiSecurity->keyMgmt();
     const NetworkManager::Settings::WirelessSecuritySetting::AuthAlg authAlg = m_wifiSecurity->authAlg();
+
     if (keyMgmt == NetworkManager::Settings::WirelessSecuritySetting::Unknown) {
         m_ui->securityCombo->setCurrentIndex(0); // None
 

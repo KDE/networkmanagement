@@ -43,6 +43,7 @@ set(connectioneditor_SRCS
    ui/ipv6delegate.cpp
    ui/simpleipv6addressvalidator.cpp
    wifisecurity.cpp
+   security802-1x.cpp
 )
 
 set(connectioneditor_HDRS
@@ -65,6 +66,7 @@ set(connectioneditor_HDRS
    ui/ipv6delegate.h
    ui/simpleipv6addressvalidator.h
    wifisecurity.h
+   security802-1x.h
 )
 
 kde4_add_ui_files(connectioneditor_SRCS
@@ -78,9 +80,10 @@ kde4_add_ui_files(connectioneditor_SRCS
     ui/ipv6.ui
     ui/ipv6routes.ui
     ui/wifisecurity.ui
+    ui/802-1x.ui
 )
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})
 
 add_executable(connectioneditor ${connectioneditor_SRCS} ${connectioneditor_HDRS_MOC})
-target_link_libraries(connectioneditor QtNetworkManager ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${KDE4_KDEUI_LIBS})
+target_link_libraries(connectioneditor QtNetworkManager ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 

@@ -67,9 +67,6 @@
    </item>
    <item row="1" column="0" colspan="2">
     <widget class="QStackedWidget" name="stackedWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
      <widget class="QWidget" name="securityNone"/>
      <widget class="QWidget" name="securityWep">
       <layout class="QFormLayout" name="formLayout">
@@ -213,7 +210,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="securityDynamicWep"/>
      <widget class="QWidget" name="securityWpaPersonal">
       <layout class="QFormLayout" name="formLayout_4">
        <item row="0" column="0">
@@ -242,7 +238,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="securityWpaEnterprise"/>
     </widget>
    </item>
   </layout>
