@@ -36,6 +36,7 @@ class Security8021x: public QWidget
 public:
     Security8021x(NetworkManager::Settings::Security8021xSetting * setting, QWidget *parent = 0);
     virtual ~Security8021x();
+    void loadConfig();
 
 private slots:
     void setShowMD5Password(bool on);
