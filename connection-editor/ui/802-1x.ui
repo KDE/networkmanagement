@@ -268,7 +268,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="fastAllowPacProvisioning">
          <property name="text">
-          <string>Allow automatic &amp;PAC provisioning</string>
+          <string>Automatic &amp;PAC provisioning</string>
          </property>
         </widget>
        </item>

@@ -35,6 +35,11 @@ Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *set
     connect(m_ui->cbShowTtlsPassword, SIGNAL(toggled(bool)), SLOT(setShowTtlsPassword(bool)));
     connect(m_ui->cbShowPeapPassword, SIGNAL(toggled(bool)), SLOT(setShowPeapPassword(bool)));
 
+    connect(m_ui->cbAskMd5Password, SIGNAL(toggled(bool)), m_ui->cbShowMd5Password, SLOT(setDisabled(bool)));
+    connect(m_ui->cbAskFastPassword, SIGNAL(toggled(bool)), m_ui->cbShowFastPassword, SLOT(setDisabled(bool)));
+    connect(m_ui->cbAskPeapPassword, SIGNAL(toggled(bool)), m_ui->cbShowPeapPassword, SLOT(setDisabled(bool)));
+    connect(m_ui->cbAskTtlsPassword, SIGNAL(toggled(bool)), m_ui->cbShowTtlsPassword, SLOT(setDisabled(bool)));
+
     loadConfig();
 }
 
