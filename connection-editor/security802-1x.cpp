@@ -21,12 +21,19 @@
 #include "security802-1x.h"
 #include "ui_802-1x.h"
 
-Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *setting, QWidget *parent) :
+Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *setting, bool wifiMode, QWidget *parent) :
     QWidget(parent),
     m_setting(setting),
     m_ui(new Ui::Security8021x)
 {
     m_ui->setupUi(this);
+
+    m_ui->auth->setItemData(0, NetworkManager::Settings::Security8021xSetting::EapMethodMd5);
+    m_ui->auth->setItemData(1, NetworkManager::Settings::Security8021xSetting::EapMethodTls);
+    m_ui->auth->setItemData(2, NetworkManager::Settings::Security8021xSetting::EapMethodLeap);
+    m_ui->auth->setItemData(3, NetworkManager::Settings::Security8021xSetting::EapMethodFast);
+    m_ui->auth->setItemData(4, NetworkManager::Settings::Security8021xSetting::EapMethodTtls);
+    m_ui->auth->setItemData(5, NetworkManager::Settings::Security8021xSetting::EapMethodPeap);
 
     connect(m_ui->cbShowMd5Password, SIGNAL(toggled(bool)), SLOT(setShowMD5Password(bool)));
     connect(m_ui->cbShowTlsPassword, SIGNAL(toggled(bool)), SLOT(setShowTlsPrivateKeyPassword(bool)));
@@ -40,7 +47,17 @@ Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *set
     connect(m_ui->cbAskPeapPassword, SIGNAL(toggled(bool)), m_ui->cbShowPeapPassword, SLOT(setDisabled(bool)));
     connect(m_ui->cbAskTtlsPassword, SIGNAL(toggled(bool)), m_ui->cbShowTtlsPassword, SLOT(setDisabled(bool)));
 
-    loadConfig();
+    if (m_setting)
+        loadConfig();
+
+    if (wifiMode) {
+        m_ui->auth->removeItem(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodMd5)); // MD 5
+        m_ui->stackedWidget->removeWidget(m_ui->md5Page);
+    }
+    else {
+        m_ui->auth->removeItem(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodLeap)); // LEAP
+        m_ui->stackedWidget->removeWidget(m_ui->leapPage);
+    }
 }
 
 Security8021x::~Security8021x()
@@ -51,25 +68,26 @@ void Security8021x::loadConfig()
 {
     const QList<NetworkManager::Settings::Security8021xSetting::EapMethod> eapMethods = m_setting->eapMethods();
     const NetworkManager::Settings::Security8021xSetting::AuthMethod phase2AuthMethod = m_setting->phase2AuthMethod();
+    const bool notSavedPassword = m_setting->passwordFlags() & NetworkManager::Settings::Setting::NotSaved;
 
     if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodMd5)) {
-        m_ui->auth->setCurrentIndex(0);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodMd5));
         m_ui->md5UserName->setText(m_setting->identity());
         m_ui->md5Password->setText(m_setting->password());
-        m_ui->cbAskMd5Password->setChecked(m_setting->passwordFlags() & NetworkManager::Settings::Setting::NotSaved);
+        m_ui->cbAskMd5Password->setChecked(notSavedPassword);
     } else if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodTls)) {
-        m_ui->auth->setCurrentIndex(1);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodTls));
         m_ui->tlsIdentity->setText(m_setting->identity());
         m_ui->tlsUserCert->setText(m_setting->clientCertificate()); // FIXME check the blob vs. path case
         m_ui->tlsCACert->setText(m_setting->caCertificate()); // FIXME check the blob vs. path case
         m_ui->tlsPrivateKey->setText(m_setting->privateKey()); // FIXME check the blob vs. path case
         m_ui->tlsPrivateKeyPassword->setText(m_setting->privateKeyPassword());
     } else if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodLeap)) {
-        m_ui->auth->setCurrentIndex(2);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodLeap));
         m_ui->leapUsername->setText(m_setting->identity());
         m_ui->leapPassword->setText(m_setting->password());
     } else if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodFast)) {
-        m_ui->auth->setCurrentIndex(3);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodFast));
         m_ui->fastAnonIdentity->setText(m_setting->anonymousIdentity());
         m_ui->fastAllowPacProvisioning->setChecked((int)m_setting->phase1FastProvisioning() > 0);
         m_ui->pacMethod->setCurrentIndex(m_setting->phase1FastProvisioning() - 1);
@@ -80,9 +98,9 @@ void Security8021x::loadConfig()
             m_ui->fastInnerAuth->setCurrentIndex(1);
         m_ui->fastUsername->setText(m_setting->identity());
         m_ui->fastPassword->setText(m_setting->password());
-        m_ui->cbAskFastPassword->setChecked(m_setting->passwordFlags() & NetworkManager::Settings::Setting::NotSaved);
+        m_ui->cbAskFastPassword->setChecked(notSavedPassword);
     } else if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodTtls)) {
-        m_ui->auth->setCurrentIndex(4);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodTtls));
         m_ui->ttlsAnonIdentity->setText(m_setting->anonymousIdentity());
         m_ui->ttlsCACert->setText(m_setting->caCertificate());  // FIXME check the blob vs. path case
         if (phase2AuthMethod == NetworkManager::Settings::Security8021xSetting::AuthMethodPap)
@@ -95,9 +113,9 @@ void Security8021x::loadConfig()
             m_ui->ttlsInnerAuth->setCurrentIndex(3);
         m_ui->ttlsUsername->setText(m_setting->identity());
         m_ui->ttlsPassword->setText(m_setting->password());
-        m_ui->cbAskTtlsPassword->setChecked(m_setting->passwordFlags() & NetworkManager::Settings::Setting::NotSaved);
+        m_ui->cbAskTtlsPassword->setChecked(notSavedPassword);
     } else if (eapMethods.contains(NetworkManager::Settings::Security8021xSetting::EapMethodPeap)) {
-        m_ui->auth->setCurrentIndex(5);
+        m_ui->auth->setCurrentIndex(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodPeap));
         m_ui->peapAnonIdentity->setText(m_setting->anonymousIdentity());
         m_ui->peapCACert->setText(m_setting->caCertificate()); // FIXME check the blob vs. path case
         m_ui->peapVersion->setCurrentIndex(m_setting->phase1PeapVersion() + 1);
@@ -109,8 +127,14 @@ void Security8021x::loadConfig()
             m_ui->peapInnerAuth->setCurrentIndex(2);
         m_ui->peapUsername->setText(m_setting->identity());
         m_ui->peapPassword->setText(m_setting->password());
-        m_ui->cbAskPeapPassword->setChecked(m_setting->passwordFlags() & NetworkManager::Settings::Setting::NotSaved);
+        m_ui->cbAskPeapPassword->setChecked(notSavedPassword);
     }
+}
+
+QVariantMap Security8021x::setting() const
+{
+    // TODO
+    return QVariantMap();
 }
 
 void Security8021x::setShowMD5Password(bool on)

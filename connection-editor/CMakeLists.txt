@@ -43,6 +43,7 @@ set(connectioneditor_SRCS
    ui/ipv6delegate.cpp
    ui/simpleipv6addressvalidator.cpp
    wifisecurity.cpp
+   wiredsecurity.cpp
    security802-1x.cpp
 )
 
@@ -66,6 +67,7 @@ set(connectioneditor_HDRS
    ui/ipv6delegate.h
    ui/simpleipv6addressvalidator.h
    wifisecurity.h
+   wiredsecurity.h
    security802-1x.h
 )
 
@@ -80,6 +82,7 @@ kde4_add_ui_files(connectioneditor_SRCS
     ui/ipv6.ui
     ui/ipv6routes.ui
     ui/wifisecurity.ui
+    ui/wiredsecurity.ui
     ui/802-1x.ui
 )
 qt4_wrap_cpp(connectioneditor_HDRS_MOC ${connectioneditor_HDRS})

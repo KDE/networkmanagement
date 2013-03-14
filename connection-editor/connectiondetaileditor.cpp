@@ -26,6 +26,7 @@
 #include "ipv4widget.h"
 #include "ipv6widget.h"
 #include "wifisecurity.h"
+#include "wiredsecurity.h"
 
 #include <QtNetworkManager/settings.h>
 #include <QtNetworkManager/activeconnection.h>
@@ -74,6 +75,8 @@ void ConnectionDetailEditor::addTab(Settings::Setting::SettingType type)
     if (type == Settings::Setting::Wired) {
         WiredConnectionWidget * wiredWidget = new WiredConnectionWidget(m_connection->setting(type), this);
         m_detailEditor->tabWidget->addTab(wiredWidget, i18n("Wired"));
+        WiredSecurity * wiredSecurity = new WiredSecurity(static_cast<NetworkManager::Settings::Security8021xSetting *>(m_connection->setting(NetworkManager::Settings::Setting::Security8021x)), this);
+        m_detailEditor->tabWidget->addTab(wiredSecurity, i18n("802.1x Security"));
         IPv4Widget * ipv4Widget = new IPv4Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv4), this);
         m_detailEditor->tabWidget->addTab(ipv4Widget, i18n("IPv4"));
         IPv6Widget * ipv6Widget = new IPv6Widget(m_connection->setting(NetworkManager::Settings::Setting::Ipv6), this);

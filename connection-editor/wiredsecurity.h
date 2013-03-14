@@ -18,12 +18,11 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIFI_SECURITY
-#define WIFI_SECURITY
+#ifndef WIRED_SECURITY
+#define WIRED_SECURITY
 
 #include <QtGui/QWidget>
 
-#include <QtNetworkManager/settings/802-11-wireless-security.h>
 #include <QtNetworkManager/settings/802-1x.h>
 
 #include "settingwidget.h"
@@ -31,30 +30,22 @@
 
 namespace Ui
 {
-class WifiSecurity;
+class WiredSecurity;
 }
 
-class WifiSecurity : public SettingWidget
+class WiredSecurity : public SettingWidget
 {
     Q_OBJECT
 public:
-    WifiSecurity(NetworkManager::Settings::Setting* setting = 0, NetworkManager::Settings::Security8021xSetting * setting8021x = 0,
-                 QWidget* parent = 0, Qt::WindowFlags f = 0);
-    virtual ~WifiSecurity();
+    WiredSecurity(NetworkManager::Settings::Security8021xSetting * setting8021x = 0, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    virtual ~WiredSecurity();
     void loadConfig(NetworkManager::Settings::Setting * setting);
     QVariantMap setting() const;
-private slots:
-    void slotShowWepKeyPasswordChecked(bool checked);
-    void slotShowLeapPasswordChecked(bool checked);
-    void slotShowPskPasswordChecked(bool checked);
-    void setWepKey(int keyIndex);
 
 private:
-    Ui::WifiSecurity * m_ui;
+    Ui::WiredSecurity * m_ui;
     Security8021x * m_8021xWidget;
-    Security8021x * m_WPA2Widget;
-    NetworkManager::Settings::WirelessSecuritySetting * m_wifiSecurity;
     NetworkManager::Settings::Security8021xSetting * m_8021xSetting;
 };
 
-#endif // WIFI_SECURITY
+#endif // WIRED_SECURITY

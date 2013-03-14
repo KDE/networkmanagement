@@ -31,8 +31,8 @@ WifiSecurity::WifiSecurity(NetworkManager::Settings::Setting * setting, NetworkM
 
     m_ui->setupUi(this);
 
-    m_8021xWidget = new Security8021x(m_8021xSetting, this);  // Dynamic WEP
-    m_WPA2Widget = new Security8021x(m_8021xSetting, this);   // WPA(2) Enterprise
+    m_8021xWidget = new Security8021x(m_8021xSetting, true, this);  // Dynamic WEP
+    m_WPA2Widget = new Security8021x(m_8021xSetting, true, this);   // WPA(2) Enterprise
     m_ui->stackedWidget->insertWidget(3, m_8021xWidget);
     m_ui->stackedWidget->insertWidget(5, m_WPA2Widget);
 

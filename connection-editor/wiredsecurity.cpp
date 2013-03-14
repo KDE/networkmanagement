@@ -18,38 +18,37 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SECURITY8021X_H
-#define SECURITY8021X_H
+#include "wiredsecurity.h"
+#include "ui_wiredsecurity.h"
 
-#include <QWidget>
-
-#include <QtNetworkManager/settings/802-1x.h>
-
-namespace Ui
+WiredSecurity::WiredSecurity(NetworkManager::Settings::Security8021xSetting * setting8021x, QWidget* parent, Qt::WindowFlags f):
+    SettingWidget(setting8021x, parent, f),
+    m_ui(new Ui::WiredSecurity),
+    m_8021xSetting(setting8021x)
 {
-class Security8021x;
+    m_ui->setupUi(this);
+
+    m_8021xWidget = new Security8021x(m_8021xSetting, false, this);
+    m_8021xWidget->setDisabled(true);
+
+    m_ui->verticalLayout->addWidget(m_8021xWidget);
+
+    connect(m_ui->use8021X, SIGNAL(toggled(bool)), m_8021xWidget, SLOT(setEnabled(bool)));
 }
 
-class Security8021x: public QWidget
+WiredSecurity::~WiredSecurity()
 {
-    Q_OBJECT
-public:
-    Security8021x(NetworkManager::Settings::Security8021xSetting * setting, bool wifiMode, QWidget *parent = 0);
-    virtual ~Security8021x();
-    QVariantMap setting() const;
+}
 
-private slots:
-    void setShowMD5Password(bool on);
-    void setShowTlsPrivateKeyPassword(bool on);
-    void setShowLeapPassword(bool on);
-    void setShowFastPassword(bool on);
-    void setShowTtlsPassword(bool on);
-    void setShowPeapPassword(bool on);
-    
-private:
-    void loadConfig();
-    NetworkManager::Settings::Security8021xSetting * m_setting;
-    Ui::Security8021x * m_ui;
-};
+void WiredSecurity::loadConfig(NetworkManager::Settings::Setting * setting)
+{
+    Q_UNUSED(setting);
+}
 
-#endif // SECURITY8021X_H
+QVariantMap WiredSecurity::setting() const
+{
+    if (m_ui->use8021X->isChecked())
+        return m_8021xWidget->setting();
+
+    return QVariantMap();
+}
