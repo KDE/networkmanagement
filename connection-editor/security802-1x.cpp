@@ -47,9 +47,6 @@ Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *set
     connect(m_ui->cbAskPeapPassword, SIGNAL(toggled(bool)), m_ui->cbShowPeapPassword, SLOT(setDisabled(bool)));
     connect(m_ui->cbAskTtlsPassword, SIGNAL(toggled(bool)), m_ui->cbShowTtlsPassword, SLOT(setDisabled(bool)));
 
-    if (m_setting)
-        loadConfig();
-
     if (wifiMode) {
         m_ui->auth->removeItem(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodMd5)); // MD 5
         m_ui->stackedWidget->removeWidget(m_ui->md5Page);
@@ -58,6 +55,9 @@ Security8021x::Security8021x(NetworkManager::Settings::Security8021xSetting *set
         m_ui->auth->removeItem(m_ui->auth->findData(NetworkManager::Settings::Security8021xSetting::EapMethodLeap)); // LEAP
         m_ui->stackedWidget->removeWidget(m_ui->leapPage);
     }
+
+    if (m_setting)
+        loadConfig();
 }
 
 Security8021x::~Security8021x()
