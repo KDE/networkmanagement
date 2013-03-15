@@ -136,8 +136,9 @@ QVariantMap Security8021x::setting() const
     NetworkManager::Settings::Security8021xSetting::EapMethod method =
             static_cast<NetworkManager::Settings::Security8021xSetting::EapMethod>(m_ui->auth->itemData(m_ui->auth->currentIndex()).toInt());
 
+    m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
+
     if (method == NetworkManager::Settings::Security8021xSetting::EapMethodMd5) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->md5UserName->text().isEmpty())
             m_setting->setIdentity(m_ui->md5UserName->text());
         if (m_ui->cbAskMd5Password->isChecked())
@@ -145,7 +146,6 @@ QVariantMap Security8021x::setting() const
         else if (!m_ui->md5Password->text().isEmpty())
             m_setting->setPassword(m_ui->md5Password->text());
     } else if (method == NetworkManager::Settings::Security8021xSetting::EapMethodTls) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->tlsIdentity->text().isEmpty())
             m_setting->setIdentity(m_ui->tlsIdentity->text());
         if (!m_ui->tlsUserCert->url().isEmpty())
@@ -157,13 +157,11 @@ QVariantMap Security8021x::setting() const
         if (!m_ui->tlsPrivateKeyPassword->text().isEmpty())
             m_setting->setPrivateKeyPassword(m_ui->tlsPrivateKeyPassword->text());
     } else if (method == NetworkManager::Settings::Security8021xSetting::EapMethodLeap) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->leapUsername->text().isEmpty())
             m_setting->setIdentity(m_ui->leapUsername->text());
         if (!m_ui->leapPassword->text().isEmpty())
             m_setting->setPassword(m_ui->leapPassword->text());
     } else if (method == NetworkManager::Settings::Security8021xSetting::EapMethodFast) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->fastAnonIdentity->text().isEmpty())
             m_setting->setAnonymousIdentity(m_ui->fastAnonIdentity->text());
         if (!m_ui->fastAllowPacProvisioning->isChecked()) {
@@ -184,7 +182,6 @@ QVariantMap Security8021x::setting() const
         else if (!m_ui->fastPassword->text().isEmpty())
             m_setting->setPassword(m_ui->fastPassword->text());
     } else if (method == NetworkManager::Settings::Security8021xSetting::EapMethodTtls) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->ttlsAnonIdentity->text().isEmpty())
             m_setting->setAnonymousIdentity(m_ui->ttlsAnonIdentity->text());
         if (!m_ui->ttlsCACert->text().isEmpty())
@@ -205,7 +202,6 @@ QVariantMap Security8021x::setting() const
         else if (!m_ui->ttlsPassword->text().isEmpty())
             m_setting->setPassword(m_ui->ttlsPassword->text());
     } else if (method == NetworkManager::Settings::Security8021xSetting::EapMethodPeap) {
-        m_setting->setEapMethods(QList<NetworkManager::Settings::Security8021xSetting::EapMethod>() << method);
         if (!m_ui->peapAnonIdentity->text().isEmpty())
             m_setting->setAnonymousIdentity(m_ui->peapAnonIdentity->text());
         if (!m_ui->peapCACert->text().isEmpty())
