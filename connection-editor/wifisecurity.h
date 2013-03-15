@@ -43,6 +43,7 @@ public:
     virtual ~WifiSecurity();
     void loadConfig(NetworkManager::Settings::Setting * setting);
     QVariantMap setting() const;
+    QVariantMap setting8021x() const;
 private slots:
     void slotShowWepKeyPasswordChecked(bool checked);
     void slotShowLeapPasswordChecked(bool checked);
@@ -54,7 +55,6 @@ private:
     Security8021x * m_8021xWidget;
     Security8021x * m_WPA2Widget;
     NetworkManager::Settings::WirelessSecuritySetting * m_wifiSecurity;
-    NetworkManager::Settings::Security8021xSetting * m_8021xSetting;
 };
 
 #endif // WIFI_SECURITY

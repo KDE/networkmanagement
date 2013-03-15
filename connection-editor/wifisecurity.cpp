@@ -24,15 +24,14 @@
 WifiSecurity::WifiSecurity(NetworkManager::Settings::Setting * setting, NetworkManager::Settings::Security8021xSetting * setting8021x,
                            QWidget* parent, Qt::WindowFlags f):
     SettingWidget(setting, parent, f),
-    m_ui(new Ui::WifiSecurity),
-    m_8021xSetting(setting8021x)
+    m_ui(new Ui::WifiSecurity)
 {
     m_wifiSecurity = static_cast<NetworkManager::Settings::WirelessSecuritySetting*>(setting);
 
     m_ui->setupUi(this);
 
-    m_8021xWidget = new Security8021x(m_8021xSetting, true, this);  // Dynamic WEP
-    m_WPA2Widget = new Security8021x(m_8021xSetting, true, this);   // WPA(2) Enterprise
+    m_8021xWidget = new Security8021x(setting8021x, true, this);  // Dynamic WEP
+    m_WPA2Widget = new Security8021x(setting8021x, true, this);   // WPA(2) Enterprise
     m_ui->stackedWidget->insertWidget(3, m_8021xWidget);
     m_ui->stackedWidget->insertWidget(5, m_WPA2Widget);
 
@@ -81,7 +80,7 @@ void WifiSecurity::loadConfig(NetworkManager::Settings::Setting * setting)
 
     } else if (keyMgmt == NetworkManager::Settings::WirelessSecuritySetting::Ieee8021x) {
         m_ui->securityCombo->setCurrentIndex(3);  // Dynamic WEP
-        // TODO
+        // done in the widget
 
     } else if (keyMgmt == NetworkManager::Settings::WirelessSecuritySetting::WpaPsk) {
         m_ui->securityCombo->setCurrentIndex(4);  // WPA
@@ -89,17 +88,63 @@ void WifiSecurity::loadConfig(NetworkManager::Settings::Setting * setting)
 
     } else if (keyMgmt == NetworkManager::Settings::WirelessSecuritySetting::WpaEap) {
         m_ui->securityCombo->setCurrentIndex(5);  // WPA2 Enterprise
-        // TODO
+        // done in the widget
     }
 }
 
 QVariantMap WifiSecurity::setting() const
 {
-    NetworkManager::Settings::WirelessSecuritySetting wifiSecurity;
+    QVariantMap tmp80211Map;
 
-    // TODO
+    const int securityIndex = m_ui->securityCombo->currentIndex();
+    if (securityIndex == 0) {
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::Unknown);
+    }
+    else if (securityIndex == 1)  { // WEP
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::Wep);
+        const int keyIndex = m_ui->wepIndex->currentIndex();
+        const QString wepKey = m_ui->wepKey->text();
+        m_wifiSecurity->setWepTxKeyindex(keyIndex);
+        if (keyIndex == 0)
+            m_wifiSecurity->setWepKey0(wepKey);
+        else if (keyIndex == 1)
+            m_wifiSecurity->setWepKey1(wepKey);
+        else if (keyIndex == 2)
+            m_wifiSecurity->setWepKey2(wepKey);
+        else if (keyIndex == 3)
+            m_wifiSecurity->setWepKey3(wepKey);
 
-    return wifiSecurity.toMap();
+        if (m_ui->wepAuth->currentIndex() == 0)
+            m_wifiSecurity->setAuthAlg(NetworkManager::Settings::WirelessSecuritySetting::Open);
+        else
+            m_wifiSecurity->setAuthAlg(NetworkManager::Settings::WirelessSecuritySetting::Shared);
+    } else if (securityIndex == 2) { // LEAP
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::Ieee8021x);
+        m_wifiSecurity->setAuthAlg(NetworkManager::Settings::WirelessSecuritySetting::Leap);
+        m_wifiSecurity->setLeapUsername(m_ui->leapUsername->text());
+        m_wifiSecurity->setLeapPassword(m_ui->leapPassword->text());
+    } else if (securityIndex == 3) {  // Dynamic WEP
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::Ieee8021x);
+        tmp80211Map = m_8021xWidget->setting();
+    } else if (securityIndex == 4) { // WPA
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::WpaPsk);
+        m_wifiSecurity->setPsk(m_ui->psk->text());
+    } else if (securityIndex == 5) {  // WPA2 Enterprise
+        m_wifiSecurity->setKeyMgmt(NetworkManager::Settings::WirelessSecuritySetting::WpaEap);
+        tmp80211Map = m_WPA2Widget->setting();
+    }
+
+    return m_wifiSecurity->toMap();
+}
+
+QVariantMap WifiSecurity::setting8021x() const
+{
+    if (m_ui->securityCombo->currentIndex() == 3) // Dynamic WEP
+        return m_8021xWidget->setting();
+    else if (m_ui->securityCombo->currentIndex() == 5) // WPA2 Enterprise
+        return m_WPA2Widget->setting();
+
+    return QVariantMap();
 }
 
 void WifiSecurity::setWepKey(int keyIndex)
