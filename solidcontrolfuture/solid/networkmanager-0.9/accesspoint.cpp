@@ -54,7 +54,7 @@ NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::C
         d->wpaFlags = convertWpaFlags( d->iface.wpaFlags() );
         d->rsnFlags = convertWpaFlags( d->iface.rsnFlags() );
         d->signalStrength = d->iface.strength();
-        d->ssid = d->iface.ssid();
+        d->ssid = QString::fromUtf8(d->iface.ssid());
         d->rawSsid = d->iface.ssid();
         d->frequency = d->iface.frequency();
         d->hardwareAddress = d->iface.hwAddress();
