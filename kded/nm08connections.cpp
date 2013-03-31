@@ -134,7 +134,6 @@ void Nm08Connections::importNextNm08Connection()
     connection->setName(cg.readEntry("id"));
     connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
     connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
-    connection->setIconName(cg.readEntry("icon"));
 
     // load each setting
     foreach (Setting * setting, connection->settings()) {
