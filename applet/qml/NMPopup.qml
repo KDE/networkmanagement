@@ -156,7 +156,7 @@ Item {
                 spacing: 4
 
                 PlasmaComponents.CheckBox {
-                    text: i18n("Enable Wireless")
+                    text: i18n("Wireless")
 
                     visible: wirelessVisible
                     checked: wirelessChecked
@@ -168,7 +168,7 @@ Item {
                 }
 
                 PlasmaComponents.CheckBox {
-                    text: i18n("Enable Mobile Broadband")
+                    text: i18n("Mobile Broadband")
 
                     visible: mobileVisible
                     checked: mobileChecked
