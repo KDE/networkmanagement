@@ -1,6 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
-Copyright 2013 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -238,6 +238,7 @@ void DeclarativeNMPopup::updateHasWireless(bool checked)
         hasWireless = false;
     }
     m_rootContext->setContextProperty("wirelessVisible", hasWireless);
+    listModel->setHasWireless(hasWireless);
 }
 
 

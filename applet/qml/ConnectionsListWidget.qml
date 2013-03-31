@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>   *
+ *   Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -55,6 +56,8 @@ Item {
             defaultRoute: hasDefaultRoute
             signalQuality: model["signalQuality"]
             accessTechnology: model["accessTechnology"]
+            shoreMoreChecked: model["showMoreChecked"]
+            networkCount: model["networkCount"]
             onDisconnectNetwork: {
                 connectionsListModel.disconnectFrom(uuidProperty)
             }
@@ -63,6 +66,9 @@ Item {
             }
             onConnectToHiddenNetwork: {
                 connectionsListModel.connectToHiddenNetwork(ssid)
+            }
+            onShowMoreClicked: {
+                connectionsListModel.showMoreClicked()
             }
         }
 

@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
+Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -52,13 +53,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 static const int m_iconSize = 48;
 
-ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObject *parent) :
+ConnectionItem::ConnectionItem(RemoteActivatable *activatable, ItemType type, QObject *parent) :
     QObject(parent),
     m_activatable(activatable),
     m_hoverEnter(false),
     m_hasDefaultRoute(false),
     m_activationState(QLatin1String("unknown")),
-    m_hidden(hidden)
+    m_type(type),
+    m_showMoreChecked(false),
+    m_networkCount(0)
 {
     if (m_activatable) {
         RemoteInterfaceConnection * remote = interfaceConnection();
@@ -80,29 +83,29 @@ ConnectionItem::ConnectionItem(RemoteActivatable *activatable, bool hidden, QObj
         switch (m_activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
             connect(qobject_cast<RemoteWirelessNetwork *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
-            m_type = "wirelessNetwork";
+            m_typeString = "wirelessNetwork";
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
             connect(qobject_cast<RemoteWirelessInterfaceConnection *>(m_activatable), SIGNAL(strengthChanged(int)), this, SLOT(handlePropertiesChanges()));
-            m_type = "wireless";
+            m_typeString = "wireless";
             break;
         case Knm::Activatable::InterfaceConnection:
-            m_type = "wired";
+            m_typeString = "wired";
             break;
         case Knm::Activatable::VpnInterfaceConnection:
-            m_type = "vpn";
+            m_typeString = "vpn";
             break;
         case Knm::Activatable::GsmInterfaceConnection:
             connect(qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable), SIGNAL(signalQualityChanged(int)), this, SLOT(handlePropertiesChanges()));
             connect(qobject_cast<RemoteGsmInterfaceConnection *>(m_activatable), SIGNAL(accessTechnologyChanged(int)), this, SLOT(handlePropertiesChanges()));
-            m_type = "gsm";
+            m_typeString = "gsm";
             break;
         /* TODO: add HiddenWirelessInterfaceConnection and UnconfiguredInterface, or just get rid of them. */
         }
-    }
-
-    if (hidden) {
-        m_type = "wirelessNetwork";
+    } else if (type == ConnectionItem::HiddenNetwork) {
+        m_typeString = "wirelessNetwork";
+    } else if (type == ConnectionItem::ShowMore) {
+        m_typeString = "showMore";
     }
 }
 
@@ -165,12 +168,12 @@ QString ConnectionItem::connectionName()
 
 QString ConnectionItem::connectionType()
 {
-    return m_type;
+    return m_typeString;
 }
 
 bool ConnectionItem::hidden()
 {
-    return m_hidden;
+    return (m_type == ConnectionItem::HiddenNetwork);
 }
 
 void ConnectionItem::handleHasDefaultRouteChanged(bool has)
@@ -304,6 +307,18 @@ QString ConnectionItem::accessTechnology()
         }
     }
     return QString();
+}
+
+bool ConnectionItem::showMoreChecked()
+{
+    return m_showMoreChecked;
+}
+
+void ConnectionItem::setShowMoreChecked(const bool show)
+{
+    kDebug() << "Lamarque" << show;
+    m_showMoreChecked = show;
+    emit itemChanged();
 }
 
 QString ConnectionItem::activationState()

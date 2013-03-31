@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
+Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -58,14 +59,13 @@ public:
         HoverEnterRole,
         NetworkIconRole,
         SignalQualityRole,
-        AccessTechnologyRole
+        AccessTechnologyRole,
+        ShowMoreCheckedRole,
+        NetworkCountRole
     };
 
-    enum Filter {
-        NormalConnections,
-        VpnConnections,
-        SharedConnections
-    };
+    enum FilterType {NormalConnections = 0x1, VpnConnections = 0x2, SharedConnections = 0x4, SavedConnections = 0x8, FilterDevice = 0x10};
+    Q_DECLARE_FLAGS(FilterTypes, FilterType)
 
     explicit ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent = 0);
 
@@ -74,12 +74,12 @@ public:
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
 
     void appendRow(ConnectionItem *item);
-
     void appendRows(const QList<ConnectionItem*> &items);
 
     void insertHiddenItem();
-
     void removeHiddenItem();
+
+    void updateShowMoreItem();
 
     bool removeRow(int row, const QModelIndex &parent = QModelIndex());
 
@@ -92,6 +92,8 @@ public:
     void updateConnectionsList();
 
     void setDeviceToFilter(NetworkManager::Device* device, const bool vpn = false);
+
+    void setHasWireless(const bool hasWireless) { m_hasWireless = hasWireless; }
 
 Q_SIGNALS:
     void showInterfaceDetails(QString);
@@ -109,14 +111,25 @@ public slots:
     void hoverLeftVpn();
     void activatableAdded(RemoteActivatable *activatable);
     void activatableRemoved(RemoteActivatable *activatable);
+    void showMoreClicked();
+    void showMore(const bool);
+    void checkShowMore(RemoteActivatable *);
+    void uncheckShowMore(RemoteActivatable *);
 
 private:
     QList<ConnectionItem *> connections;
+    ConnectionItem *m_showMoreItem;
     NetworkManager::Device* m_device;
     RemoteActivatableList* m_activatables;
     bool hiddenInserted;
     bool m_vpn;
-    Filter currentFilter;
+    FilterTypes currentFilter;
+    int m_moreNetworks;
+    bool m_showMoreChecked;
+    bool m_oldShowMoreChecked;
+    bool m_oldShowInterfaceList;
+    int wicCount;
+    bool m_hasWireless;
 };
 
 #endif // CONNECTIONSLISTMODEL_H

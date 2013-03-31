@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>   *
+ *   Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -37,10 +38,13 @@ Item {
     property bool defaultRoute
     property int signalQuality
     property string accessTechnology
+    property bool shoreMoreChecked
+    property int networkCount
 
     signal disconnectNetwork(string uuidProperty)
     signal connectNetwork(int index)
     signal connectToHiddenNetwork(string ssid)
+    signal showMoreClicked()
 
     Component {
         id: wiredNetworkItemComponent
@@ -143,6 +147,19 @@ Item {
         }
     }
 
+    Component {
+        id: showMoreItemComponent
+
+        ShowMoreItem {
+            id: showMoreItem
+
+            width: connectionItem.width
+            hoverEnter: connectionItem.isHovered
+            checked: connectionItem.shoreMoreChecked
+            networkCount: connectionItem.networkCount
+        }
+    }
+
     Component.onCompleted: {
         if (connectionType == "wireless" || connectionType == "wirelessNetwork") {
             if (hidden) {
@@ -156,6 +173,8 @@ Item {
             vpnNetworkItemComponent.createObject(connectionItem)
         } else if (connectionType == "gsm") {
             gsmNetworkItemComponent.createObject(connectionItem)
+        } else if (connectionType == "showMore") {
+            showMoreItemComponent.createObject(connectionItem)
         } else {
             console.log("Unhandled connection type " + connectionType)
         }

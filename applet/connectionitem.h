@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
+Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -30,7 +31,10 @@ class ConnectionItem : public QObject
     Q_OBJECT
 
 public:
-    explicit ConnectionItem(RemoteActivatable *activatable, bool hidden = false, QObject *parent = 0);
+    enum ItemType { Activatable, HiddenNetwork, ShowMore };
+
+    explicit ConnectionItem(RemoteActivatable *activatable, ItemType type = Activatable, QObject *parent = 0);
+
     QString deviceUni();
     bool isShared();
     QString ssid();
@@ -53,6 +57,9 @@ public:
     bool defaultRoute();
     int signalQuality();
     QString accessTechnology();
+    bool showMoreChecked();
+    void setShowMoreChecked(const bool show);
+    int& networkCount() { return m_networkCount; }
 
 protected Q_SLOTS:
     void handlePropertiesChanges();
@@ -69,8 +76,10 @@ private:
     bool m_hoverEnter;
     bool m_hasDefaultRoute;
     QString m_activationState;
-    QString m_type;
-    bool m_hidden;
+    QString m_typeString;
+    ItemType m_type;
+    bool m_showMoreChecked;
+    int m_networkCount;
 };
 
 #endif
