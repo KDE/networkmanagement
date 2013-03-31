@@ -29,6 +29,7 @@ Item {
 
     property string uuid
     property string connectionName
+    property string connectionIcon
     property string activationState
     property string accessTechnology
     property alias signalQuality: qualityProgressBar.value
@@ -86,10 +87,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
 
-            GsmNetworkIcon {
+            IconItem {
                 id: icon
+
+                iconName: connectionIcon
                 route: routeDefault
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {

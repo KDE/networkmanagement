@@ -61,7 +61,7 @@ ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, 
     roles[ProtectedIconRole] = "protectedIcon";
     roles[HiddenRole] = "hiddenNetwork";
     roles[HoverEnterRole] = "hoverEntered";
-    roles[NetworkIconRole] = "netIcon";
+    roles[ConnectionIconRole] = "connectionIcon";
     roles[SignalQualityRole] = "signalQuality";
     roles[AccessTechnologyRole] = "accessTechnology";
     roles[ShowMoreCheckedRole] = "showMoreChecked";
@@ -193,7 +193,7 @@ QVariant ConnectionsListModel::data(const QModelIndex &index, int role) const
             return connections.at(index.row())->hidden();
         case HoverEnterRole:
             return connections.at(index.row())->hover();
-        case NetworkIconRole:
+        case ConnectionIconRole:
             return connections.at(index.row())->connectionIcon();
         case HasDefaultRouteRole:
             return connections.at(index.row())->defaultRoute();

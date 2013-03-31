@@ -27,10 +27,13 @@ Item {
     width: 16
     height: 16
 
-    property bool route
+    anchors.verticalCenter: parent.verticalCenter
+
+    property string iconName
+    property bool route: false
 
     QIconItem {
-        icon: QIcon("phone")
+        icon: QIcon(iconName)
         anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
     }

@@ -29,6 +29,7 @@ Item {
 
     property string uuid
     property alias connectionName: connectionNameLabel.text
+    property string connectionIcon
     property string activationState
     property alias signalStrength: strengthProgressBar.value
     property string protectedNetworkIcon
@@ -84,11 +85,12 @@ Item {
             id: row2
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
-            WirelessNetworkIcon {
+
+            IconItem {
                 id: icon
-                status: activationState
+
+                iconName: connectionIcon
                 route: routeDefault
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {

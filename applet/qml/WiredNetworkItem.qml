@@ -29,6 +29,7 @@ Item {
 
     property string uuid
     property alias connectionName: connectionNameLabel.text
+    property string connectionIcon
     property string activationState
     property bool hoverEnter
     property bool routeDefault
@@ -85,11 +86,11 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
 
-            WiredNetworkIcon {
+            IconItem {
                 id: icon
-                status: activationState
+
+                iconName: connectionIcon
                 route: routeDefault
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             PlasmaComponents.Label {

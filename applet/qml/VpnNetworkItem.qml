@@ -31,7 +31,7 @@ Item {
     property alias connectionName: connectionNameLabel.text
     property string activationState
     property bool hoverEnter
-    property string networkIcon
+    property string connectionIcon
 
     signal disconnect(string uuidProperty)
     signal connectionClicked(int index)
@@ -85,13 +85,10 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 4
 
-            QIconItem {
+            IconItem {
                 id: icon
 
-                icon: QIcon(networkIcon)
-                width: 16
-                height: 16
-                anchors.verticalCenter: parent.verticalCenter
+                iconName: connectionIcon
             }
 
             PlasmaComponents.Label {

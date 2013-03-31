@@ -52,7 +52,7 @@ Item {
             wirelessNetworkIcon: protectedIcon
             activationState: model["activationState"]
             isHovered: hoverEntered
-            iconNetwork: netIcon
+            connectionIcon: model["connectionIcon"]
             defaultRoute: hasDefaultRoute
             signalQuality: model["signalQuality"]
             accessTechnology: model["accessTechnology"]

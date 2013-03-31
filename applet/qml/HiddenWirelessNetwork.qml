@@ -60,22 +60,21 @@ Item {
         width: parent.width
         height: parent.height
         anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 8
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 10
+        spacing: 8
 
         Row {
             id: row2
-            height: parent.height - 20
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 5
+            spacing: 4
 
-            WirelessNetworkIcon {
+            IconItem {
                 id: icon
-                status: "unknown"
-                anchors.verticalCenter: parent.verticalCenter
+
+                iconName: "network-wireless"
             }
 
             PlasmaComponents.Label {
@@ -84,7 +83,6 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
-
     }
 
     PlasmaComponents.TextField {

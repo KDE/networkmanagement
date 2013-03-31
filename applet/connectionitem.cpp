@@ -194,9 +194,26 @@ QString ConnectionItem::connectionUuid()
 
 QString ConnectionItem::connectionIcon()
 {
-    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
-    if (remoteconnection) {
-        return remoteconnection->iconName();
+    if (!m_activatable) {
+        return QString();
+    }
+
+    switch (m_activatable->activatableType()) {
+    case Knm::Activatable::WirelessInterfaceConnection:
+    case Knm::Activatable::WirelessNetwork:
+        return QString("network-wireless-connected-100");
+    case Knm::Activatable::InterfaceConnection: {
+        RemoteInterfaceConnection *remote = interfaceConnection();
+        if (remote && remote->activationState() == Knm::InterfaceConnection::Activated) {
+            return QString("network-wired-activated");
+        }
+        return QString("network-wired");
+    }
+    }
+
+    RemoteInterfaceConnection *remote = interfaceConnection();
+    if (remote) {
+        return interfaceConnection()->iconName();
     }
     return QString();
 }
@@ -316,7 +333,6 @@ bool ConnectionItem::showMoreChecked()
 
 void ConnectionItem::setShowMoreChecked(const bool show)
 {
-    kDebug() << "Lamarque" << show;
     m_showMoreChecked = show;
     emit itemChanged();
 }

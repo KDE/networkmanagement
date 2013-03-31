@@ -57,7 +57,7 @@ public:
         ProtectedIconRole,
         HiddenRole,
         HoverEnterRole,
-        NetworkIconRole,
+        ConnectionIconRole,
         SignalQualityRole,
         AccessTechnologyRole,
         ShowMoreCheckedRole,

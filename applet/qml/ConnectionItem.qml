@@ -29,7 +29,7 @@ Item {
     property string networkUuid
     property string connectionName
     property string activationState
-    property string iconNetwork
+    property string connectionIcon
     property double wirelessSignalStrength
     property string wirelessNetworkIcon
     property string connectionType
@@ -89,6 +89,7 @@ Item {
             width: connectionItem.width
             uuid: connectionItem.networkUuid
             connectionName: connectionItem.connectionName
+            connectionIcon: connectionItem.connectionIcon
             signalStrength: connectionItem.wirelessSignalStrength
             protectedNetworkIcon: connectionItem.wirelessNetworkIcon
             activationState: connectionItem.activationState
@@ -113,9 +114,9 @@ Item {
             width: connectionItem.width
             uuid: connectionItem.networkUuid
             connectionName: connectionItem.connectionName
+            connectionIcon: connectionItem.connectionIcon
             activationState: connectionItem.activationState
             hoverEnter: connectionItem.isHovered
-            networkIcon: connectionItem.iconNetwork
             onDisconnect: {
                 connectionItem.disconnectNetwork(uuid)
             }
@@ -134,6 +135,7 @@ Item {
             width: connectionItem.width
             uuid: connectionItem.networkUuid
             connectionName: connectionItem.connectionName
+            connectionIcon: connectionItem.connectionIcon
             activationState: connectionItem.activationState
             signalQuality: connectionItem.signalQuality
             accessTechnology: connectionItem.accessTechnology
