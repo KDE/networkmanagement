@@ -81,6 +81,7 @@ Item {
             PlasmaComponents.Label {
                 id: description
                 text: i18n("<hidden network>")
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
