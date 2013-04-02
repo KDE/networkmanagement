@@ -332,7 +332,7 @@ void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
             ifaceItem = new DeclarativeInterfaceItem(iface, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
         }
         m_interfaces.insert(iface->uni(), ifaceItem);
-        interfaceListModel->appendRow(ifaceItem);
+        interfaceListModel->insertRow(interfaceListModel->rowCount()-1, ifaceItem);
     }
     updateHasWireless();
     updateHasWwan();

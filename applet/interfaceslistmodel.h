@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Arthur de Souza Ribeiro <arthurdesribeiro@gmail.com>
+Copyright 2012-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -48,6 +49,7 @@ public:
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
 
     void appendRow(DeclarativeInterfaceItem *item);
+    void insertRow(int row, DeclarativeInterfaceItem *item);
 
     void appendRows(const QList<DeclarativeInterfaceItem*> &items);
 
