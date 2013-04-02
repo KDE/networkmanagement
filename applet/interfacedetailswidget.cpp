@@ -106,7 +106,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_info->setFont(KGlobalSettings::smallestReadableFont());
     m_info->setTextSelectable(true);
     m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_gridLayout->addItem(m_info, row, 0);
+    m_gridLayout->addItem(m_info, row, 0, 1, 2);
 
     // Traffic
 
@@ -173,10 +173,13 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     // add pushbutton for "back" action
     m_backButton = new Plasma::IconWidget(this);
-    int backButtonHeight = QFontMetrics(KGlobalSettings::generalFont()).height() + QFontMetrics(KGlobalSettings::generalFont()).xHeight();
-    m_backButton->setMaximumHeight(backButtonHeight);
-    m_backButton->setMaximumWidth(backButtonHeight);
+    m_backButton->setDrawBackground(true);
+    m_backButton->setOrientation(Qt::Horizontal);
+    m_backButton->setAcceptsHoverEvents(true);
+    m_backButton->setMaximumHeight(disconnectButtonHeight);
+    m_backButton->setMaximumHeight(disconnectButtonHeight);
     m_backButton->setIcon(KIcon("go-previous"));
+    m_backButton->setText(i18nc("@action:button", "Back"));
     //m_backButton->setToolTip(i18n("Go Back"));
     m_backButton->setZValue(100);
 
