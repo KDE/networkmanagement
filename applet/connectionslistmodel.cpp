@@ -372,6 +372,10 @@ void ConnectionsListModel::updateShowMoreItem()
     beginInsertRows(QModelIndex(), index, index);
     connections.append(m_showMoreItem);
     endInsertRows();
+
+    // Hack to avoid scrolling problems in connection list after clicking on the ShowMore item.
+    // FIXME: improve updateConnectionsList so that this is not necessary.
+    reset();
 }
 
 void ConnectionsListModel::appendRows(const QList<ConnectionItem*> &items)
