@@ -105,9 +105,7 @@ Item {
 
         Row {
             id: row3
-            height: parent.heght - 20
-            anchors.right: parent.right
-            spacing: 10
+            spacing: 8
             anchors.verticalCenter: parent.verticalCenter
 
             PlasmaComponents.ProgressBar {
