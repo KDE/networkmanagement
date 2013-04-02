@@ -22,11 +22,14 @@ import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.plasma.components 0.1 as PlasmaComponents
 
-Column {
-    spacing: 8
+Item {
+    height: 300
+    width: 300
 
     PlasmaComponents.TabBar {
-        width: 300
+        id: tabBar
+
+        width: parent.width
         height: theme.defaultFont.mSize.height * 2.2
         anchors.horizontalCenter: parent.horizontalCenter
         PlasmaComponents.TabButton { tab: tabContent; text: i18n("Connections")}
@@ -42,17 +45,18 @@ Column {
     }
 
     PlasmaComponents.TabGroup {
-        height: parent.height - 28
-        width: parent.width - parent.spacing
-        Flickable {
-            id: tabContent
-            width: parent.width
-            height: parent.height - 28
-            ConnectionsListWidget{
-                widgetHeight: parent.height
-                widgetWidth: parent.width
-            }
+        anchors {
+            top: tabBar.bottom
+            topMargin: 8
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+        }
 
+        ConnectionsListWidget{
+            id: tabContent
+
+            anchors.fill: parent
         }
     }
 }
