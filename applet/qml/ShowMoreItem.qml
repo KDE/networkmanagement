@@ -33,10 +33,6 @@ Item {
 
     signal showMoreClicked()
 
-    onCheckedChanged: {
-        console.log("Lamarque " << checked);
-    }
-
     onHoverEnterChanged: {
         if (hoverEnter) {
             shadow.state = "hover"
