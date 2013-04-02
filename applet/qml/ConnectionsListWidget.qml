@@ -36,8 +36,7 @@ Item {
     ListView {
         id: scrollList
 
-        width: parent.width
-        height: parent.height
+        anchors.fill: parent
         clip: true
         model: connectionsListModel
         spacing: 4

@@ -31,13 +31,13 @@ Item {
 
     signal showTraffic(int index)
 
-    height: Math.max(290, scrollList.height)
+    height: 290
 
     ListView {
         id: scrollList
 
         spacing: 12
-        width: parent.width
+        anchors.fill: parent
         clip: true
         model: interfacesListModel
         delegate: InterfaceItem {
@@ -52,7 +52,7 @@ Item {
             widgetIcon: interfaceIcon
 
             Component.onCompleted: {
-                scrollList.height = scrollList.count * (height + scrollList.spacing)
+                listWidget.height = Math.max(290, scrollList.count * (height + scrollList.spacing))
             }
             onInterfaceClicked: {
                 showTraffic(index)
@@ -63,18 +63,5 @@ Item {
             anchors.fill: parent
             color: "#00000000"
         }
-
-        /*PlasmaComponents.ScrollBar {
-            id: scrollBar
-            orientation: Qt.Vertical
-            flickableItem: scrollList
-            //stepSize: 40
-            scrollButtonInterval: 50
-            anchors {
-                top: scrollList.top
-                right: scrollList.right
-                bottom: scrollList.bottom
-            }
-        }*/
     }
 }
