@@ -28,8 +28,6 @@ PlasmaExtras.ScrollArea {
     ListView {
         id: scrollList
 
-        anchors.fill: parent
-        clip: true
         model: connectionsListModel
         spacing: 4
         delegate: ConnectionItem {
