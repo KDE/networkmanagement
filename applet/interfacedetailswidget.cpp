@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/wirelessdevice.h>
 #include <QtNetworkManager/wireddevice.h>
 #include <QtNetworkManager/bluetoothdevice.h>
-#include <QtNetworkManager/ipv4config.h>
 #include <QtNetworkManager/manager.h>
 #include <QtModemManager/manager.h>
 #include <Solid/Device>
@@ -812,8 +811,7 @@ void InterfaceDetailsWidget::updateIPv4Details()
         details->ipv4Gateway = dhcp4Config->optionValue("routers");
     } else if (!m_iface->ipV4Config().routes().isEmpty()) {
         // OBS: NetworkManager does not report routes if connection uses static IP address (tested with NetworkManager-0.9.4.0)
-        QHostAddress addr;
-        addr.setAddress(m_iface->ipV4Config().routes().at(0).route());
+        QHostAddress addr = m_iface->ipV4Config().routes().first().ip();
         details->ipv4Gateway = addr.toString();
     } else {
         details->ipv4Gateway.clear();

@@ -7,12 +7,12 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include <QtNetworkManager/ipv4config.h>
+#include <QtNetworkManager/ipconfig.h>
 #include "setting.h"
 #include "knminternals_export.h"
 
-Q_DECLARE_METATYPE(NetworkManager::IPv4Address)
-Q_DECLARE_METATYPE(NetworkManager::IPv4Route)
+Q_DECLARE_METATYPE(NetworkManager::IpAddress)
+Q_DECLARE_METATYPE(NetworkManager::IpRoute)
 
 namespace Knm {
 
@@ -84,7 +84,7 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     /**
       Set IP Addresses
     */
-    void setAddresses( const QList<NetworkManager::IPv4Address> & v )
+    void setAddresses( const QList<NetworkManager::IpAddress> & v )
     {
         mAddresses = v;
     }
@@ -92,7 +92,7 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     /**
       Get IP Addresses
     */
-    QList<NetworkManager::IPv4Address> addresses() const
+    QList<NetworkManager::IpAddress> addresses() const
     {
       return mAddresses;
     }
@@ -177,12 +177,12 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
       return mDhcphostname;
     }
 
-    QList<NetworkManager::IPv4Route> routes() const
+    QList<NetworkManager::IpRoute> routes() const
     {
         return mRoutes;
     }
 
-    void setRoutes(QList<NetworkManager::IPv4Route> routes)
+    void setRoutes(QList<NetworkManager::IpRoute> routes)
     {
         mRoutes = routes;
     }
@@ -210,8 +210,8 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     int mMethod;
     QList<QHostAddress> mDns;
     QStringList mDnssearch;
-    QList<NetworkManager::IPv4Address> mAddresses;
-    QList<NetworkManager::IPv4Route> mRoutes;
+    QList<NetworkManager::IpAddress> mAddresses;
+    QList<NetworkManager::IpRoute> mRoutes;
     bool mIgnoredhcpdns;
     bool mIgnoreautoroute;
     bool mNeverdefault;

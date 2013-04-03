@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStandardItem>
 #include <QStyledItemDelegate>
 
-#include <QtNetworkManager/ipv4config.h>
+#include <QtNetworkManager/ipconfig.h>
 
 class QStandardItem;
 class QItemSelection;
@@ -38,8 +38,8 @@ public:
     IpV4AdvancedWidget(QWidget * parent = 0);
     virtual ~IpV4AdvancedWidget();
 
-    void setAdditionalAddresses(const QList<NetworkManager::IPv4Address> &list);
-    QList<NetworkManager::IPv4Address> additionalAddresses();
+    void setAdditionalAddresses(const QList<NetworkManager::IpAddress> &list);
+    QList<NetworkManager::IpAddress> additionalAddresses();
 
 protected slots:
     void addIPAddress();

@@ -80,44 +80,30 @@ IpV6AdvancedWidget::~IpV6AdvancedWidget()
     delete d;
 }
 
-void IpV6AdvancedWidget::setAdditionalAddresses(const QList<NetworkManager::IPv6Address> &list)
+void IpV6AdvancedWidget::setAdditionalAddresses(const QList<NetworkManager::IpAddress> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const NetworkManager::IPv6Address &addr, list) {
+    foreach (const NetworkManager::IpAddress &address, list) {
         QList<QStandardItem *> item;
-        QNetworkAddressEntry entry;
-        // we need to set up IP before prefix/netmask manipulation
-        entry.setIp(QHostAddress(addr.address()));
-
-        item << new QStandardItem(entry.ip().toString())
-             << new QStandardItem(QString::number(addr.netMask(),10));
-
-        QString gateway;
-        if (!QHostAddress(addr.gateway()).isNull()) {
-            gateway = QHostAddress(addr.gateway()).toString();
-        }
-        item << new QStandardItem(gateway);
+        item << new QStandardItem(address.ip().toString())
+             << new QStandardItem(QString::number(address.prefixLength(), 10))
+             << new QStandardItem(address.gateway().toString());
 
         d->model.appendRow(item);
     }
 }
 
-QList<NetworkManager::IPv6Address> IpV6AdvancedWidget::additionalAddresses()
+QList<NetworkManager::IpAddress> IpV6AdvancedWidget::additionalAddresses()
 {
-    QList<NetworkManager::IPv6Address> list;
+    QList<NetworkManager::IpAddress> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
-        QHostAddress ip, gw;
-        QNetworkAddressEntry entry;
+        NetworkManager::IpAddress address;
+        address.setIp(QHostAddress(d->model.item(i, 0)->text()));
+        address.setPrefixLength(d->model.item(i, 1)->text().toInt());
+        address.setGateway(QHostAddress(d->model.item(i, 2)->text()));
 
-        ip.setAddress(d->model.item(i, 0)->text());
-        entry.setIp(ip);
-        entry.setPrefixLength(d->model.item(i, 1)->text().toInt());
-        gw.setAddress(d->model.item(i, 2)->text());
-
-        list.append(NetworkManager::IPv6Address(ip.toIPv6Address(),
-                                                entry.prefixLength(),
-                                                gw.toIPv6Address()));
+        list << address;
     }
     return list;
 }

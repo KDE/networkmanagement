@@ -42,34 +42,39 @@ void Ipv4Persistence::load()
   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
 
   // addresses
-  QList<NetworkManager::IPv4Address> addresses;
+  QList<NetworkManager::IpAddress> addresses;
   QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
   foreach (const QString &rawAddress, rawAddresses) {
       QStringList parts = rawAddress.split(';');
       if (parts.count() != 3) { // sanity check
           continue;
       }
-      QHostAddress ip(parts[0]);
-      QHostAddress gateway(parts[2]);
-      NetworkManager::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
-      addresses.append(addr);
+
+      NetworkManager::IpAddress address;
+      address.setIp(QHostAddress(parts[0]));
+      address.setPrefixLength(parts[1].toUInt());
+      address.setGateway(QHostAddress(parts[2]));
+
+      addresses << address;
   }
   setting->setAddresses(addresses);
 
   // routes
-  QList<NetworkManager::IPv4Route> routes;
+  QList<NetworkManager::IpRoute> routes;
   QStringList rawRoutes = m_config->readEntry("routes", QStringList());
   foreach (const QString &rawRoute, rawRoutes) {
-      QStringList parts = rawRoute.split(';');
+      QStringList parts = rawRoute.split(QLatin1Char(';'));
       if (parts.count() != 4) { // sanity check
           continue;
       }
-      QHostAddress address(parts[0]);
-      quint32 prefix = parts[1].toUInt();
-      QHostAddress nextHop(parts[2]);
-      quint32 metric = parts[3].toUInt();
-      NetworkManager::IPv4Route route(address.toIPv4Address(), prefix, nextHop.toIPv4Address(), metric);
-      routes.append(route);
+
+      NetworkManager::IpRoute route;
+      route.setIp(QHostAddress(parts[0]));
+      route.setPrefixLength(parts[1].toInt());
+      route.setNextHop(QHostAddress(parts[2]));
+      route.setMetric(parts[3].toUInt());
+
+      routes << route;
   }
   setting->setRoutes(routes);
   setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));

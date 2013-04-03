@@ -79,46 +79,30 @@ IpV4AdvancedWidget::~IpV4AdvancedWidget()
     delete d;
 }
 
-void IpV4AdvancedWidget::setAdditionalAddresses(const QList<NetworkManager::IPv4Address> &list)
+void IpV4AdvancedWidget::setAdditionalAddresses(const QList<NetworkManager::IpAddress> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const NetworkManager::IPv4Address &addr, list) {
+    foreach (const NetworkManager::IpAddress &address, list) {
         QList<QStandardItem *> item;
-        QNetworkAddressEntry entry;
-        // we need to set up IP before prefix/netmask manipulation
-        entry.setIp(QHostAddress(addr.address()));
-        entry.setPrefixLength(addr.netMask());
-
-        item << new QStandardItem(entry.ip().toString())
-             << new QStandardItem(entry.netmask().toString());
-
-        QString gateway;
-        if (addr.gateway()) {
-            gateway = QHostAddress(addr.gateway()).toString();
-        }
-        item << new QStandardItem(gateway);
+        item << new QStandardItem(address.ip().toString())
+             << new QStandardItem(address.netmask().toString())
+             << new QStandardItem(address.gateway().toString());
 
         d->model.appendRow(item);
     }
 }
 
-QList<NetworkManager::IPv4Address> IpV4AdvancedWidget::additionalAddresses()
+QList<NetworkManager::IpAddress> IpV4AdvancedWidget::additionalAddresses()
 {
-    QList<NetworkManager::IPv4Address> list;
+    QList<NetworkManager::IpAddress> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
-        QHostAddress ip, mask, gw;
-        QNetworkAddressEntry entry;
+        NetworkManager::IpAddress address;
+        address.setIp(QHostAddress(d->model.item(i, 0)->text()));
+        address.setNetmask(QHostAddress(d->model.item(i, 1)->text()));
+        address.setGateway(QHostAddress(d->model.item(i, 2)->text()));
 
-        ip.setAddress(d->model.item(i, 0)->text());
-        entry.setIp(ip);
-        mask.setAddress(d->model.item(i, 1)->text());
-        entry.setNetmask(mask);
-        gw.setAddress(d->model.item(i, 2)->text());
-
-        list.append(NetworkManager::IPv4Address(ip.toIPv4Address(),
-                                                entry.prefixLength(),
-                                                gw.toIPv4Address()));
+        list << address;
     }
     return list;
 }

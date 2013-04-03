@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-ip4-config.h>
 
+#include <QStringBuilder>
 #include <KPluginFactory>
 #include <KSharedConfig>
 #include <KStandardDirs>
@@ -377,8 +378,8 @@ bool VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
     Knm::Ipv4Setting *ipv4Setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
     if (!ipv4Setting->routes().isEmpty()) {
         QString routes;
-        foreach(const NetworkManager::IPv4Route &oneRoute, ipv4Setting->routes()) {
-            routes += QHostAddress(oneRoute.route()).toString() + '/' + QString::number(oneRoute.prefix()) + ' ';
+        foreach(const NetworkManager::IpRoute &route, ipv4Setting->routes()) {
+            routes += route.ip().toString() % QLatin1Char('/') % QString::number(route.prefixLength()) % QLatin1Char(' ');
         }
         cg.writeEntry("X-NM-Routes", routes.trimmed());
     }

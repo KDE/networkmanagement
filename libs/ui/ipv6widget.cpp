@@ -138,26 +138,17 @@ void IpV6Widget::readConfig()
 
     // ip addresses
     if (advancedSettingsPartEnabled) {
-        QList<NetworkManager::IPv6Address> addrList = d->setting->addresses();
+        QList<NetworkManager::IpAddress> addrList = d->setting->addresses();
         if (!addrList.isEmpty())
         {
             if (addressPartEnabled)
             {
                 // show only the first IP address, the rest addresses will be shown
                 // via "Advanced..."
-                QNetworkAddressEntry entry;
-                // we need to set up IP before prefix/netmask manipulation
-                entry.setIp(QHostAddress(addrList[0].address()));
-                entry.setPrefixLength(addrList[0].netMask());
-
-                d->ui.address->setText(QHostAddress(addrList[0].address()).toString());
-                d->ui.netMask->setText(QString::number(entry.prefixLength(),10));
-                if (!QHostAddress(addrList[0].gateway()).isNull()) {
-                    d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
-                }
-
-                // remove first item
-                addrList.removeFirst();
+                NetworkManager::IpAddress address = addrList.takeFirst();
+                d->ui.address->setText(address.ip().toString());
+                d->ui.netMask->setText(QString::number(address.prefixLength(), 10));
+                d->ui.gateway->setText(address.gateway().toString());
             }
             // put the rest to advanced settings
             d->ui.advancedSettings->setAdditionalAddresses(addrList);
@@ -236,18 +227,15 @@ void IpV6Widget::writeConfig()
     }
 
     // addresses
-    QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
+    QList<NetworkManager::IpAddress> addresses = d->ui.advancedSettings->additionalAddresses();
     // update only the first item, the rest items are already updated
-    QNetworkAddressEntry entry;
+    NetworkManager::IpAddress address;
     // we need to set up IP before prefix/netmask manipulation
-    entry.setIp(QHostAddress(d->ui.address->text()));
-    entry.setPrefixLength(d->ui.netMask->text().toInt());
-
-    QHostAddress gateway(d->ui.gateway->text());
-    if (entry.ip() != QHostAddress::Null) {
-        NetworkManager::IPv6Address addr(entry.ip().toIPv6Address(),
-                                         entry.prefixLength(), gateway.toIPv6Address());
-            addresses.prepend(addr);
+    address.setIp(QHostAddress(d->ui.address->text()));
+    address.setPrefixLength(d->ui.netMask->text().toInt());
+    address.setGateway(QHostAddress(d->ui.gateway->text()));
+    if (address.ip() != QHostAddress::Null) {
+        addresses.prepend(address);
     }
 
     d->setting->setAddresses(addresses);
@@ -310,36 +298,28 @@ void IpV6Widget::methodChanged(int currentIndex)
 
     if (!addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
-        QNetworkAddressEntry entry;
+        QList<NetworkManager::IpAddress> addresses = d->ui.advancedSettings->additionalAddresses();
+        NetworkManager::IpAddress address;
         // we need to set up IP before prefix/netmask manipulation
-        entry.setIp(QHostAddress(d->ui.address->text()));
-        entry.setPrefixLength(d->ui.netMask->text().toUInt());
-        QHostAddress gateway(d->ui.gateway->text());
-        if (entry.ip() != QHostAddress::Null)
-        {
-            NetworkManager::IPv6Address addr(entry.ip().toIPv6Address(),
-                                         entry.prefixLength(), gateway.toIPv6Address());
-            addresses.prepend(addr);
+        address.setIp(QHostAddress(d->ui.address->text()));
+        address.setPrefixLength(d->ui.netMask->text().toUInt());
+        address.setGateway(QHostAddress(d->ui.gateway->text()));
+        if (address.ip() != QHostAddress::Null) {
+            addresses.prepend(address);
         }
         d->ui.advancedSettings->setAdditionalAddresses(addresses);
     }
     else if (addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QList<NetworkManager::IpAddress> addresses = d->ui.advancedSettings->additionalAddresses();
         if (!addresses.isEmpty())
         {
-            NetworkManager::IPv6Address addr = addresses.takeFirst();
-            QNetworkAddressEntry entry;
-            // we need to set up IP before prefix/netmask manipulation
-            entry.setIp(QHostAddress(addr.address()));
-            entry.setPrefixLength(addr.netMask());
-            kDebug()<<entry.netmask().toString();
-            QHostAddress gateway(addr.gateway());
+            NetworkManager::IpAddress address = addresses.takeFirst();
+            kDebug() << address.netmask();
 
-            d->ui.address->setText(entry.ip().toString());
-            d->ui.netMask->setText(QString::number(entry.prefixLength(),10));
-            d->ui.gateway->setText(gateway.toString());
+            d->ui.address->setText(address.ip().toString());
+            d->ui.netMask->setText(QString::number(address.prefixLength(), 10));
+            d->ui.gateway->setText(address.gateway().toString());
 
             d->ui.advancedSettings->setAdditionalAddresses(addresses);
         }
@@ -352,7 +332,7 @@ void IpV6Widget::methodChanged(int currentIndex)
     }
     if (!advancedSettingsPartEnabled)
     {
-        d->ui.advancedSettings->setAdditionalAddresses(QList<NetworkManager::IPv6Address>());
+        d->ui.advancedSettings->setAdditionalAddresses(QList<NetworkManager::IpAddress>());
     }
     if (methodAuto) {
         d->ui.dnsLabel->setText(i18nc("@info","Additional &DNS Servers:"));

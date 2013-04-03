@@ -54,7 +54,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES))) {
-      QList<NetworkManager::IPv4Address> addresses;
+      QList<NetworkManager::IpAddress> addresses;
       QList<QList<uint> > temp;
       if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).canConvert< QDBusArgument>()) {
           QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value<QDBusArgument>();
@@ -70,15 +70,18 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
             continue;
           }
 
-          NetworkManager::IPv4Address addr((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32) ntohl(uintList.at(2)));
-          if (!addr.isValid())
+          NetworkManager::IpAddress address;
+          address.setIp(QHostAddress((quint32)ntohl(uintList.at(0))));
+          address.setPrefixLength((quint32)uintList.at(1));
+          address.setGateway(QHostAddress((quint32) ntohl(uintList.at(2))));
+          if (!address.isValid())
           {
             kWarning() << "Invalid address format detected.";
             continue;
           }
-          kDebug() << "IP Address:" << QHostAddress(ntohl(uintList.at(0))).toString() << " Subnet:" << uintList.at(1) << "Gateway:" << QHostAddress(ntohl(uintList.at(2))).toString();
+          kDebug() << "IP Address:" << address.ip().toString() << " Subnet:" << address.prefixLength() << "Gateway:" << address.gateway().toString();
 
-          addresses << addr;
+          addresses << address;
       }
       //NO addressArg.endArray(); it's fatal in debug builds.
 
@@ -87,7 +90,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)))
   {
-      QList<NetworkManager::IPv4Route> routes;
+      QList<NetworkManager::IpRoute> routes;
       QList<QList<uint> > temp;
       if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).canConvert< QDBusArgument>()) {
           QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value<QDBusArgument>();
@@ -103,7 +106,11 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
               continue;
           }
 
-          NetworkManager::IPv4Route route((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32)ntohl(uintList.at(2)), (quint32)uintList.at(3));
+          NetworkManager::IpRoute route;
+          route.setIp(QHostAddress((quint32)ntohl(uintList.at(0))));
+          route.setPrefixLength((quint32)uintList.at(1));
+          route.setNextHop(QHostAddress((quint32)ntohl(uintList.at(2))));
+          route.setMetric((quint32)uintList.at(3));
           if (!route.isValid())
           {
               kWarning() << "Invalid route format detected.";
@@ -194,23 +201,23 @@ QVariantMap Ipv4Dbus::toMap()
   }
   if (!setting->addresses().isEmpty()) {
       QList<QList<uint> > dbusAddresses;
-      foreach (const NetworkManager::IPv4Address &addr, setting->addresses()) {
+      foreach (const NetworkManager::IpAddress &address, setting->addresses()) {
           QList<uint> dbusAddress;
-          dbusAddress << htonl(addr.address())
-              << addr.netMask()
-              << htonl(addr.gateway());
+          dbusAddress << htonl(address.ip().toIPv4Address())
+                      << address.prefixLength()
+                      << htonl(address.gateway().toIPv4Address());
           dbusAddresses << dbusAddress;
       }
       map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(dbusAddresses));
   }
   if (!setting->routes().isEmpty()) {
       QList<QList<uint> > dbusRoutes;
-      foreach (const NetworkManager::IPv4Route &route, setting->routes()) {
+      foreach (const NetworkManager::IpRoute &route, setting->routes()) {
           QList<uint> dbusRoute;
-          dbusRoute << htonl(route.route())
-              << route.prefix()
-              << htonl(route.nextHop())
-              << route.metric();
+          dbusRoute << htonl(route.ip().toIPv4Address())
+                    << route.prefixLength()
+                    << htonl(route.nextHop().toIPv4Address())
+                    << route.metric();
           dbusRoutes << dbusRoute;
       }
 

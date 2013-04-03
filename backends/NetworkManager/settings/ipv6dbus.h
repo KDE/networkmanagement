@@ -14,7 +14,7 @@
 #include "nm09dbus_export.h"
 
 #include "settings/ipv6.h"
-#include <QtNetworkManager/ipv6config.h>
+#include <QtNetworkManager/ipconfig.h>
 
 typedef struct
 {

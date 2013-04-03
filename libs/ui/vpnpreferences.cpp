@@ -81,7 +81,7 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     // IpV4Setting
     if (args.count() > 5 ) {
         Knm::Ipv4Setting * ipv4Setting = static_cast<Knm::Ipv4Setting*>(m_connection->setting(Knm::Setting::Ipv4));
-        QList <NetworkManager::IPv4Route> routes;
+        QList <NetworkManager::IpRoute> routes;
         QStringMap ipv4Data = Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[5].toMap()));
         if (ipv4Data.contains(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT))) {
             ipv4Setting->setNeverdefault( static_cast<bool>(ipv4Data[QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT)].toUInt()) );
@@ -90,7 +90,9 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
             foreach(const QString &oneRoute, ipv4Data[NM_SETTING_IP4_CONFIG_ROUTES].split(' ')) { // Split at whitespace
                 QStringList routeData = oneRoute.split('/');    // Host + Prefix (e.g: 192.168.2.0/24)
                 if (routeData.count() == 2) {
-                    NetworkManager::IPv4Route route(QHostAddress(routeData[0]).toIPv4Address(), routeData[1].toUInt(),0,0);
+                    NetworkManager::IpRoute route;
+                    route.setIp(QHostAddress(routeData[0]));
+                    route.setPrefixLength(routeData[1].toUInt());
                     routes.append(route);
                 }
             }

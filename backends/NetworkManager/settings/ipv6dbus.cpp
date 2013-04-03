@@ -64,7 +64,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
       } else {
           temp = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value<QList<IpV6AddressMap> >();
       }
-      QList<NetworkManager::IPv6Address> addresses;
+      QList<NetworkManager::IpAddress> addresses;
 
       foreach(const IpV6AddressMap &addressMap, temp) {
           if (addressMap.address.isEmpty() || !addressMap.netMask || addressMap.gateway.isEmpty())
@@ -82,14 +82,17 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
               gateway[i] = addressMap.gateway[i];
           }
 
-          NetworkManager::IPv6Address addr(ip, addressMap.netMask, gateway);
-          if (!addr.isValid())
+          NetworkManager::IpAddress address;
+          address.setIp(QHostAddress(ip));
+          address.setPrefixLength(addressMap.netMask);
+          address.setGateway(QHostAddress(gateway));
+          if (!address.isValid())
           {
             kWarning() << "Invalid address format detected.";
             continue;
           }
 
-          addresses << addr;
+          addresses << address;
       }
       //NO addressArg.endArray(); it's fatal in debug builds.
 
@@ -105,7 +108,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
       } else {
           temp = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value<QList<IpV6RouteMap> >();
       }
-      QList<NetworkManager::IPv6Route> routes;
+      QList<NetworkManager::IpRoute> routes;
 
       foreach(const IpV6RouteMap &routeMap, temp) {
           if (routeMap.route.isEmpty() || !routeMap.prefix || routeMap.nextHop.isEmpty() || !routeMap.metric)
@@ -123,7 +126,11 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
               nexthop[i] = routeMap.nextHop[i];
           }
 
-          NetworkManager::IPv6Route route(addr, routeMap.prefix, nexthop, routeMap.metric);
+          NetworkManager::IpRoute route;
+          route.setIp(QHostAddress(addr));
+          route.setPrefixLength(routeMap.prefix);
+          route.setNextHop(QHostAddress(nexthop));
+          route.setMetric(routeMap.metric);
           if (!route.isValid())
           {
               kWarning() << "Invalid route format detected.";
@@ -224,16 +231,16 @@ QVariantMap Ipv6Dbus::toMap()
   }
   if (!setting->addresses().isEmpty()) {
       QList<IpV6AddressMap> dbusAddresses;
-      foreach (const NetworkManager::IPv6Address &addr, setting->addresses()) {
+      foreach (const NetworkManager::IpAddress &addr, setting->addresses()) {
           IpV6AddressMap dbusAddress;
-          Q_IPV6ADDR address = addr.address();
+          Q_IPV6ADDR address = addr.ip().toIPv6Address();
           QList<quint8> assembledAddress;
           for (int i = 0; i < 16; i++)
           {
               assembledAddress << address[i];
           }
 
-          Q_IPV6ADDR gateway = addr.gateway();
+          Q_IPV6ADDR gateway = addr.gateway().toIPv6Address();
           QList<quint8> assembledGateway;
           for (int i = 0; i < 16; i++)
           {
@@ -241,7 +248,7 @@ QVariantMap Ipv6Dbus::toMap()
           }
 
           dbusAddress.address = assembledAddress;
-          dbusAddress.netMask = addr.netMask();
+          dbusAddress.netMask = addr.prefixLength();
           dbusAddress.gateway = assembledGateway;
           dbusAddresses << dbusAddress;
       }
@@ -249,17 +256,17 @@ QVariantMap Ipv6Dbus::toMap()
   }
   if (!setting->routes().isEmpty()) {
       QList<IpV6RouteMap> dbusRoutes;
-      foreach (const NetworkManager::IPv6Route &route, setting->routes()) {
+      foreach (const NetworkManager::IpRoute &route, setting->routes()) {
           IpV6RouteMap dbusRoute;
 
-          Q_IPV6ADDR Route = route.route();
+          Q_IPV6ADDR Route = route.ip().toIPv6Address();
           QList<quint8> assembledRoute;
           for (int i = 0; i < 16; i++)
           {
               assembledRoute << Route[i];
           }
 
-          Q_IPV6ADDR nextHop = route.nextHop();
+          Q_IPV6ADDR nextHop = route.nextHop().toIPv6Address();
           QList<quint8> assembledNextHop;
           for (int i = 0; i < 16; i++)
           {
@@ -267,7 +274,7 @@ QVariantMap Ipv6Dbus::toMap()
           }
 
           dbusRoute.route = assembledRoute;
-          dbusRoute.prefix = route.prefix();
+          dbusRoute.prefix = route.prefixLength();
           dbusRoute.nextHop = assembledNextHop;
           dbusRoute.metric = route.metric();
           dbusRoutes << dbusRoute;

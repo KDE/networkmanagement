@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Solid/Device>
 #include <QtNetworkManager/wireddevice.h>
-#include <QtNetworkManager/ipv4config.h>
 #include <QtNetworkManager/manager.h>
 #include <NetworkManager/NetworkManager.h>
 
