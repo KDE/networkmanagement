@@ -605,16 +605,17 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
-    NetworkManager::Device::Ptr interface(qobject_cast<NetworkManager::Device *>(sender()));
+    NetworkManager::Device *interface = qobject_cast<NetworkManager::Device *>(sender());
     if (interface) {
         if (m_activeSystrayInterface && m_activeSystrayInterface->uni() != interface->uni()) {
+            NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(interface->uni());
             switch (interface->state()) {
             case NetworkManager::Device::Preparing:
             case NetworkManager::Device::ConfiguringHardware:
             case NetworkManager::Device::ConfiguringIp:
             case NetworkManager::Device::CheckingIp:
             case NetworkManager::Device::WaitingForSecondaries:
-                setActiveSystrayInterface(interface);
+                setActiveSystrayInterface(device);
                 m_activeSystrayInterfaceState = NetworkManager::Device::UnknownState;
                 break;
             default:
