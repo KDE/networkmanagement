@@ -30,20 +30,20 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WiredNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    WiredNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::WiredDevice * theInterface)
+    WiredNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, const NetworkManager::WiredDevice::Ptr &theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    NetworkManager::WiredDevice * wiredInterface() const
+    NetworkManager::WiredDevice::Ptr wiredInterface() const
     {
-        return qobject_cast<NetworkManager::WiredDevice*>(interface);
+        return interface.objectCast<NetworkManager::WiredDevice>();
     }
 };
 
-WiredNetworkInterfaceActivatableProvider::WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WiredDevice * interface, QObject * parent)
+WiredNetworkInterfaceActivatableProvider::WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::WiredDevice::Ptr &interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new WiredNetworkInterfaceActivatableProviderPrivate( connectionList, activatableList, interface), parent)
 {
-    connect(interface, SIGNAL(carrierChanged(bool)), this, SLOT(handleCarrierChange(bool)));
+    connect(interface.data(), SIGNAL(carrierChanged(bool)), this, SLOT(handleCarrierChange(bool)));
 }
 
 WiredNetworkInterfaceActivatableProvider::~WiredNetworkInterfaceActivatableProvider()

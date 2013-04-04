@@ -265,7 +265,7 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
             foreach (const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
                 if ( ac->default4() && ac->state() == NetworkManager::ActiveConnection::Activated) {
                     activeConnPath = ac->path();
-                    QList<NetworkManager::Device *> devs = ac->devices();
+                    NetworkManager::Device::List devs = ac->devices();
                     if (!devs.isEmpty()) {
                         deviceToActivateOn = devs.first()->uni();
                     }
@@ -283,7 +283,8 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
         }
 
         // Enable modem before connecting.
-        NetworkManager::ModemDevice *iface = qobject_cast<NetworkManager::ModemDevice *>(NetworkManager::findNetworkInterface(deviceToActivateOn));
+        NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceToActivateOn);
+        NetworkManager::ModemDevice::Ptr iface = device.objectCast<NetworkManager::ModemDevice>();
         if (iface) {
             ModemManager::ModemGsmCardInterface *modem = iface->getModemCardIface();
             if (modem && !modem->enabled()) {
@@ -335,7 +336,7 @@ void NMDBusSettingsConnectionProvider::onVpnConnectionActivated(QDBusPendingCall
 void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    NetworkManager::Device *iface = NetworkManager::findNetworkInterface(ic->deviceUni());
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
         iface->disconnectInterface();
     } else { // VPN connections do have NetworkInterface objects.

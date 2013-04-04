@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove
  */
-NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::Device * theInterface)
+NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, const NetworkManager::Device::Ptr &theInterface)
 : interface(theInterface), connectionList(theConnectionList), unconfiguredActivatable(0)
 {
     activatableList = theActivatableList;
@@ -44,7 +44,7 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 
 }
 
-NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent)
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::Device::Ptr &interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
 }
@@ -121,14 +121,14 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
             ); /* TODO: implement Bluetooth Cdma, Wimax, LTE */
 }
 
-bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface)
+bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, const NetworkManager::Device::Ptr &iface)
 {
     bool matches = true;
     Q_UNUSED(connection);
     Q_UNUSED(iface);
     if (connection->type() == Knm::Connection::Wireless) {
         Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-        NetworkManager::WirelessDevice * wirelessIface = dynamic_cast<NetworkManager::WirelessDevice *>(iface);
+        NetworkManager::WirelessDevice::Ptr wirelessIface = iface.objectCast<NetworkManager::WirelessDevice>();
 
         if (wirelessSetting && wirelessIface) {
 
@@ -139,7 +139,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
         }
     } else if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-        NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
+        NetworkManager::WiredDevice::Ptr wiredIface = iface.objectCast<NetworkManager::WiredDevice>();
 
         if (wiredSetting && wiredIface) {
 

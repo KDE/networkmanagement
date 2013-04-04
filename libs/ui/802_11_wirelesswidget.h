@@ -54,9 +54,9 @@ protected Q_SLOTS:
     void generateRandomClonedMac();
 
 Q_SIGNALS:
-    void ssidSelected(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *);
+    void ssidSelected(NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *);
 private:
-    void setAccessPointData(const NetworkManager::WirelessDevice *, const NetworkManager::AccessPoint *) const;
+    void setAccessPointData(const NetworkManager::WirelessDevice::Ptr, const NetworkManager::AccessPoint *) const;
 };
 
 class Wireless80211WidgetBand : public QSpinBox

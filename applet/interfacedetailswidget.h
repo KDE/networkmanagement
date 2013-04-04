@@ -45,7 +45,7 @@ Q_OBJECT
     public:
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
-        void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
+        void setInterface(const NetworkManager::Device::Ptr &iface = NetworkManager::Device::Ptr(), bool disconnectOld = true);
         void resetUi();
         QString getLastIfaceUni();
 
@@ -71,7 +71,7 @@ Q_OBJECT
         void connectSignals();
         void disconnectSignals();
 
-        NetworkManager::Device* m_iface;
+        NetworkManager::Device::Ptr m_iface;
         QString m_ifaceUni;
 
         QGraphicsGridLayout *m_gridLayout;

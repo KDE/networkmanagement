@@ -51,8 +51,8 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
             this, SLOT(deviceAdded(QString)));
 
-    NetworkManager::DeviceList allInterfaces = NetworkManager::networkInterfaces();
-    foreach (NetworkManager::Device * interface, allInterfaces) {
+    NetworkManager::Device::List allInterfaces = NetworkManager::networkInterfaces();
+    foreach (const NetworkManager::Device::Ptr &interface, allInterfaces) {
         deviceAdded(interface->uni());
     }
 }
@@ -91,12 +91,12 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                 // update timestamp
                 connection->setTimestamp(QDateTime::currentDateTime());
                 // update with the BSSID of the device's AP
-                NetworkManager::Device * networkInterface
+                NetworkManager::Device::Ptr networkInterface
                     = NetworkManager::findNetworkInterface(ic->deviceUni());
                 if (networkInterface) {
                     if (networkInterface->type() == NetworkManager::Device::Wifi) {
-                        NetworkManager::WirelessDevice * wifiDevice =
-                            qobject_cast<NetworkManager::WirelessDevice *>(networkInterface);
+                        NetworkManager::WirelessDevice::Ptr wifiDevice =
+                            networkInterface.objectCast<NetworkManager::WirelessDevice>();
 
                         NetworkManager::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
                         if (ap) {
@@ -121,13 +121,13 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
 
 void ConnectionUsageMonitor::deviceAdded(const QString& uni)
 {
-    NetworkManager::Device * interface = NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device::Ptr interface = NetworkManager::findNetworkInterface(uni);
 
     if (interface && interface->type() == NetworkManager::Device::Wifi) {
-        NetworkManager::WirelessDevice * wifiDevice =
-            qobject_cast<NetworkManager::WirelessDevice *>(interface);
+        NetworkManager::WirelessDevice::Ptr wifiDevice =
+            interface.objectCast<NetworkManager::WirelessDevice>();
         if (wifiDevice)
-            connect(wifiDevice, SIGNAL(activeAccessPointChanged(QString)),
+            connect(wifiDevice.data(), SIGNAL(activeAccessPointChanged(QString)),
                     this, SLOT(networkInterfaceAccessPointChanged(QString)));
     }
 }

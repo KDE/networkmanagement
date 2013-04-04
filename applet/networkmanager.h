@@ -137,7 +137,7 @@ private:
     bool needToUpdateOverlay();
     bool hasInterfaceOfType(NetworkManager::Device::Type type);
     void setupInterfaceSignals();
-    QString svgElement(NetworkManager::Device *iface);
+    QString svgElement(const NetworkManager::Device::Ptr &iface);
     QString m_currentSvgElement;
     QString m_currentPixmapIconName;
 
@@ -148,11 +148,11 @@ private:
     QPixmap generateVpnProgressStatusOverlay(const RemoteInterfaceConnection *ic);
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
-    inline void setActiveInterface(NetworkManager::Device * device);
-    inline void setActiveSystrayInterface(NetworkManager::Device * device);
+    inline void setActiveInterface(const NetworkManager::Device::Ptr &device = NetworkManager::Device::Ptr());
+    inline void setActiveSystrayInterface(const NetworkManager::Device::Ptr &device = NetworkManager::Device::Ptr());
 
     void updateInterfaceList();
-    NetworkManager::DeviceList m_interfaces;
+    NetworkManager::Device::List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
@@ -168,11 +168,11 @@ private:
     // or the first interface selected after sorting the current
     // interface list using networkInterfaceLessThan().
     // WARNING: do not directly assign this pointer, use setActiveInterface instead.
-    NetworkManager::Device* m_activeInterface;
+    NetworkManager::Device::Ptr m_activeInterface;
     // Interface used to update system tray icon. If we have only one interface
     // then this one is always equals to m_activeInterfaceState.
     // WARNING: do not directly assign this pointer, use setActiveSystrayInterface instead.
-    NetworkManager::Device* m_activeSystrayInterface;
+    NetworkManager::Device::Ptr m_activeSystrayInterface;
     NetworkManager::AccessPoint* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon

@@ -44,7 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WirelessNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::WirelessDevice * theInterface)
+    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, const NetworkManager::WirelessDevice::Ptr &theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
@@ -53,13 +53,13 @@ public:
     // essid to WirelessNetwork - only 1 exists per network
     QHash<QString, Knm::WirelessNetwork *> wirelessNetworks;
 
-    NetworkManager::WirelessDevice * wirelessInterface() const
+    NetworkManager::WirelessDevice::Ptr wirelessInterface() const
     {
-        return qobject_cast<NetworkManager::WirelessDevice*>(interface);
+        return interface.objectCast<NetworkManager::WirelessDevice>();
     }
 };
 
-WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WirelessDevice * interface, QObject * parent)
+WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::WirelessDevice::Ptr &interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);

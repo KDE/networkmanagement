@@ -80,7 +80,7 @@ class InterfaceNotificationHost : public QObject
 {
 Q_OBJECT
 public:
-    InterfaceNotificationHost(NetworkManager::Device * iface, NotificationManager * parent);
+    InterfaceNotificationHost(const NetworkManager::Device::Ptr &iface, NotificationManager * parent);
     ~InterfaceNotificationHost();
 
     void addInterfaceConnection(Knm::InterfaceConnection* added);
@@ -107,7 +107,7 @@ private:
     void performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag);
 
     NotificationManager * m_manager;
-    NetworkManager::Device * m_interface;
+    NetworkManager::Device::Ptr m_interface;
     // used to refer to the interface if it is removed
     QString m_interfaceNameLabel;
     Knm::Connection::Type m_type;

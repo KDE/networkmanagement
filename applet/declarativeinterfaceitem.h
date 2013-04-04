@@ -43,9 +43,9 @@ class DeclarativeInterfaceItem : public QObject
     Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    DeclarativeInterfaceItem(NetworkManager::Device* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QObject* parent = 0);
+    DeclarativeInterfaceItem(const NetworkManager::Device::Ptr &iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QObject* parent = 0);
 
-    NetworkManager::Device* interface();
+    NetworkManager::Device::Ptr interface() const;
     bool equals(const DeclarativeInterfaceItem *item);
     QString connectionName();
     QString connection();
@@ -81,7 +81,7 @@ private:
     void setInterfaceIcon();
 
     QList<RemoteActivatable*> m_vpnActivatables;
-    QWeakPointer<NetworkManager::Device> m_iface;
+    NetworkManager::Device::Ptr m_iface;
 
     RemoteInterfaceConnection* m_currentConnection;
     RemoteActivatableList* m_activatables;

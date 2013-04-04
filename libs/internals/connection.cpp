@@ -93,14 +93,14 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type Connection::typeFromSolidType(const NetworkManager::Device *iface)
+Connection::Type Connection::typeFromSolidType(const NetworkManager::Device::Ptr &iface)
 {
     switch (iface->type()) {
         case NetworkManager::Device::Ethernet: return Knm::Connection::Wired;
         case NetworkManager::Device::Wifi: return Knm::Connection::Wireless;
         case NetworkManager::Device::Bluetooth: return Knm::Connection::Bluetooth;
         case NetworkManager::Device::Modem: {
-             const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
+             const NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
              if (nmModemIface) {
                  switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                      case NetworkManager::ModemDevice::GsmUmts: return Knm::Connection::Gsm;

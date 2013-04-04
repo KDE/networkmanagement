@@ -47,8 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
 /* for qSort()ing */
-bool networkInterfaceLessThan(NetworkManager::Device * if1, NetworkManager::Device * if2);
-bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, NetworkManager::Device * if2);
+bool networkInterfaceLessThan(const NetworkManager::Device::Ptr &if1, const NetworkManager::Device::Ptr &if2);
+bool networkInterfaceSameConnectionStateLessThan(const NetworkManager::Device::Ptr &if1, const NetworkManager::Device::Ptr &if2);
 
 class NetworkManagerApplet::Private
 {
@@ -113,7 +113,7 @@ QList<QAction*> NetworkManagerApplet::contextualActions()
     return d->actions;
 }
 
-QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
+QString NetworkManagerApplet::svgElement(const NetworkManager::Device::Ptr &iface)
 {
     if (!iface || (iface->type() != NetworkManager::Device::Wifi &&
                    iface->type() != NetworkManager::Device::Ethernet &&
@@ -125,7 +125,7 @@ QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
     if (iface->type() == NetworkManager::Device::Wifi) {
         // Now figure out which exact element we'll use
         QString strength = "00";
-        NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
+        NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
 
         if (wiface) {
             QString uni = wiface->activeAccessPoint();
@@ -159,7 +159,7 @@ QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
             return QString(); // this means: use KIcon("phone") instead of svg icon.
         }
 
-        NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(iface);
+        NetworkManager::ModemDevice::Ptr giface = iface.objectCast<NetworkManager::ModemDevice>();
 
         if (giface) {
             ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
@@ -230,27 +230,27 @@ QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
 
 void NetworkManagerApplet::setupInterfaceSignals()
 {
-    foreach (NetworkManager::Device* interface, m_interfaces) {
+    foreach (const NetworkManager::Device::Ptr &interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
 
-        connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
+        connect(interface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
 
 
         // Interface type-specific connections
         if (interface->type() == NetworkManager::Device::Ethernet) {
-            NetworkManager::WiredDevice* wirediface =
-                            static_cast<NetworkManager::WiredDevice*>(interface);
-            connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+            NetworkManager::WiredDevice::Ptr wirediface =
+                            interface.objectCast<NetworkManager::WiredDevice>();
+            connect(wirediface.data(), SIGNAL(carrierChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
         } else if (interface->type() == NetworkManager::Device::Wifi) {
-            NetworkManager::WirelessDevice* wirelessiface =
-                            static_cast<NetworkManager::WirelessDevice*>(interface);
-            connect(wirelessiface, SIGNAL(activeAccessPointChanged(QString)), SLOT(setupAccessPointSignals(QString)));
-            QMetaObject::invokeMethod(wirelessiface, "activeAccessPointChanged",
+            NetworkManager::WirelessDevice::Ptr wirelessiface =
+                            interface.objectCast<NetworkManager::WirelessDevice>();
+            connect(wirelessiface.data(), SIGNAL(activeAccessPointChanged(QString)), SLOT(setupAccessPointSignals(QString)));
+            QMetaObject::invokeMethod(wirelessiface.data(), "activeAccessPointChanged",
                                       Q_ARG(QString, wirelessiface->activeAccessPoint()));
         } else if (interface->type() == NetworkManager::Device::Modem) {
-            NetworkManager::ModemDevice* modemiface =
-                            static_cast<NetworkManager::ModemDevice*>(interface);
+            NetworkManager::ModemDevice::Ptr modemiface =
+                            interface.objectCast<NetworkManager::ModemDevice>();
 
             ModemManager::ModemGsmNetworkInterface *modemNetworkIface = modemiface->getModemNetworkIface();
             if (modemNetworkIface) {
@@ -351,7 +351,7 @@ void NetworkManagerApplet::finishInitialization()
 
     // to force InterfaceItems to update their hasDefaultRoute state.
     if (m_activeInterface) {
-        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
+        QMetaObject::invokeMethod(m_activeInterface.data(), "stateChanged",
                                   Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
                                   Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
                                   Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
@@ -567,7 +567,7 @@ void NetworkManagerApplet::deviceAdded(const QString & uni)
 
     if (!m_activeInterface) {
         if (m_interfaces.isEmpty()) {
-            setActiveInterface(0);
+            setActiveInterface(NetworkManager::Device::Ptr());
         } else {
             setActiveInterface(m_interfaces.first());
         }
@@ -585,7 +585,7 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
 
     if (uni == m_lastActiveInterfaceUni) {
         if (m_interfaces.isEmpty()) {
-            setActiveInterface(0);
+            setActiveInterface(NetworkManager::Device::Ptr());
         } else {
             qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
             setActiveInterface(m_interfaces.first());
@@ -594,7 +594,7 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
     }
     setupInterfaceSignals();
     if (uni == m_lastActiveSystrayInterfaceUni) {
-        setActiveSystrayInterface(0);
+        setActiveSystrayInterface(NetworkManager::Device::Ptr());
         resetActiveSystrayInterface();
     } else {
         interfaceConnectionStateChanged();
@@ -605,7 +605,7 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
-    NetworkManager::Device * interface = qobject_cast<NetworkManager::Device *>(sender());
+    NetworkManager::Device::Ptr interface(qobject_cast<NetworkManager::Device *>(sender()));
     if (interface) {
         if (m_activeSystrayInterface && m_activeSystrayInterface->uni() != interface->uni()) {
             switch (interface->state()) {
@@ -679,7 +679,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
 
 void NetworkManagerApplet::toolTipAboutToShow()
 {
-    NetworkManager::DeviceList interfaces
+    NetworkManager::Device::List interfaces
         = NetworkManager::networkInterfaces();
     if (interfaces.isEmpty()) {
         m_toolTip = Plasma::ToolTipContent(QString(),
@@ -692,7 +692,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
         bool iconChanged = false;
         QString icon = "networkmanager";
         QStringList lines;
-        foreach (NetworkManager::Device *iface, interfaces) {
+        foreach (const NetworkManager::Device::Ptr &iface, interfaces) {
             if (iface->state() != NetworkManager::Device::Unavailable &&
                 iface->state() != NetworkManager::Device::Unmanaged) {
                 if (!lines.isEmpty()) {
@@ -771,7 +771,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
 }
 
 
-bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Device * if2)
+bool networkInterfaceLessThan(const NetworkManager::Device::Ptr &if1, const NetworkManager::Device::Ptr &if2)
 {
     /*
      * status merging algorithm
@@ -862,7 +862,7 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
     return lessThan;
 }
 
-bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, NetworkManager::Device * if2)
+bool networkInterfaceSameConnectionStateLessThan(const NetworkManager::Device::Ptr &if1, const NetworkManager::Device::Ptr &if2)
 {
     bool lessThan = false;
     switch (if1->type() ) {
@@ -947,8 +947,8 @@ void NetworkManagerApplet::managerStatusChanged(NetworkManager::Status status)
     //kDebug() << "managerstatuschanged";
     updateInterfaceList();
     if (status == NetworkManager::Unknown) {
-        setActiveInterface(0);
-        setActiveSystrayInterface(0);
+        setActiveInterface(NetworkManager::Device::Ptr());
+        setActiveSystrayInterface(NetworkManager::Device::Ptr());
     } else {
         if (!m_interfaces.isEmpty()) {
             qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
@@ -962,7 +962,7 @@ void NetworkManagerApplet::managerStatusChanged(NetworkManager::Status status)
 
 bool NetworkManagerApplet::hasInterfaceOfType(NetworkManager::Device::Type type)
 {
-    foreach (NetworkManager::Device * interface, m_interfaces) {
+    foreach (const NetworkManager::Device::Ptr &interface, m_interfaces) {
         if (interface->type() == type) {
             return true;
         }
@@ -1079,7 +1079,7 @@ void NetworkManagerApplet::updateActiveInterface(bool hasDefaultRoute)
     if (hasDefaultRoute) {
         // TODO: add support for VpnRemoteInterfaceConnection's, which have "any" as ic->deviceUni().
         setActiveInterface(NetworkManager::findNetworkInterface(ic->deviceUni()));
-        connect(m_activeInterface, SIGNAL(destroyed(QObject*)), SLOT(_k_destroyed(QObject*)));
+        connect(m_activeInterface.data(), SIGNAL(destroyed(QObject*)), SLOT(_k_destroyed(QObject*)));
         resetActiveSystrayInterface();
     }
 }
@@ -1088,10 +1088,10 @@ void NetworkManagerApplet::_k_destroyed(QObject *object)
 {
     Q_UNUSED(object);
     if (object == m_activeInterface) {
-        setActiveInterface(0);
+        setActiveInterface();
     }
     if (object == m_activeSystrayInterface) {
-        setActiveSystrayInterface(0);
+        setActiveSystrayInterface();
     }
 }
 
@@ -1136,7 +1136,7 @@ void NetworkManagerApplet::activatablesDisappeared()
     update();
 }
 
-void NetworkManagerApplet::setActiveInterface(NetworkManager::Device * device)
+void NetworkManagerApplet::setActiveInterface(const NetworkManager::Device::Ptr &device)
 {
     m_activeInterface = device;
 
@@ -1145,7 +1145,7 @@ void NetworkManagerApplet::setActiveInterface(NetworkManager::Device * device)
     }
 }
 
-void NetworkManagerApplet::setActiveSystrayInterface(NetworkManager::Device * device)
+void NetworkManagerApplet::setActiveSystrayInterface(const NetworkManager::Device::Ptr &device)
 {
     m_activeSystrayInterface = device;
 

@@ -49,7 +49,7 @@ static const int iconSize = 48;
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "libknetworkmanager", KComponentData::SkipMainComponentRegistration))
 
-InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
+InterfaceNotificationHost::InterfaceNotificationHost(const NetworkManager::Device::Ptr &interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
 {
     // Keep a record for when it is removed
     m_interfaceNameLabel = UiUtils::interfaceNameLabel(interface->uni());
@@ -57,7 +57,7 @@ InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * in
     // For the notification icon
     m_type = Knm::Connection::typeFromSolidType(interface);
 
-    QObject::connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+    QObject::connect(interface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
             this, SLOT(interfaceConnectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
 }
 
@@ -426,7 +426,7 @@ NotificationManager::NotificationManager(ConnectionList *connectionList, QObject
     QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
             this, SLOT(deviceRemoved(QString)));
 
-    foreach (NetworkManager::Device* interface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &interface, NetworkManager::networkInterfaces()) {
         deviceAdded(interface->uni());
     }
     d->suppressHardwareEvents = false;
@@ -506,7 +506,7 @@ void NotificationManager::deviceAdded(const QString & uni)
     if (!d->interfaceHosts.contains(uni)) {
 
         kDebug() << "adding notification host";
-        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+        NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(uni);
         if (iface) {
             InterfaceNotificationHost * host = new InterfaceNotificationHost(iface, this);
 
@@ -515,7 +515,7 @@ void NotificationManager::deviceAdded(const QString & uni)
             // notify hardware added
             if (!d->suppressHardwareEvents) {
                 if (iface->type() == NetworkManager::Device::Modem) {
-                    NetworkManager::ModemDevice * nmModemIface = qobject_cast<NetworkManager::ModemDevice *>(iface);
+                    NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
                     if (nmModemIface) {
                         // KNotification::CloseOnTimeout sometimes breaks the activation of slot createCellularConnection,
                         // so using Persistent here and closing the notification using QTimer::singleShot() below.
@@ -538,7 +538,7 @@ void NotificationManager::deviceAdded(const QString & uni)
 
             // if wireless, listen for new networks
             if (iface->type() == NetworkManager::Device::Wifi) {
-                NetworkManager::WirelessDevice * wireless = qobject_cast<NetworkManager::WirelessDevice*>(iface);
+                NetworkManager::WirelessDevice::Ptr wireless = iface.objectCast<NetworkManager::WirelessDevice>();
 
                 if (wireless) {
                     // this is a bit wasteful because NetworkManager::WirelessDeviceActivatableProvider is also

@@ -62,7 +62,7 @@ class NetworkItemModel : public QAbstractItemModel
 
     private:
         QStringList m_networks;
-        NetworkManager::WirelessDevice *m_networkInterface;
+        NetworkManager::WirelessDevice::Ptr m_networkInterface;
         NetworkManager::WirelessNetworkInterfaceEnvironment *m_environment;
 
         static const int s_numColumns = 6;

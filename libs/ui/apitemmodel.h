@@ -58,7 +58,7 @@ class ApItemModel : public QAbstractItemModel
 
     private:
         QStringList m_accessPoints;
-        NetworkManager::WirelessDevice *m_networkInterface;
+        NetworkManager::WirelessDevice::Ptr m_networkInterface;
 
         static const int s_numColumns = 4;
 };

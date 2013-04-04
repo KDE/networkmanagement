@@ -63,9 +63,9 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
     d->ui.mtu->setSuffix(ki18ncp("@label:textbox", " byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi) {
-            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
+            NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), UiUtils::macAddressFromString(wiface->permanentHardwareAddress()));
         }
     }
@@ -212,13 +212,13 @@ void Wireless80211Widget::scanClicked()
         QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
         d->ui.ssid->setText(accessPoint.first);
         d->ui.bssid->setText(accessPoint.second);
-        const QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> pair = scanWid.currentAccessPointUni();
+        const QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *> pair = scanWid.currentAccessPointUni();
         emit ssidSelected(pair.first, pair.second);
         setAccessPointData(pair.first, pair.second);
     }
 }
 
-void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevice *wiface, const NetworkManager::AccessPoint * ap) const
+void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevice::Ptr wiface, const NetworkManager::AccessPoint * ap) const
 {
     if (!wiface || !ap) {
         return;
@@ -324,9 +324,9 @@ void Wireless80211Widget::copyToBssid()
     Q_D(Wireless80211Widget);
     QString hardwareAddress;
     int maxSignalStrength = 0;
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi) {
-            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
+            NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
             int i = d->ui.cmbMacAddress->currentIndex();
             if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
                 QString activeAp = wiface->activeAccessPoint();

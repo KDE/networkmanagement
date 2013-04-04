@@ -22,13 +22,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_EXTERNALS_WIRELESSINTERFACECONNECTIONHELPERS_H
 
 #include "knminternals_export.h"
+#include <QtNetworkManager/wirelessdevice.h>
 
 class QObject;
 class QString;
-
-namespace NetworkManager {
-    class WirelessDevice;
-}
 
 namespace Knm {
 
@@ -42,8 +39,7 @@ public:
      * This helper builds a WirelessInterfaceConnection object from
      * the corresponding Connection object.
      */
-    static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(
-                       NetworkManager::WirelessDevice *interface,
+    static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(const NetworkManager::WirelessDevice::Ptr &interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);
@@ -53,7 +49,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::HiddenWirelessInterfaceConnection * buildHiddenWirelessInterfaceConnection(
-                       NetworkManager::WirelessDevice *interface,
+                       const NetworkManager::WirelessDevice::Ptr &interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

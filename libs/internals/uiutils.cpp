@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/device.h>
+#include <QtNetworkManager/modemdevice.h>
 #include <QtNetworkManager/accesspoint.h>
 #include <QtNetworkManager/wireddevice.h>
 #include <QtNetworkManager/wirelessdevice.h>
@@ -43,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 K_GLOBAL_STATIC(UiUtilsPrivate, s_UiUtilsPrivate)
 
-QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, const NetworkManager::Device *iface)
+QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, const NetworkManager::Device::Ptr &iface)
 {
     QString deviceText;
     switch (type) {
@@ -57,7 +58,7 @@ QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, con
             deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
             break;
         case NetworkManager::Device::Modem: {
-            const NetworkManager::ModemDevice *nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
+            NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
             if (nmModemIface) {
                 switch(modemSubType(nmModemIface->currentCapabilities())) {
                     case NetworkManager::ModemDevice::Pots:
@@ -82,7 +83,7 @@ QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, con
     return deviceText;
 }
 
-QString UiUtils::iconName(NetworkManager::Device *iface)
+QString UiUtils::iconName(const NetworkManager::Device::Ptr &iface)
 {
     if (!iface) {
         return QString("dialog-error");
@@ -93,7 +94,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
         case NetworkManager::Device::Ethernet: {
             icon = "network-wired";
 
-            NetworkManager::WiredDevice *wiredIface = qobject_cast<NetworkManager::WiredDevice*>(iface);
+            NetworkManager::WiredDevice::Ptr wiredIface = iface.objectCast<NetworkManager::WiredDevice>();
             if (wiredIface && wiredIface->carrier()) {
                 icon = "network-wired-activated";
             }
@@ -101,7 +102,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
         }
         case NetworkManager::Device::Wifi: {
             QString strength = "00";
-            NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
+            NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
@@ -234,7 +235,7 @@ QString UiUtils::connectionStateToString(Knm::InterfaceConnection::ActivationSta
 
 Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 {
-    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(uni);
 
     if (!iface) {
         return 0;
@@ -254,7 +255,7 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle)
 {
     QString label;
-    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(uni);
 
     switch (interfaceNamingStyle) {
         case KNetworkManagerServicePrefs::SystemNames:
@@ -292,7 +293,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
 
-qreal UiUtils::interfaceState(const NetworkManager::Device *interface)
+qreal UiUtils::interfaceState(const NetworkManager::Device::Ptr &interface)
 {
     if (!interface) {
         return 0;

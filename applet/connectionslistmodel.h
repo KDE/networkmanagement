@@ -91,7 +91,7 @@ public:
 
     void updateConnectionsList();
 
-    void setDeviceToFilter(NetworkManager::Device* device, const bool vpn = false);
+    void setDeviceToFilter(const NetworkManager::Device::Ptr &device = NetworkManager::Device::Ptr(), const bool vpn = false);
 
     void setHasWireless(const bool hasWireless) { m_hasWireless = hasWireless; }
 
@@ -119,7 +119,7 @@ public slots:
 private:
     QList<ConnectionItem *> connections;
     ConnectionItem *m_showMoreItem;
-    NetworkManager::Device* m_device;
+    NetworkManager::Device::Ptr m_device;
     RemoteActivatableList* m_activatables;
     bool hiddenInserted;
     bool m_vpn;

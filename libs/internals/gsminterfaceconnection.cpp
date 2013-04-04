@@ -47,7 +47,7 @@ GsmInterfaceConnection::~GsmInterfaceConnection()
 void GsmInterfaceConnection::connectMMSignals()
 {
     kDebug();
-    NetworkManager::ModemDevice *nmModemIface = qobject_cast<NetworkManager::ModemDevice *>(NetworkManager::findNetworkInterface(deviceUni()));
+    NetworkManager::ModemDevice::Ptr nmModemIface = NetworkManager::findNetworkInterface(deviceUni()).objectCast<NetworkManager::ModemDevice>();
     if (!nmModemIface) {
         return;
     }

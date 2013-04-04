@@ -119,7 +119,7 @@ public:
 
 WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
         Knm::Connection * connection,
-        NetworkManager::WirelessDevice * iface,
+        const NetworkManager::WirelessDevice::Ptr &iface,
         NetworkManager::AccessPoint * ap,
         QWidget * parent)
 : SettingWidget(*new WirelessSecuritySettingWidgetPrivate, connection, parent)
@@ -136,7 +136,7 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     setIfaceAndAccessPoint(iface, ap);
 }
 
-void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(NetworkManager::WirelessDevice * iface, NetworkManager::AccessPoint * ap)
+void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, NetworkManager::AccessPoint * ap)
 {
     Q_D(WirelessSecuritySettingWidget);
     d->clearSecurityWidgets();
@@ -158,9 +158,9 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(NetworkManager::Wirel
             apRsn = ap->rsnFlags();
         }
     } else {
-        foreach (NetworkManager::Device * candidate , NetworkManager::networkInterfaces()) {
+        foreach (const NetworkManager::Device::Ptr &candidate , NetworkManager::networkInterfaces()) {
             if (candidate->type() == NetworkManager::Device::Wifi) {
-                NetworkManager::WirelessDevice * wirelessIface = qobject_cast<NetworkManager::WirelessDevice*>(candidate);
+                NetworkManager::WirelessDevice::Ptr wirelessIface = candidate.objectCast<NetworkManager::WirelessDevice>();
                 if (wirelessIface) {
                     ifaceCaps |= wirelessIface->wirelessCapabilities();
                 }

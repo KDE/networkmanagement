@@ -39,10 +39,10 @@ class GsmInterfaceConnection;
 class GsmInterfaceConnectionBuilder : public InterfaceConnectionBuilder
 {
 public:
-    GsmInterfaceConnectionBuilder(NetworkManager::ModemDevice * interface,
-                                       Knm::Connection *connection,
-                                       const QString & deviceUni,
-                                       QObject * parent);
+    GsmInterfaceConnectionBuilder(const NetworkManager::ModemDevice::Ptr &interface,
+                                  Knm::Connection *connection,
+                                  const QString & deviceUni,
+                                  QObject * parent);
     virtual ~GsmInterfaceConnectionBuilder();
 
     Knm::GsmInterfaceConnection* build();
@@ -54,7 +54,7 @@ private:
     Q_DISABLE_COPY(GsmInterfaceConnectionBuilder)
 
 protected:
-    NetworkManager::ModemDevice *m_interface;
+    NetworkManager::ModemDevice::Ptr m_interface;
 };
 
 

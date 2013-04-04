@@ -77,12 +77,13 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     }
 
     NetworkManager::AccessPoint * ap = 0;
-    NetworkManager::WirelessDevice * iface = 0;
+    NetworkManager::WirelessDevice::Ptr iface;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::findNetworkInterface(deviceUni));
+        NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceUni);
+        iface = device.objectCast<NetworkManager::WirelessDevice>();
         if (iface) {
-            if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
+            if (!apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
                 if (ap) {
                     ssid = ap->ssid();
@@ -109,14 +110,14 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         // FIXME: we need to check the correct wifi device associated to this connection when creating it.
         // If there is only one wifi card in the system then the code below is correct but it may test the
         // wrong device if there is more than one.
-        NetworkManager::WirelessDevice * w = 0;
-        foreach (NetworkManager::Device *d, NetworkManager::networkInterfaces()) {
-            if (d->type() == NetworkManager::Device::Wifi) {
-                w = qobject_cast<NetworkManager::WirelessDevice*>(d);
-                if (w->wirelessCapabilities().testFlag(NetworkManager::WirelessDevice::ApCap)) {
-                    Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
+        NetworkManager::WirelessDevice::Ptr wifiDevice;
+        foreach (const NetworkManager::Device::Ptr &device, NetworkManager::networkInterfaces()) {
+            if (device->type() == NetworkManager::Device::Wifi) {
+                wifiDevice = device.objectCast<NetworkManager::WirelessDevice>();
+                if (wifiDevice->wirelessCapabilities().testFlag(NetworkManager::WirelessDevice::ApCap)) {
+                    Knm::WirelessSetting *setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
                     setting->setMode(Knm::WirelessSetting::EnumMode::apMode);
-                    iface = w;
+                    iface = wifiDevice;
                     break;
                 }
             }
@@ -181,7 +182,7 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)),
             this, SLOT(setDefaultName(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)));
 
-    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
+    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NetworkManager::WirelessDevice::Ptr(), NULL, this);
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
@@ -218,7 +219,7 @@ bool WirelessPreferences::needsEdits() const
 void WirelessPreferences::tabChanged(int index)
 {
     if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
-        NetworkManager::WirelessDevice * ifaceForSsid = 0;
+        NetworkManager::WirelessDevice:: Ptr ifaceForSsid;
         NetworkManager::AccessPoint * apForSsid = 0;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
         QByteArray hwAddr = m_wirelessWidget->selectedInterfaceHardwareAddress();
@@ -227,10 +228,9 @@ void WirelessPreferences::tabChanged(int index)
             // find the S::C::WNI for this ssid
             // if hwAddr set, take that one
             // else, take the first one that can see this ssid
-            foreach (NetworkManager::Device * iface,
-                    NetworkManager::networkInterfaces()) {
+            foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
                 if (iface->type() == NetworkManager::Device::Wifi) {
-                    NetworkManager::WirelessDevice * candidate = static_cast<NetworkManager::WirelessDevice*>(iface);
+                    NetworkManager::WirelessDevice::Ptr candidate = iface.objectCast<NetworkManager::WirelessDevice>();
                     if (candidate->hardwareAddress() == hwAddr) {
                         ifaceForSsid = candidate;
                         break;

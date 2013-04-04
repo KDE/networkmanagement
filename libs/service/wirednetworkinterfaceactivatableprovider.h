@@ -39,7 +39,7 @@ class KNM_EXPORT WiredNetworkInterfaceActivatableProvider : public NetworkInterf
 {
 Q_OBJECT
 public:
-    WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WiredDevice * interface, QObject * parent);
+    WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::WiredDevice::Ptr &interface, QObject * parent);
     virtual ~WiredNetworkInterfaceActivatableProvider();
 public slots:
     /**

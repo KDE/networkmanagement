@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 
-DeclarativeInterfaceItem::DeclarativeInterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QObject *parent) : QObject(parent),
+DeclarativeInterfaceItem::DeclarativeInterfaceItem(const NetworkManager::Device::Ptr &iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QObject *parent) : QObject(parent),
     m_iface(iface),
     m_currentConnection(0),
     m_activatables(activatables),
@@ -124,7 +124,7 @@ void DeclarativeInterfaceItem::activatableAdded(RemoteActivatable * activatable)
             currentConnectionChanged();
         }
     } else {
-        if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface.data())) {
+        if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface)) {
             updateCurrentConnection(qobject_cast<RemoteInterfaceConnection*>(activatable));
 
             /* Sometimes the activatableAdded signal arrives after the stateChanged
@@ -314,9 +314,9 @@ bool DeclarativeInterfaceItem::accept(RemoteActivatable * activatable) const
     return false;
 }
 
-NetworkManager::Device* DeclarativeInterfaceItem::interface()
+NetworkManager::Device::Ptr DeclarativeInterfaceItem::interface() const
 {
-    return m_iface.data();
+    return m_iface;
 }
 
 void DeclarativeInterfaceItem::currentConnectionChanged()
@@ -342,7 +342,7 @@ void DeclarativeInterfaceItem::currentConnectionChanged()
         }
         setConnectionInfo();
     } else {
-        updateCurrentConnection(m_activatables->connectionForInterface(m_iface.data()));
+        updateCurrentConnection(m_activatables->connectionForInterface(m_iface));
     }
 }
 
@@ -363,7 +363,7 @@ QString DeclarativeInterfaceItem::connectionName()
 
 void DeclarativeInterfaceItem::setInterfaceIcon()
 {
-    m_icon = UiUtils::iconName(m_iface.data());
+    m_icon = UiUtils::iconName(m_iface);
     emit itemChanged();
 }
 

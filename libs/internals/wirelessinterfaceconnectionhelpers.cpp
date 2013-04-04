@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
-        NetworkManager::WirelessDevice *interface,
+        const NetworkManager::WirelessDevice::Ptr &interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     WirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -43,7 +43,7 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirel
 }
 
 Knm::HiddenWirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildHiddenWirelessInterfaceConnection(
-        NetworkManager::WirelessDevice *interface,
+        const NetworkManager::WirelessDevice::Ptr &interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     HiddenWirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -58,8 +58,7 @@ void WirelessInterfaceConnectionHelpers::syncWirelessInterfaceConnection(Wireles
     sync.sync(ic, c);
 }
 
-WirelessInterfaceConnectionBuilder::WirelessInterfaceConnectionBuilder(
-                    NetworkManager::WirelessDevice *interface,
+WirelessInterfaceConnectionBuilder::WirelessInterfaceConnectionBuilder(const NetworkManager::WirelessDevice::Ptr &interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -155,8 +154,7 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
     }
 }
 
-HiddenWirelessInterfaceConnectionBuilder::HiddenWirelessInterfaceConnectionBuilder(
-                    NetworkManager::WirelessDevice *interface,
+HiddenWirelessInterfaceConnectionBuilder::HiddenWirelessInterfaceConnectionBuilder(const NetworkManager::WirelessDevice::Ptr &interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)

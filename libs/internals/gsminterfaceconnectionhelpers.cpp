@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::GsmInterfaceConnection* GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
-        NetworkManager::ModemDevice *interface,
+        const NetworkManager::ModemDevice::Ptr &interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     GsmInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -50,7 +50,7 @@ void GsmInterfaceConnectionHelpers::syncGsmInterfaceConnection(GsmInterfaceConne
 }
 
 GsmInterfaceConnectionBuilder::GsmInterfaceConnectionBuilder(
-                    NetworkManager::ModemDevice *interface,
+                    const NetworkManager::ModemDevice::Ptr &interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)

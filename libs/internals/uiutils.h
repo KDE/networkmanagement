@@ -42,7 +42,7 @@ public:
      * @return a human-readable description for the network interface type for use as label
      * @param type the type of the network interface
      */
-    static QString interfaceTypeLabel(const NetworkManager::Device::Type type, const NetworkManager::Device * iface);
+    static QString interfaceTypeLabel(const NetworkManager::Device::Type type, const NetworkManager::Device::Ptr &iface);
 
     /**
      * @return a human-readable name for a given network interface according to the configured
@@ -81,7 +81,7 @@ public:
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
-    static QString iconName(NetworkManager::Device *iface);
+    static QString iconName(const NetworkManager::Device::Ptr &iface);
 
     /** This method can be used to retrieve an icon size that fits into a given size.
      * The resulting size can be used to render Pixmaps from KIconLoader without
@@ -98,7 +98,7 @@ public:
      * @return the progress between 0 (disconnected) and 1 (activated).
      * @param interface the network interface
      */
-    static qreal interfaceState(const NetworkManager::Device *interface);
+    static qreal interfaceState(const NetworkManager::Device::Ptr &interface);
 
     /** This method can be used to retrieve the progress of a connection attempt
      * as a qreal, for painting progress bars. This is mostly used by VPN connections,
