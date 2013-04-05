@@ -57,13 +57,13 @@ void GsmInterfaceConnection::connectMMSignals()
         kDebug() << "Loading ModemManager backend";
     }
 
-    ModemManager::ModemGsmNetworkInterface * modemNetworkIface = nmModemIface->getModemNetworkIface();
+    ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface = nmModemIface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
     if (modemNetworkIface) {
         kDebug() << "Connecting signals of " << modemNetworkIface->udi() << " to " << deviceUni();
-        QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
-        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(setEnabled(bool)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(signalQualityChanged(uint)), this, SLOT(setSignalQuality(uint)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(enabledChanged(bool)), this, SLOT(setEnabled(bool)));
 
         m_enabled = modemNetworkIface->enabled();
         if (m_enabled) {

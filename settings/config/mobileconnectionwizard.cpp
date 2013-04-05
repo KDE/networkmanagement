@@ -294,7 +294,8 @@ void MobileConnectionWizard::introAddDevice(const NetworkManager::Device::Ptr &d
 {
     QString desc;
 
-    ModemManager::ModemInterface *modem = ModemManager::findModemInterface(device->udi(), ModemManager::ModemInterface::GsmCard);
+    ModemManager::ModemInterface::Ptr modem;
+    modem = ModemManager::findModemInterface(device->udi(), ModemManager::ModemInterface::GsmCard);
     if (modem) {
         if (modem->enabled()) {
             desc.append(modem->getInfo().manufacturer);

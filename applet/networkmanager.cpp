@@ -162,7 +162,8 @@ QString NetworkManagerApplet::svgElement(const NetworkManager::Device::Ptr &ifac
         NetworkManager::ModemDevice::Ptr giface = iface.objectCast<NetworkManager::ModemDevice>();
 
         if (giface) {
-            ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+            ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+            modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
             if (modemNetworkIface) {
                 int str = modemNetworkIface->getSignalQuality();
@@ -252,10 +253,11 @@ void NetworkManagerApplet::setupInterfaceSignals()
             NetworkManager::ModemDevice::Ptr modemiface =
                             interface.objectCast<NetworkManager::ModemDevice>();
 
-            ModemManager::ModemGsmNetworkInterface *modemNetworkIface = modemiface->getModemNetworkIface();
+            ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+            modemNetworkIface = modemiface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
             if (modemNetworkIface) {
-                connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(interfaceConnectionStateChanged()));
-                connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(interfaceConnectionStateChanged()));
+                connect(modemNetworkIface.data(), SIGNAL(signalQualityChanged(uint)), this, SLOT(interfaceConnectionStateChanged()));
+                connect(modemNetworkIface.data(), SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(interfaceConnectionStateChanged()));
             }
         }
     }

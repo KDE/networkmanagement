@@ -287,10 +287,11 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
         NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceToActivateOn);
         NetworkManager::ModemDevice::Ptr iface = device.objectCast<NetworkManager::ModemDevice>();
         if (iface) {
-            ModemManager::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            ModemManager::ModemGsmCardInterface::Ptr modem;
+            modem = iface->getModemCardIface().objectCast<ModemManager::ModemGsmCardInterface>();
             if (modem && !modem->enabled()) {
                 // Try to pin-unlock the modem.
-                QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
+                QMetaObject::invokeMethod(modem.data(), "unlockRequiredChanged", Qt::DirectConnection,
                                           Q_ARG(QString, modem->unlockRequired()));
             }
         }

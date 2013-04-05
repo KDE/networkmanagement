@@ -248,8 +248,8 @@ void InterfaceDetailsWidget::resetInterfaceDetails()
     details = new InterfaceDetails();
     NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        giface->setModemCardIface(0);
-        giface->setModemNetworkIface(0);
+        giface->clearModemCardIface();
+        giface->clearModemNetworkIface();
     }
     getDetails();
     showDetails();
@@ -296,7 +296,8 @@ void InterfaceDetailsWidget::getDetails()
 
     NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+        ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+        modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
         if (modemNetworkIface) {
             details->registrationInfo = modemNetworkIface->getRegistrationInfo();
             details->signalQuality = modemNetworkIface->getSignalQuality();
@@ -312,7 +313,8 @@ void InterfaceDetailsWidget::getDetails()
             details->unlockRequired = modemNetworkIface->unlockRequired();
         }
 
-        ModemManager::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+        ModemManager::ModemGsmCardInterface::Ptr modemCardIface;
+        modemCardIface = giface->getModemCardIface().objectCast<ModemManager::ModemGsmCardInterface>();
         if (modemCardIface) {
             details->imei = modemCardIface->getImei();
             details->imsi = modemCardIface->getImsi();
@@ -738,18 +740,19 @@ void InterfaceDetailsWidget::connectSignals()
             NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
 
             if (giface) {
-                ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+                ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+                modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
                 if (modemNetworkIface) {
                     // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
                     connect(ModemManager::notifier(), SIGNAL(modemRemoved(QString)), this, SLOT(resetInterfaceDetails()));
-                    connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
-                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
+                    connect(modemNetworkIface.data(), SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
+                    connect(modemNetworkIface.data(), SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
 
-                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)));
-                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
-                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
-                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(ModemManager::ModemInterface::AllowedMode)));
+                    connect(modemNetworkIface.data(), SIGNAL(registrationInfoChanged(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)));
+                    connect(modemNetworkIface.data(), SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+                    connect(modemNetworkIface.data(), SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
+                    connect(modemNetworkIface.data(), SIGNAL(allowedModeChanged(ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(ModemManager::ModemInterface::AllowedMode)));
                 }
             }
     }
@@ -769,10 +772,11 @@ void InterfaceDetailsWidget::disconnectSignals()
         NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
 
         if (giface) {
-            ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+            ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+            modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
             if (modemNetworkIface) {
-                disconnect(modemNetworkIface, 0, this, 0);
+                disconnect(modemNetworkIface.data(), 0, this, 0);
             }
         }
     }
@@ -843,7 +847,8 @@ void InterfaceDetailsWidget::modemUpdateBand()
 {
     NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+        ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+        modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
         if (modemNetworkIface) {
             details->band = modemNetworkIface->getBand();
         }
