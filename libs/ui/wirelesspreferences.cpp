@@ -44,8 +44,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
-
 WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent), m_securityTabIndex(0)
 {
@@ -76,7 +74,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    NetworkManager::AccessPoint * ap = 0;
+    NetworkManager::AccessPoint::Ptr ap;
     NetworkManager::WirelessDevice::Ptr iface;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
@@ -182,7 +180,10 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)),
             this, SLOT(setDefaultName(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)));
 
-    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NetworkManager::WirelessDevice::Ptr(), NULL, this);
+    m_securityWidget = new WirelessSecuritySettingWidget(m_connection,
+                                                         NetworkManager::WirelessDevice::Ptr(),
+                                                         NetworkManager::AccessPoint::Ptr(),
+                                                         this);
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
@@ -203,11 +204,11 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     */
 }
 
-void WirelessPreferences::setDefaultName(NetworkManager::WirelessDevice * wiface, NetworkManager::AccessPoint * ap)
+void WirelessPreferences::setDefaultName(const NetworkManager::WirelessDevice::Ptr &wirelessDevice, const NetworkManager::AccessPoint::Ptr &accessPoint)
 {
-    Q_UNUSED(wiface);
-    if(ap) {
-        m_contents->setDefaultName(ap->ssid());
+    Q_UNUSED(wirelessDevice);
+    if (accessPoint) {
+        m_contents->setDefaultName(accessPoint->ssid());
     }
 }
 
@@ -220,7 +221,7 @@ void WirelessPreferences::tabChanged(int index)
 {
     if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
         NetworkManager::WirelessDevice:: Ptr ifaceForSsid;
-        NetworkManager::AccessPoint * apForSsid = 0;
+        NetworkManager::AccessPoint::Ptr apForSsid;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
         QByteArray hwAddr = m_wirelessWidget->selectedInterfaceHardwareAddress();
         QString ssid = m_wirelessWidget->enteredSsid();
@@ -235,13 +236,10 @@ void WirelessPreferences::tabChanged(int index)
                         ifaceForSsid = candidate;
                         break;
                     }
-                    NetworkManager::WirelessNetworkInterfaceEnvironment env(candidate);
 
-                    NetworkManager::WirelessNetwork * net = 0;
-                    net = env.findNetwork(ssid);
-                    if (net) {
-                        QString apUni = net->referenceAccessPoint();
-                        apForSsid = candidate->findAccessPoint(apUni);
+                    NetworkManager::WirelessNetwork::Ptr network = candidate->findNetwork(ssid);
+                    if (network) {
+                        apForSsid = network->referenceAccessPoint();
                         ifaceForSsid = candidate;
                         break;
                     }

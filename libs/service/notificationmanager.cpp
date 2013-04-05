@@ -40,7 +40,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
 #include <uiutils.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "events.h"
 #include "../internals/connection.h"
@@ -543,11 +542,10 @@ void NotificationManager::deviceAdded(const QString & uni)
                 if (wireless) {
                     // this is a bit wasteful because NetworkManager::WirelessDeviceActivatableProvider is also
                     // creating these objects, but I expect these will move into Solid and become singletons
-                    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(wireless);
 
-                    QObject::connect(environment, SIGNAL(networkAppeared(QString)),
+                    QObject::connect(wireless.data(), SIGNAL(networkAppeared(QString)),
                             this, SLOT(networkAppeared(QString)));
-                    QObject::connect(environment, SIGNAL(networkDisappeared(QString)),
+                    QObject::connect(wireless.data(), SIGNAL(networkDisappeared(QString)),
                             this, SLOT(networkDisappeared(QString)));
                 }
             }
@@ -583,8 +581,8 @@ void NotificationManager::deviceRemoved(const QString &uni)
 void NotificationManager::networkAppeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
-    if (environment && environment->interface()->activeAccessPoint() == "/") {
+    NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
+    if (wifiDevice && wifiDevice->activeAccessPoint() == QLatin1String("/")) {
         d->newWirelessNetworks.append(ssid);
         d->newNetworkTimer->start(500);
     }
@@ -593,8 +591,8 @@ void NotificationManager::networkAppeared(const QString & ssid)
 void NotificationManager::networkDisappeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
-    if (environment && environment->interface()->activeAccessPoint() == "/") {
+    NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
+    if (wifiDevice && wifiDevice->activeAccessPoint() == QLatin1String("/")) {
         d->disappearedWirelessNetworks.append(ssid);
         d->disappearedNetworkTimer->start(500);
     }

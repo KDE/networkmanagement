@@ -98,7 +98,7 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                         NetworkManager::WirelessDevice::Ptr wifiDevice =
                             networkInterface.objectCast<NetworkManager::WirelessDevice>();
 
-                        NetworkManager::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
+                        NetworkManager::AccessPoint::Ptr ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
                         if (ap) {
                             Knm::WirelessSetting * ws
                                 = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
@@ -137,7 +137,7 @@ void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & 
     Q_D(ConnectionUsageMonitor);
     NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
     if (wifiDevice && static_cast<NetworkManager::Device::State>(wifiDevice->state()) == NetworkManager::Device::Activated) {
-        NetworkManager::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
+        NetworkManager::AccessPoint::Ptr ap = wifiDevice->findAccessPoint(apiUni);
         if (ap) {
             // find the activatable
             foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {

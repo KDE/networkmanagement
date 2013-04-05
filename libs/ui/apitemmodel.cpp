@@ -73,7 +73,7 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
     if (index.row() >= m_accessPoints.size() || index.row() < 0 || index.column() >= s_numColumns || index.column() < 0)
         return QVariant();
 
-    NetworkManager::AccessPoint *accessPoint = m_networkInterface->findAccessPoint(m_accessPoints.value(index.row()));
+    NetworkManager::AccessPoint::Ptr accessPoint = m_networkInterface->findAccessPoint(m_accessPoints.value(index.row()));
     if (!accessPoint) {
         kDebug() << "Access point could not be found.";
         return QVariant();

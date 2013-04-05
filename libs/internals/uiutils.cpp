@@ -106,7 +106,7 @@ QString UiUtils::iconName(const NetworkManager::Device::Ptr &iface)
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
-                NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
+                NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(uni);
                 if (ap) {
                     int s = ap->signalStrength();
                     if (s < 13) {

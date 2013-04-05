@@ -279,7 +279,7 @@ void InterfaceDetailsWidget::getDetails()
     NetworkManager::WirelessDevice::Ptr wiface = m_iface.objectCast<NetworkManager::WirelessDevice>();
     if (wiface) {
         details->activeAccessPoint = wiface->activeAccessPoint();
-        NetworkManager::AccessPoint *ap = wiface->findAccessPoint(details->activeAccessPoint);
+        NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(details->activeAccessPoint);
         if (ap) {
             details->wifiChannelFrequency = ap->frequency();
             QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
@@ -342,7 +342,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     m_disconnectButton->setVisible(details->connectionState == NetworkManager::Device::Activated);
     if (!reset && m_iface) {
         NetworkManager::WirelessDevice::Ptr wiface = m_iface.objectCast<NetworkManager::WirelessDevice>();
-        NetworkManager::AccessPoint *ap = 0;
+        NetworkManager::AccessPoint::Ptr ap;
         NetworkManager::ModemDevice::Ptr giface;
 
         if (wiface) {
@@ -801,7 +801,7 @@ void InterfaceDetailsWidget::updateIPv4Details()
         details->ipv4Address = addr.toString();
     }
 
-    NetworkManager::Dhcp4Config *dhcp4Config = m_iface->dhcp4Config();
+    NetworkManager::Dhcp4Config::Ptr dhcp4Config = m_iface->dhcp4Config();
     if (dhcp4Config) {
         details->ipv4Gateway = dhcp4Config->optionValue("routers");
     } else if (!m_iface->ipV4Config().routes().isEmpty()) {

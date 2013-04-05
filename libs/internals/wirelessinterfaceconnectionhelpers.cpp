@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "hiddenwirelessinterfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 using namespace Knm;
 
@@ -89,35 +88,28 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
 
     Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
     if (wirelessSetting) {
-        std::auto_ptr<NetworkManager::WirelessNetworkInterfaceEnvironment> apEnvironment(
-                new NetworkManager::WirelessNetworkInterfaceEnvironment(m_interface));
-
         int strength = -1;
         NetworkManager::AccessPoint::Capabilities caps = 0;
         NetworkManager::AccessPoint::WpaFlags wpaFlags = 0;
         NetworkManager::AccessPoint::WpaFlags rsnFlags = 0;
-        NetworkManager::WirelessDevice::OperationMode mode
-            = NetworkManager::WirelessDevice::Infra;
+        NetworkManager::AccessPoint::OperationMode mode
+            = NetworkManager::AccessPoint::Infra;
 
         // show connections where the network is present OR adhoc connections
-        if (apEnvironment->networks().contains(wirelessSetting->ssid())) {
-            // get the info on the network
-            NetworkManager::WirelessNetwork *network = apEnvironment->findNetwork(wirelessSetting->ssid());
-
-            if (network) {
-                strength = network->signalStrength();
-                NetworkManager::AccessPoint * ap = m_interface->findAccessPoint(network->referenceAccessPoint());
-                if (ap) {
-                    caps = ap->capabilities();
-                    wpaFlags = ap->wpaFlags();
-                    rsnFlags = ap->rsnFlags();
-                    mode = ap->mode();
-                }
+        NetworkManager::WirelessNetwork::Ptr network = m_interface->findNetwork(wirelessSetting->ssid());
+        if (network) {
+            strength = network->signalStrength();
+            NetworkManager::AccessPoint::Ptr ap = network->referenceAccessPoint();
+            if (ap) {
+                caps = ap->capabilities();
+                wpaFlags = ap->wpaFlags();
+                rsnFlags = ap->rsnFlags();
+                mode = ap->mode();
             }
         }
         else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
                  wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode) {
-                mode = (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) ? NetworkManager::WirelessDevice::Adhoc : NetworkManager::WirelessDevice::ApMode;
+                mode = (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) ? NetworkManager::AccessPoint::Adhoc : NetworkManager::AccessPoint::ApMode;
                 Knm::WirelessSecuritySetting * wirelessSecuritySetting = dynamic_cast<Knm::WirelessSecuritySetting *>(m_connection->setting(Knm::Setting::WirelessSecurity));
                 switch( wirelessSecuritySetting->securityType())
                 {

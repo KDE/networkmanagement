@@ -212,20 +212,20 @@ void Wireless80211Widget::scanClicked()
         QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
         d->ui.ssid->setText(accessPoint.first);
         d->ui.bssid->setText(accessPoint.second);
-        const QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *> pair = scanWid.currentAccessPointUni();
+        const QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> pair = scanWid.currentAccessPointUni();
         emit ssidSelected(pair.first, pair.second);
         setAccessPointData(pair.first, pair.second);
     }
 }
 
-void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevice::Ptr wiface, const NetworkManager::AccessPoint * ap) const
+void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevice::Ptr &wirelessDevice, const NetworkManager::AccessPoint::Ptr &accessPoint) const
 {
-    if (!wiface || !ap) {
+    if (!wirelessDevice || !accessPoint) {
         return;
     }
 
     Q_D(const Wireless80211Widget);
-    QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel((int)ap->frequency());
+    QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel((int)accessPoint->frequency());
 
     switch(bandAndChannel.first)
     {
@@ -238,11 +238,11 @@ void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevic
             break;
     }
 
-    switch (ap->mode()) {
-        case NetworkManager::WirelessDevice::Adhoc:
+    switch (accessPoint->mode()) {
+        case NetworkManager::AccessPoint::Adhoc:
             d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::AdhocIndex);
-        case NetworkManager::WirelessDevice::ApMode:
-            if (ap->mode() == NetworkManager::WirelessDevice::ApMode) {
+        case NetworkManager::AccessPoint::ApMode:
+            if (accessPoint->mode() == NetworkManager::AccessPoint::ApMode) {
                 d->ui.cmbMode->setCurrentIndex(Wireless80211WidgetPrivate::ApModeIndex);
             }
 
@@ -330,17 +330,16 @@ void Wireless80211Widget::copyToBssid()
             int i = d->ui.cmbMacAddress->currentIndex();
             if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
                 QString activeAp = wiface->activeAccessPoint();
-                NetworkManager::AccessPoint * ap = 0;
+                NetworkManager::AccessPoint::Ptr ap;
                 if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
                     ap = wiface->findAccessPoint(activeAp);
                     if (ap && ap->ssid() != d->ui.ssid->text())
-                        ap = 0;
+                        ap.clear();
                 }
                 if (!ap && !d->ui.ssid->text().isEmpty()) {
-                    NetworkManager::WirelessNetworkInterfaceEnvironment environment(wiface);
-                    NetworkManager::WirelessNetwork * network = environment.findNetwork(d->ui.ssid->text());
+                    NetworkManager::WirelessNetwork::Ptr network = wiface->findNetwork(d->ui.ssid->text());
                     if (network)
-                        ap = wiface->findAccessPoint(network->referenceAccessPoint());
+                        ap = network->referenceAccessPoint();
                 }
                 if (ap && ap->signalStrength() > maxSignalStrength) {
                     maxSignalStrength = ap->signalStrength();

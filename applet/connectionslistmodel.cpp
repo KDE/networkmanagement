@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 #include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),
@@ -563,13 +562,12 @@ void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
     QStringList args;
     QString moduleArgs;
 
-    NetworkManager::WirelessNetworkInterfaceEnvironment envt(wiface);
-    NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
+    NetworkManager::WirelessNetwork::Ptr network = wiface->findNetwork(ssid);
 
     if (network) {
         moduleArgs = QString::fromLatin1("%1 %2")
                      .arg(wiface->uni())
-                     .arg(network->referenceAccessPoint());
+                     .arg(network->referenceAccessPoint()->uni());
 
     } else {
         moduleArgs = QString::fromLatin1("%1 %2")

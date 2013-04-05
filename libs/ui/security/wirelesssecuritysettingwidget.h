@@ -49,14 +49,14 @@ public:
      */
     explicit WirelessSecuritySettingWidget(Knm::Connection * connection,
             const NetworkManager::WirelessDevice::Ptr &iface,
-            NetworkManager::AccessPoint * ap = 0,
+            const NetworkManager::AccessPoint::Ptr ap,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 public Q_SLOTS:
-    void setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, NetworkManager::AccessPoint * ap);
+    void setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, const NetworkManager::AccessPoint::Ptr &ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
     void validate();

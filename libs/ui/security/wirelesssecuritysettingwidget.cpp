@@ -117,10 +117,9 @@ public:
     Knm::Security8021xSetting * setting8021x;
 };
 
-WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
-        Knm::Connection * connection,
+WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(Knm::Connection * connection,
         const NetworkManager::WirelessDevice::Ptr &iface,
-        NetworkManager::AccessPoint * ap,
+        const NetworkManager::AccessPoint::Ptr ap,
         QWidget * parent)
 : SettingWidget(*new WirelessSecuritySettingWidgetPrivate, connection, parent)
 {
@@ -136,7 +135,7 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     setIfaceAndAccessPoint(iface, ap);
 }
 
-void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, NetworkManager::AccessPoint * ap)
+void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, const NetworkManager::AccessPoint::Ptr &ap)
 {
     Q_D(WirelessSecuritySettingWidget);
     d->clearSecurityWidgets();
@@ -153,7 +152,7 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(const NetworkManager:
         ifaceCaps = iface->wirelessCapabilities();
         if (ap) {
             apCaps = ap->capabilities();
-            adhoc = (ap->mode() == NetworkManager::WirelessDevice::Adhoc);
+            adhoc = (ap->mode() == NetworkManager::AccessPoint::Adhoc);
             apWpa = ap->wpaFlags();
             apRsn = ap->rsnFlags();
         }

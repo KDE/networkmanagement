@@ -129,7 +129,7 @@ QString NetworkManagerApplet::svgElement(const NetworkManager::Device::Ptr &ifac
 
         if (wiface) {
             QString uni = wiface->activeAccessPoint();
-            NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
+            NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(uni);
             if (ap) {
                 int str = ap->signalStrength();
                 if (str < 13) {
@@ -264,10 +264,10 @@ void NetworkManagerApplet::setupInterfaceSignals()
 void NetworkManagerApplet::setupAccessPointSignals(const QString & uni)
 {
     NetworkManager::WirelessDevice * wirelessiface = qobject_cast<NetworkManager::WirelessDevice *>(sender());
-    NetworkManager::AccessPoint * ap = wirelessiface->findAccessPoint(uni);
+    NetworkManager::AccessPoint::Ptr ap = wirelessiface->findAccessPoint(uni);
     if (ap) {
-        connect(ap, SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
-        connect(ap, SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
+        connect(ap.data(), SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
+        connect(ap.data(), SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
     }
 }
 

@@ -262,12 +262,13 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
             // look up the active connection (a real connection, not this vpn that is being activated)
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
-            foreach (const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+            foreach (const NetworkManager::ActiveConnection::Ptr &ac, NetworkManager::activeConnections()) {
                 if ( ac->default4() && ac->state() == NetworkManager::ActiveConnection::Activated) {
                     activeConnPath = ac->path();
-                    NetworkManager::Device::List devs = ac->devices();
-                    if (!devs.isEmpty()) {
-                        deviceToActivateOn = devs.first()->uni();
+
+                    QStringList devices = ac->devices();
+                    if (!devices.isEmpty()) {
+                        deviceToActivateOn = devices.first();
                     }
                 }
             }

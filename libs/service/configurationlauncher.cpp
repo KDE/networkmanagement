@@ -32,7 +32,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/modemdevice.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "uiutils.h"
 #include "unconfiguredinterface.h"
@@ -128,10 +127,9 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
     NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceUni);
     NetworkManager::WirelessDevice::Ptr iface = device.objectCast<NetworkManager::WirelessDevice>();
     if (iface) {
-        NetworkManager::WirelessNetworkInterfaceEnvironment envt(iface);
-        NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
+        NetworkManager::WirelessNetwork::Ptr network = iface->findNetwork(ssid);
         if (network) {
-            apUni = network->referenceAccessPoint();
+            apUni = network->referenceAccessPoint()->uni();
         }
     }
 

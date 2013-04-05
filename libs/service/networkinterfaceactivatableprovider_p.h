@@ -38,6 +38,7 @@ public:
     NetworkInterfaceActivatableProviderPrivate(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::Device::Ptr &interface);
     virtual ~NetworkInterfaceActivatableProviderPrivate();
     NetworkManager::Device::Ptr interface;
+    NetworkManager::WirelessDevice::Ptr wifiDevice;
     ConnectionList * connectionList;
     QPointer<ActivatableList> activatableList;
     // map connection UUID to activatable

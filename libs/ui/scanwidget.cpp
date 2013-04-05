@@ -116,10 +116,9 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
     return accessPoint;
 }
 
-QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *> ScanWidget::currentAccessPointUni()
+QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> ScanWidget::currentAccessPointUni()
 {
-    QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *> pair;
-    pair.second = 0;
+    QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> pair;
     QModelIndex index;
 
     switch (m_stack->currentIndex())
@@ -145,7 +144,7 @@ QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *> ScanWi
     NetworkManager::WirelessDevice::Ptr wiface = NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()).objectCast<NetworkManager::WirelessDevice>();
     if (wiface) {
         foreach(const QString & uni, wiface->accessPoints()) {
-            NetworkManager::AccessPoint * ap = wiface->findAccessPoint(uni);
+            NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(uni);
             if (ap->hardwareAddress() == apMac) {
                 pair.first = wiface;
                 pair.second = ap;

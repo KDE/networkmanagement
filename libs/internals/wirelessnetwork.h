@@ -40,7 +40,7 @@ Q_PROPERTY(int strength READ strength)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
-    WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode, const QString & deviceUni, QObject * parent);
+    WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::AccessPoint::OperationMode mode, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetwork();
     QVariantMap toMap();
 signals:

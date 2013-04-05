@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSpinBox>
 #include <QValidator>
 
-#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "settingwidget.h"
 
@@ -54,9 +54,9 @@ protected Q_SLOTS:
     void generateRandomClonedMac();
 
 Q_SIGNALS:
-    void ssidSelected(NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint *);
+    void ssidSelected(const NetworkManager::WirelessDevice::Ptr &wirelessDevice, const NetworkManager::AccessPoint::Ptr &accessPoint);
 private:
-    void setAccessPointData(const NetworkManager::WirelessDevice::Ptr, const NetworkManager::AccessPoint *) const;
+    void setAccessPointData(const NetworkManager::WirelessDevice::Ptr &wirelessDevice, const NetworkManager::AccessPoint::Ptr &accessPoint) const;
 };
 
 class Wireless80211WidgetBand : public QSpinBox

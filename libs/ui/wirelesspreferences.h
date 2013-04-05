@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESS_PREFERENCES_H
 #define WIRELESS_PREFERENCES_H
 
-#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "connectionprefs.h"
 
@@ -55,7 +55,7 @@ public:
     virtual bool needsEdits() const;
 private Q_SLOTS:
     void tabChanged(int index);
-    void setDefaultName(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *);
+    void setDefaultName(const NetworkManager::WirelessDevice::Ptr &wirelessDevice, const NetworkManager::AccessPoint::Ptr &accessPoint);
 private:
     bool m_hasSecrets;
     int m_securityTabIndex;

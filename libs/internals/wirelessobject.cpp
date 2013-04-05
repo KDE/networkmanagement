@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessobject.h"
 
-Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode)
+Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::AccessPoint::OperationMode mode)
 : m_ssid(ssid),
     m_strength(strength),
     m_interfaceCapabilities(interfaceCapabilities),
@@ -76,7 +76,7 @@ NetworkManager::AccessPoint::WpaFlags Knm::WirelessObject::rsnFlags() const
     return m_rsnFlags;
 }
 
-NetworkManager::WirelessDevice::OperationMode Knm::WirelessObject::operationMode() const
+NetworkManager::AccessPoint::OperationMode Knm::WirelessObject::operationMode() const
 {
     return m_operationMode;
 }

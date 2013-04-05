@@ -770,7 +770,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
     foreach(QTreeWidgetItem * t, mUuidItemHash.values()) {
         t->setText(ConnectionStateColumn, QString());
     }
-    foreach(const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+    foreach(const NetworkManager::ActiveConnection::Ptr &ac, NetworkManager::activeConnections()) {
         QString activeConnection = '{' + ac->connection()->uuid() + '}';
         item = mUuidItemHash.value(activeConnection);
         if (item != 0 && ac->state() == NetworkManager::ActiveConnection::Activated) {
