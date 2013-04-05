@@ -33,8 +33,6 @@ PlasmaExtras.ScrollArea {
         delegate: ConnectionItem {
             id: connectionItem
             anchors {
-                left: parent.left
-                right: parent.right
                 rightMargin: 4
             }
             networkUuid: connectionUuid
