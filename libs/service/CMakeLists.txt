@@ -23,9 +23,6 @@ set(knmservice_SRCS
    #defines interface for objects storing secrets
    secretsprovider.cpp
 
-   # provides dbus configure() for config UI
-   #connectionlistpersistencedbus.cpp
-
    # list of things that may be connected: connections and unconfigured networks
    activatablelist.cpp
 
