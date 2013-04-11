@@ -32,7 +32,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/modemdevice.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "uiutils.h"
 #include "unconfiguredinterface.h"
@@ -125,12 +124,12 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
 
     QString apUni = QLatin1String("/");
 
-    NetworkManager::WirelessDevice * iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::findNetworkInterface(deviceUni));
+    NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceUni);
+    NetworkManager::WirelessDevice::Ptr iface = device.objectCast<NetworkManager::WirelessDevice>();
     if (iface) {
-        NetworkManager::WirelessNetworkInterfaceEnvironment envt(iface);
-        NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
+        NetworkManager::WirelessNetwork::Ptr network = iface->findNetwork(ssid);
         if (network) {
-            apUni = network->referenceAccessPoint();
+            apUni = network->referenceAccessPoint()->uni();
         }
     }
 
@@ -178,7 +177,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
         }
 
         //HACK - write proper AsString and FromString functions in the library somewhere
-        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(unco->deviceUni());
+        NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(unco->deviceUni());
         QString typeString;
         QString editorArgs;
         if (iface) {
@@ -190,7 +189,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
                     typeString = QLatin1String("802-11-wireless");
                     break;
                 case NetworkManager::Device::Modem: {
-                    NetworkManager::ModemDevice * nmModemIface = qobject_cast<NetworkManager::ModemDevice *>(iface);
+                    NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
                     if (nmModemIface) {
                         switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                             case NetworkManager::ModemDevice::Pots:

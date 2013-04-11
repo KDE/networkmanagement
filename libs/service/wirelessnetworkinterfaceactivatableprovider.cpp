@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wirelessinterfaceconnection.h>
 #include <wirelessinterfaceconnectionhelpers.h>
 #include <wirelessnetwork.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "activatablelist.h"
 #include "connectionlist.h"
@@ -44,29 +43,27 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WirelessNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::WirelessDevice * theInterface)
+    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, const NetworkManager::WirelessDevice::Ptr &theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
-
-    NetworkManager::WirelessNetworkInterfaceEnvironment * environment;
 
     // essid to WirelessNetwork - only 1 exists per network
     QHash<QString, Knm::WirelessNetwork *> wirelessNetworks;
 
-    NetworkManager::WirelessDevice * wirelessInterface() const
+    NetworkManager::WirelessDevice::Ptr wirelessInterface() const
     {
-        return qobject_cast<NetworkManager::WirelessDevice*>(interface);
+        return interface.objectCast<NetworkManager::WirelessDevice>();
     }
 };
 
-WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WirelessDevice * interface, QObject * parent)
+WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::WirelessDevice::Ptr &interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
-    d->environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(interface);
+    d->wifiDevice = interface;
 
-    QObject::connect(d->environment, SIGNAL(networkAppeared(QString)), this, SLOT(networkAppeared(QString)));
-    QObject::connect(d->environment, SIGNAL(networkDisappeared(QString)), this, SLOT(networkDisappeared(QString)));
+    QObject::connect(interface.data(), SIGNAL(networkAppeared(QString)), this, SLOT(networkAppeared(QString)));
+    QObject::connect(interface.data(), SIGNAL(networkDisappeared(QString)), this, SLOT(networkDisappeared(QString)));
     connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
     connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -76,8 +73,8 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
     // already ran and created WirelessInterfaceConnections as needed, but a hash lookup in
     // networkAppeared prevents duplicate WirelessInterfaceConnections, so this
     // iteration creates any WirelessNetworks needed for unconfigured networks.
-    foreach (const QString &network, d->environment->networks()) {
-        networkAppeared(network);
+    foreach (const NetworkManager::WirelessNetwork::Ptr &network, interface->networks()) {
+        networkAppeared(network->ssid());
     }
 }
 
@@ -146,17 +143,16 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 }
 
                 // create WirelessInterfaceConnections only where the network is present
-                if (!ourWicFound && (d->environment->networks().contains(wirelessSetting->ssid()) || addedConnection->isShared() || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode)) {
+                if (!ourWicFound && (d->wifiDevice->findNetwork(wirelessSetting->ssid()) || addedConnection->isShared() || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode)) {
                     kDebug() << "Adding WIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni() << wirelessSetting->channel();
 
                     Knm::WirelessInterfaceConnection * ifaceConnection =
                         Knm::WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
                                 d->wirelessInterface(), addedConnection, d->interface->uni(), this);
 
-                    NetworkManager::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
-
+                    NetworkManager::WirelessNetwork::Ptr network = d->wifiDevice->findNetwork(wirelessSetting->ssid());
                     if (network) {
-                        connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
+                        connect(network.data(), SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
                     }
                     else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc ||
                              wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::apMode) {
@@ -205,7 +201,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleRemove(Knm::Connection *
     // d->interface may be null if NM has just stopped and this provider has not been unregistered yet.
     // d->environment is a child of d->interface, so it is an invalid pointer in that situation.
     if (wirelessSetting && d->interface) {
-        if (d->environment->networks().contains(wirelessSetting->ssid())) {
+        if (d->wifiDevice->findNetwork(wirelessSetting->ssid())) {
             networkAppeared(wirelessSetting->ssid());
         }
     }
@@ -236,20 +232,20 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
     if (!hasConnection) {
         // create a wirelessnetwork, register it, tell the list
         // get the info on the network
-        NetworkManager::WirelessNetwork * network = d->environment->findNetwork(ssid);
+        NetworkManager::WirelessNetwork::Ptr network = d->wifiDevice->findNetwork(ssid);
         int strength = 0;
         NetworkManager::AccessPoint::Capabilities caps = 0;
         NetworkManager::AccessPoint::WpaFlags wpaFlags = 0;
         NetworkManager::AccessPoint::WpaFlags rsnFlags = 0;
         if (network) {
             strength = network->signalStrength();
-            NetworkManager::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
+            NetworkManager::AccessPoint::Ptr ap = network->referenceAccessPoint();
             if (ap) {
                 caps = ap->capabilities();
                 wpaFlags = ap->wpaFlags();
                 rsnFlags = ap->rsnFlags();
                 Knm::WirelessNetwork * wirelessNetworkItem = new Knm::WirelessNetwork(ssid, strength, d->wirelessInterface()->wirelessCapabilities(), caps, wpaFlags, rsnFlags, ap->mode(), d->interface->uni(), this);
-                connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
+                connect(network.data(), SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
                 d->wirelessNetworks.insert(ssid, wirelessNetworkItem);
                 d->activatableList->addActivatable(wirelessNetworkItem);
             }
@@ -270,7 +266,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
         if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection ) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
 
-            if (wic->ssid() == ssid && wic->operationMode() != NetworkManager::WirelessDevice::Adhoc) {
+            if (wic->ssid() == ssid && wic->operationMode() != NetworkManager::AccessPoint::Adhoc) {
                 d->activatableList->removeActivatable(ic);
                 i = d->activatables.erase(i);
                 delete wic;

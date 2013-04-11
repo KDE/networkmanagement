@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/wirelessdevice.h>
 #include <QtNetworkManager/accesspoint.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 /**
  * Uses NetworkManager::WirelessNetworkInterfaceEnvironment to model logical networks,
@@ -62,8 +61,7 @@ class NetworkItemModel : public QAbstractItemModel
 
     private:
         QStringList m_networks;
-        NetworkManager::WirelessDevice *m_networkInterface;
-        NetworkManager::WirelessNetworkInterfaceEnvironment *m_environment;
+        NetworkManager::WirelessDevice::Ptr m_networkInterface;
 
         static const int s_numColumns = 6;
 };

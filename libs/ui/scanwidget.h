@@ -47,7 +47,7 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
         void setWirelessInterface(const QString &interface);
         QPair<QString,QString> currentAccessPoint() const;
-        QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> currentAccessPointUni();
+        QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> currentAccessPointUni();
 
     private Q_SLOTS:
         void onInterfaceChanged(int index);

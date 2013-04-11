@@ -336,7 +336,7 @@ void ManageConnectionWidget::restoreConnections()
 void ManageConnectionWidget::updateTabStates()
 {
     bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         switch (iface->type()) {
             case NetworkManager::Device::Ethernet:
                 hasWired = true;
@@ -345,7 +345,7 @@ void ManageConnectionWidget::updateTabStates()
                 hasWireless = true;
                 break;
             case NetworkManager::Device::Modem: {
-                const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
+                const NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
                 if (nmModemIface) {
                     switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                         case NetworkManager::ModemDevice::Pots:
@@ -770,7 +770,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
     foreach(QTreeWidgetItem * t, mUuidItemHash.values()) {
         t->setText(ConnectionStateColumn, QString());
     }
-    foreach(const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+    foreach(const NetworkManager::ActiveConnection::Ptr &ac, NetworkManager::activeConnections()) {
         QString activeConnection = '{' + ac->connection()->uuid() + '}';
         item = mUuidItemHash.value(activeConnection);
         if (item != 0 && ac->state() == NetworkManager::ActiveConnection::Activated) {

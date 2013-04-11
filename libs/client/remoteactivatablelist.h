@@ -44,9 +44,9 @@ public:
      * @param interface the NetworkManager::Device state
      * @param activatables the RemoteActivatableList of all connections
      */
-    RemoteInterfaceConnection* connectionForInterface(NetworkManager::Device *interface);
+    RemoteInterfaceConnection* connectionForInterface(const NetworkManager::Device::Ptr &interface);
 
-    static bool isConnectionForInterface(RemoteActivatable *activatable, NetworkManager::Device *interface);
+    static bool isConnectionForInterface(RemoteActivatable *activatable, const NetworkManager::Device::Ptr &interface);
 
 Q_SIGNALS:
     void activatableAdded(RemoteActivatable*, int);

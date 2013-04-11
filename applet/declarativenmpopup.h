@@ -44,7 +44,7 @@ public:
     QHash<QString, DeclarativeInterfaceItem*> m_interfaces;
 
 private:
-    void addInterfaceInternal(NetworkManager::Device *);
+    void addInterfaceInternal(const NetworkManager::Device::Ptr &);
 
 public Q_SLOTS:
     void updateWireless(bool checked);

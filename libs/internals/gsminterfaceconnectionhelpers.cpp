@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::GsmInterfaceConnection* GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
-        NetworkManager::ModemDevice *interface,
+        const NetworkManager::ModemDevice::Ptr &interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     GsmInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -50,7 +50,7 @@ void GsmInterfaceConnectionHelpers::syncGsmInterfaceConnection(GsmInterfaceConne
 }
 
 GsmInterfaceConnectionBuilder::GsmInterfaceConnectionBuilder(
-                    NetworkManager::ModemDevice *interface,
+                    const NetworkManager::ModemDevice::Ptr &interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -84,12 +84,13 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
         kDebug() << "Loading ModemManager backend";
     }
 
-    ModemManager::ModemGsmNetworkInterface * modemNetworkIface = m_interface->getModemNetworkIface();
+    ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+    modemNetworkIface = m_interface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
     if (modemNetworkIface) {
-        QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), ic, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
-        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), ic, SLOT(setEnabled(bool)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(signalQualityChanged(uint)), ic, SLOT(setSignalQuality(uint)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface.data(), SIGNAL(enabledChanged(bool)), ic, SLOT(setEnabled(bool)));
 
         ic->m_enabled = modemNetworkIface->enabled();
         if (ic->m_enabled) {

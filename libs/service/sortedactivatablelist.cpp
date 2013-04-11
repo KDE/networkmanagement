@@ -96,7 +96,7 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
     if (!d->activatables.contains(activatable)) {
-        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(activatable->deviceUni());
+        NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(activatable->deviceUni());
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
@@ -255,8 +255,8 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
-    NetworkManager::Device * firstIface = NetworkManager::findNetworkInterface(first->deviceUni());
-    NetworkManager::Device * secondIface = NetworkManager::findNetworkInterface(second->deviceUni());
+    NetworkManager::Device::Ptr firstIface = NetworkManager::findNetworkInterface(first->deviceUni());
+    NetworkManager::Device::Ptr secondIface = NetworkManager::findNetworkInterface(second->deviceUni());
 
     if (firstIface != 0 && secondIface != 0) {
         if (firstIface->type() == secondIface->type()) {

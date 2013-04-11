@@ -73,7 +73,7 @@ DeclarativeNMPopup::DeclarativeNMPopup(RemoteActivatableList * activatableList, 
     connect(NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
             this, SLOT(managerWwanHardwareEnabledChanged(bool)));
 
-    foreach(NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach(const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         addInterfaceInternal(iface);
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
@@ -123,7 +123,7 @@ void DeclarativeNMPopup::interfaceAdded(const QString& uni)
     if (m_interfaces.contains(uni)) {
         return;
     }
-    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(uni);
     if (iface) {
         kDebug() << "Interface Added:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
         addInterfaceInternal(iface);
@@ -136,7 +136,7 @@ void DeclarativeNMPopup::interfaceRemoved(const QString& uni)
         // To prevent crashes when the interface removed is the one in interfaceDetailsWidget.
         // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
         if (m_interfaceDetails && uni == m_interfaceDetails->getLastIfaceUni()) {
-            m_interfaceDetails->setInterface(0, false);
+            m_interfaceDetails->setInterface(NetworkManager::Device::Ptr(), false);
         }
         DeclarativeInterfaceItem* item = m_interfaces.take(uni);
         interfaceListModel->removeItem(item);
@@ -164,7 +164,7 @@ void DeclarativeNMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 
 void DeclarativeNMPopup::addVpnInterface()
 {
-    m_vpnItem = new DeclarativeInterfaceItem(0, m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
+    m_vpnItem = new DeclarativeInterfaceItem(NetworkManager::Device::Ptr(), m_activatables, DeclarativeInterfaceItem::InterfaceName, this);
     interfaceListModel->appendRow(m_vpnItem);
 }
 
@@ -178,7 +178,7 @@ void DeclarativeNMPopup::manageConnections()
 
 void DeclarativeNMPopup::manageSelection()
 {
-    listModel->setDeviceToFilter(0);
+    listModel->setDeviceToFilter();
 }
 
 void DeclarativeNMPopup::updateWireless(bool checked)
@@ -313,7 +313,7 @@ void DeclarativeNMPopup::readConfig()
     }
 }
 
-void DeclarativeNMPopup::addInterfaceInternal(NetworkManager::Device *iface)
+void DeclarativeNMPopup::addInterfaceInternal(const NetworkManager::Device::Ptr &iface)
 {
     if (!iface) {
         // the interface might be gone in the meantime...
@@ -342,7 +342,7 @@ void DeclarativeNMPopup::updateHasWwan()
 {
     bool hasWwan = false;
     foreach(DeclarativeInterfaceItem * ifaceitem, m_interfaces) {
-        NetworkManager::ModemDevice* iface = qobject_cast<NetworkManager::ModemDevice *>(ifaceitem->interface());
+        NetworkManager::ModemDevice::Ptr iface = ifaceitem->interface().objectCast<NetworkManager::ModemDevice>();
         if (iface) {
             hasWwan = true;
             break;

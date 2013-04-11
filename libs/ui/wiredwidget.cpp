@@ -53,10 +53,10 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
     d->ui.mtu->setSuffix(ki18ncp("@label:textbox", " byte", " bytes"));
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Ethernet) {
             QString deviceText = UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames);
-            NetworkManager::WiredDevice * wired = static_cast<NetworkManager::WiredDevice*>(iface);
+            NetworkManager::WiredDevice::Ptr wired = iface.objectCast<NetworkManager::WiredDevice>();
             d->ui.cmbMacAddress->addItem(deviceText, UiUtils::macAddressFromString(wired->permanentHardwareAddress()));
         }
     }

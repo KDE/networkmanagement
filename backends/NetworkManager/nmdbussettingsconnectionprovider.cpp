@@ -262,12 +262,13 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
             // look up the active connection (a real connection, not this vpn that is being activated)
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
-            foreach (const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+            foreach (const NetworkManager::ActiveConnection::Ptr &ac, NetworkManager::activeConnections()) {
                 if ( ac->default4() && ac->state() == NetworkManager::ActiveConnection::Activated) {
                     activeConnPath = ac->path();
-                    QList<NetworkManager::Device *> devs = ac->devices();
-                    if (!devs.isEmpty()) {
-                        deviceToActivateOn = devs.first()->uni();
+
+                    QStringList devices = ac->devices();
+                    if (!devices.isEmpty()) {
+                        deviceToActivateOn = devices.first();
                     }
                 }
             }
@@ -283,12 +284,14 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
         }
 
         // Enable modem before connecting.
-        NetworkManager::ModemDevice *iface = qobject_cast<NetworkManager::ModemDevice *>(NetworkManager::findNetworkInterface(deviceToActivateOn));
+        NetworkManager::Device::Ptr device = NetworkManager::findNetworkInterface(deviceToActivateOn);
+        NetworkManager::ModemDevice::Ptr iface = device.objectCast<NetworkManager::ModemDevice>();
         if (iface) {
-            ModemManager::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            ModemManager::ModemGsmCardInterface::Ptr modem;
+            modem = iface->getModemCardIface().objectCast<ModemManager::ModemGsmCardInterface>();
             if (modem && !modem->enabled()) {
                 // Try to pin-unlock the modem.
-                QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
+                QMetaObject::invokeMethod(modem.data(), "unlockRequiredChanged", Qt::DirectConnection,
                                           Q_ARG(QString, modem->unlockRequired()));
             }
         }
@@ -335,7 +338,7 @@ void NMDBusSettingsConnectionProvider::onVpnConnectionActivated(QDBusPendingCall
 void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    NetworkManager::Device *iface = NetworkManager::findNetworkInterface(ic->deviceUni());
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
         iface->disconnectInterface();
     } else { // VPN connections do have NetworkInterface objects.

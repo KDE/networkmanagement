@@ -62,7 +62,7 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
             SIGNAL(deviceRemoved(QString)),
             this, SLOT(deviceRemoved(QString)));
 
-    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         deviceAdded(iface->uni());
     }
 
@@ -70,7 +70,7 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
             SIGNAL(modemAdded(QString)),
             this, SLOT(modemAdded(QString)));
 
-    foreach (ModemManager::ModemInterface * iface, ModemManager::modemInterfaces()) {
+    foreach (const ModemManager::ModemInterface::Ptr &iface, ModemManager::modemInterfaces()) {
         modemAdded(iface->udi());
     }
 }
@@ -84,21 +84,21 @@ void NetworkInterfaceMonitor::deviceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     kDebug();
 
-    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
         if (iface->type() == NetworkManager::Device::Wifi) {
             kDebug() << "Wireless interface added";
-            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WirelessDevice*>(iface), this);
+            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface.objectCast<NetworkManager::WirelessDevice>(), this);
         } else if (iface->type() == NetworkManager::Device::Ethernet) {
             kDebug() << "Wired interface added";
-            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WiredDevice*>(iface), this);
+            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface.objectCast<NetworkManager::WiredDevice>(), this);
         } else if (iface->type() == NetworkManager::Device::Bluetooth) {
             kDebug() << "Bluetooth interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface.objectCast<NetworkManager::ModemDevice>(), this);
         } else if (iface->type() == NetworkManager::Device::Modem) {
             kDebug() << "Gsm interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface.objectCast<NetworkManager::ModemDevice>(), this);
         } else {
             kDebug() << "Unknown interface added: uni == " << uni << "(type == " << iface->type() << ")";
             provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
@@ -120,13 +120,14 @@ void NetworkInterfaceMonitor::deviceRemoved(const QString & uni)
 void NetworkInterfaceMonitor::modemAdded(const QString & udi)
 {
     Q_D(NetworkInterfaceMonitor);
-    ModemManager::ModemGsmCardInterface * modem = qobject_cast<ModemManager::ModemGsmCardInterface *>(ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard));
+    ModemManager::ModemGsmCardInterface::Ptr modem;
+    modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard).objectCast<ModemManager::ModemGsmCardInterface>();
 
     if (!modem) {
         return;
     }
 
-    connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
+    connect(modem.data(), SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
     if (d->dialog || modem->unlockRequired().isEmpty()) {
         return;
@@ -138,7 +139,7 @@ void NetworkInterfaceMonitor::modemAdded(const QString & udi)
     }
 
     // Using queued invocation to prevent kded stalling here until user enters the pin.
-    QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::QueuedConnection,
+    QMetaObject::invokeMethod(modem.data(), "unlockRequiredChanged", Qt::QueuedConnection,
                               Q_ARG(QString, modem->unlockRequired()));
 }
 

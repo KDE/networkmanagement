@@ -35,12 +35,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 #include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),
       m_showMoreItem(new ConnectionItem(0, ConnectionItem::ShowMore, this)),
-      m_device(0),
       m_activatables(activatables),
       hiddenInserted(false),
       m_vpn(false),
@@ -470,7 +468,7 @@ void ConnectionsListModel::setFilter(QVariant tabName)
     updateConnectionsList();
 }
 
-void ConnectionsListModel::setDeviceToFilter(NetworkManager::Device* device, const bool vpn)
+void ConnectionsListModel::setDeviceToFilter(const NetworkManager::Device::Ptr &device, const bool vpn)
 {
     m_device = device;
 
@@ -549,10 +547,10 @@ void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
 {
     QString ssid = ssidParam.toString();
     kDebug() << "ssid is: " << ssid;
-    NetworkManager::WirelessDevice * wiface = 0;
-    foreach(NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    NetworkManager::WirelessDevice::Ptr wiface;
+    foreach(const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi && iface->state() > NetworkManager::Device::Unavailable) {
-            wiface = qobject_cast<NetworkManager::WirelessDevice *>(iface);
+            wiface = iface.objectCast<NetworkManager::WirelessDevice>();
             break;
         }
     }
@@ -564,13 +562,12 @@ void ConnectionsListModel::connectToHiddenNetwork(QVariant ssidParam)
     QStringList args;
     QString moduleArgs;
 
-    NetworkManager::WirelessNetworkInterfaceEnvironment envt(wiface);
-    NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
+    NetworkManager::WirelessNetwork::Ptr network = wiface->findNetwork(ssid);
 
     if (network) {
         moduleArgs = QString::fromLatin1("%1 %2")
                      .arg(wiface->uni())
-                     .arg(network->referenceAccessPoint());
+                     .arg(network->referenceAccessPoint()->uni());
 
     } else {
         moduleArgs = QString::fromLatin1("%1 %2")

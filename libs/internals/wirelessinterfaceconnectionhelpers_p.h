@@ -24,11 +24,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 
 #include "interfaceconnectionhelpers_p.h"
+#include <QtNetworkManager/wirelessdevice.h>
 
 class QObject;
-namespace NetworkManager {
-    class WirelessDevice;
-}
 
 namespace Knm {
 
@@ -38,7 +36,7 @@ class WirelessInterfaceConnection;
 class WirelessInterfaceConnectionBuilder : public InterfaceConnectionBuilder
 {
 public:
-    WirelessInterfaceConnectionBuilder(NetworkManager::WirelessDevice * interface,
+    WirelessInterfaceConnectionBuilder(const NetworkManager::WirelessDevice::Ptr &interface,
                                        Knm::Connection *connection,
                                        const QString & deviceUni,
                                        QObject * parent);
@@ -53,13 +51,13 @@ private:
     Q_DISABLE_COPY(WirelessInterfaceConnectionBuilder)
 
 protected:
-    NetworkManager::WirelessDevice *m_interface;
+    NetworkManager::WirelessDevice::Ptr m_interface;
 };
 
 class HiddenWirelessInterfaceConnectionBuilder : public WirelessInterfaceConnectionBuilder
 {
 public:
-    HiddenWirelessInterfaceConnectionBuilder(NetworkManager::WirelessDevice * interface,
+    HiddenWirelessInterfaceConnectionBuilder(const NetworkManager::WirelessDevice::Ptr &interface,
                                        Knm::Connection *connection,
                                        const QString & deviceUni,
                                        QObject * parent);

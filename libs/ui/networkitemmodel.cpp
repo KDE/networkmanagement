@@ -85,12 +85,12 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
     if (index.row() >= m_networks.size() || index.row() < 0 || index.column() >= s_numColumns || index.column() < 0)
         return QVariant();
 
-    NetworkManager::WirelessNetwork * network  = m_environment->findNetwork(m_networks.value(index.row()));
+    NetworkManager::WirelessNetwork::Ptr network = m_networkInterface->findNetwork(m_networks.value(index.row()));
     if (!network) {
         kDebug() << "Network could not be found.";
         return QVariant();
     }
-    NetworkManager::AccessPoint * ap = 0;
+    NetworkManager::AccessPoint::Ptr ap;
     switch (index.column()) {
         case 0:
             switch (role){
@@ -101,24 +101,24 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
                 case SignalStrength:
                     return network->signalStrength();
                 case EncryptionRole:
-                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
-                    return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+                    ap = network->referenceAccessPoint();
+                    return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::AccessPoint::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
                 case Qt::ToolTipRole:
-                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    ap = network->referenceAccessPoint();
                     if (ap) {
-                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::AccessPoint::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
                     } else {
                         return QVariant();
                     }
                 case MacAddress:
-                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    ap = network->referenceAccessPoint();
                     if (ap) {
                         return ap->hardwareAddress();
                     } else {
                         return QVariant();
                     }
                 case Band:
-                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    ap = network->referenceAccessPoint();
                     if (ap) {
                         int freq = ap->frequency();
                         return UiUtils::findBandAndChannel(freq).first;
@@ -126,7 +126,7 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
                         return QVariant();
                     }
                 case Channel:
-                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    ap = network->referenceAccessPoint();
                     if (ap) {
                         int freq = ap->frequency();
                         return UiUtils::findBandAndChannel(freq).second;
@@ -142,33 +142,33 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
             else
                 return QVariant();
         case 2:
-            ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+            ap = network->referenceAccessPoint();
             if (role == Qt::DisplayRole) {
                     if (ap) {
-                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::AccessPoint::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
                     } else {
                         return QVariant();
                     }
             } else if (role ==  Qt::DecorationRole) {
-                return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+                return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::AccessPoint::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
             }
             else
                 return QVariant();
         case 3:
             if (role == Qt::DisplayRole) {
-                ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                ap = network->referenceAccessPoint();
                 int freq = ap->frequency();
                 return UiUtils::wirelessBandToString(UiUtils::findBandAndChannel(freq).first);
             }
         case 4:
             if (role == Qt::DisplayRole) {
-                ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                ap = network->referenceAccessPoint();
                 int freq = ap->frequency();
                 return QString("%1 (%2 MHz)").arg(UiUtils::findBandAndChannel(freq).second).arg(freq);
             }
         case 5:
             if (role ==  Qt::DisplayRole)
-                return m_networkInterface->findAccessPoint(network->referenceAccessPoint())->hardwareAddress();
+                return network->referenceAccessPoint()->hardwareAddress();
             else
                 return QVariant();
         default:
@@ -216,21 +216,20 @@ void NetworkItemModel::setNetworkInterface(const QString &uni)
     }
 
     kDebug() << "Requesting the interface: " << uni;
-    NetworkManager::Device *networkInterface = NetworkManager::findNetworkInterface(uni);
-    if (networkInterface == 0) {
+    NetworkManager::Device::Ptr networkInterface = NetworkManager::findNetworkInterface(uni);
+    if (networkInterface.isNull()) {
         kDebug() << "Could not create a valid network interface.";
-        m_networkInterface=0;
+        m_networkInterface.clear();
         return;
     } else if (networkInterface->type() != NetworkManager::Device::Wifi) {
         kDebug() << "Network Interface is not of type IEEE 80211";
-        m_networkInterface=0;
+        m_networkInterface.clear();
         return;
     }
-    m_networkInterface = static_cast<NetworkManager::WirelessDevice*>(networkInterface);
-    m_environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(m_networkInterface);
+    m_networkInterface = networkInterface.objectCast<NetworkManager::WirelessDevice>();
     scan();
-    connect(m_environment, SIGNAL(networkAppeared(QString)), this, SLOT(networkAdded(QString)));
-    connect(m_environment, SIGNAL(networkDisappeared(QString)), this, SLOT(networkRemoved(QString)));
+    connect(m_networkInterface.data(), SIGNAL(networkAppeared(QString)), this, SLOT(networkAdded(QString)));
+    connect(m_networkInterface.data(), SIGNAL(networkDisappeared(QString)), this, SLOT(networkRemoved(QString)));
 }
 
 void NetworkItemModel::scan()
@@ -240,10 +239,14 @@ void NetworkItemModel::scan()
     kDebug() << "Scan complete.";
     reset();
 
-    if (m_networkInterface == 0) {
+    if (m_networkInterface.isNull()) {
         kDebug() << "Primary interface not set.";
+        return;
     }
-    m_networks = m_environment->networks();
+
+    foreach (const NetworkManager::WirelessNetwork::Ptr &network, m_networkInterface->networks()) {
+        m_networks << network->ssid();
+    }
 
     kDebug() << m_networks.size() << " access points were found.";
     if (m_networks.size() == 0) {

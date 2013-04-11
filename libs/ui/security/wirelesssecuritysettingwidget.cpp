@@ -117,10 +117,9 @@ public:
     Knm::Security8021xSetting * setting8021x;
 };
 
-WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
-        Knm::Connection * connection,
-        NetworkManager::WirelessDevice * iface,
-        NetworkManager::AccessPoint * ap,
+WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(Knm::Connection * connection,
+        const NetworkManager::WirelessDevice::Ptr &iface,
+        const NetworkManager::AccessPoint::Ptr ap,
         QWidget * parent)
 : SettingWidget(*new WirelessSecuritySettingWidgetPrivate, connection, parent)
 {
@@ -136,7 +135,7 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     setIfaceAndAccessPoint(iface, ap);
 }
 
-void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(NetworkManager::WirelessDevice * iface, NetworkManager::AccessPoint * ap)
+void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, const NetworkManager::AccessPoint::Ptr &ap)
 {
     Q_D(WirelessSecuritySettingWidget);
     d->clearSecurityWidgets();
@@ -153,14 +152,14 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(NetworkManager::Wirel
         ifaceCaps = iface->wirelessCapabilities();
         if (ap) {
             apCaps = ap->capabilities();
-            adhoc = (ap->mode() == NetworkManager::WirelessDevice::Adhoc);
+            adhoc = (ap->mode() == NetworkManager::AccessPoint::Adhoc);
             apWpa = ap->wpaFlags();
             apRsn = ap->rsnFlags();
         }
     } else {
-        foreach (NetworkManager::Device * candidate , NetworkManager::networkInterfaces()) {
+        foreach (const NetworkManager::Device::Ptr &candidate , NetworkManager::networkInterfaces()) {
             if (candidate->type() == NetworkManager::Device::Wifi) {
-                NetworkManager::WirelessDevice * wirelessIface = qobject_cast<NetworkManager::WirelessDevice*>(candidate);
+                NetworkManager::WirelessDevice::Ptr wirelessIface = candidate.objectCast<NetworkManager::WirelessDevice>();
                 if (wirelessIface) {
                     ifaceCaps |= wirelessIface->wirelessCapabilities();
                 }

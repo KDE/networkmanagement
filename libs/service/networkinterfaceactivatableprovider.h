@@ -59,10 +59,10 @@ class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual p
 {
 Q_OBJECT
 public:
-    static bool hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface);
+    static bool hardwareAddressMatches(Knm::Connection * connection, const NetworkManager::Device::Ptr &iface);
     static bool matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType, NetworkManager::ModemDevice::Capabilities modemCaps = NetworkManager::ModemDevice::NoCapability);
 
-    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent);
+    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::Device::Ptr &interface, QObject * parent);
     virtual ~NetworkInterfaceActivatableProvider();
 
     /**

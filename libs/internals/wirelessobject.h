@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSOBJECT_H
 
 #include <QString>
-#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "knminternals_export.h"
 
@@ -31,7 +31,7 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessObject
 {
 public:
-    WirelessObject(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode);
+    WirelessObject(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::AccessPoint::OperationMode mode);
     virtual ~WirelessObject();
     QString ssid() const;
     int strength() const;
@@ -40,7 +40,7 @@ public:
     NetworkManager::AccessPoint::Capabilities apCapabilities() const;
     NetworkManager::AccessPoint::WpaFlags wpaFlags() const;
     NetworkManager::AccessPoint::WpaFlags rsnFlags() const;
-    NetworkManager::WirelessDevice::OperationMode operationMode() const;
+    NetworkManager::AccessPoint::OperationMode operationMode() const;
     virtual void strengthChanged(int) = 0;
 
 protected:
@@ -53,7 +53,7 @@ protected:
     NetworkManager::AccessPoint::Capabilities m_apCapabilities;
     NetworkManager::AccessPoint::WpaFlags m_wpaFlags;
     NetworkManager::AccessPoint::WpaFlags m_rsnFlags;
-    NetworkManager::WirelessDevice::OperationMode m_operationMode;
+    NetworkManager::AccessPoint::OperationMode m_operationMode;
 };
 
 } // namespace Knm

@@ -35,17 +35,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class GsmNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::ModemDevice * theInterface)
+    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, const NetworkManager::ModemDevice::Ptr &theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    NetworkManager::ModemDevice * gsmInterface() const
+    NetworkManager::ModemDevice::Ptr gsmInterface() const
     {
-        return qobject_cast<NetworkManager::ModemDevice*>(interface);
+        return interface.objectCast<NetworkManager::ModemDevice>();
     }
 };
 
-GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::ModemDevice * interface, QObject * parent)
+GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::ModemDevice::Ptr &interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new GsmNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
 }

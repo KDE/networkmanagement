@@ -90,7 +90,7 @@ private:
     KComboBox * mDeviceComboBox;
     void introAddInitialDevices();
     void introRemoveAllDevices();
-    void introAddDevice(NetworkManager::Device *device);
+    void introAddDevice(const NetworkManager::Device::Ptr &device);
 
     // Country page
     QListWidget * mCountryList;

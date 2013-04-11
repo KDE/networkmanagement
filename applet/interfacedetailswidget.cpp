@@ -246,10 +246,10 @@ void InterfaceDetailsWidget::resetInterfaceDetails()
 {
     delete details;
     details = new InterfaceDetails();
-    NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+    NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        giface->setModemCardIface(0);
-        giface->setModemNetworkIface(0);
+        giface->clearModemCardIface();
+        giface->clearModemNetworkIface();
     }
     getDetails();
     showDetails();
@@ -276,10 +276,10 @@ void InterfaceDetailsWidget::getDetails()
     details->mac = getMAC();
     details->driver = m_iface->driver();
 
-    NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(m_iface);
+    NetworkManager::WirelessDevice::Ptr wiface = m_iface.objectCast<NetworkManager::WirelessDevice>();
     if (wiface) {
         details->activeAccessPoint = wiface->activeAccessPoint();
-        NetworkManager::AccessPoint *ap = wiface->findAccessPoint(details->activeAccessPoint);
+        NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(details->activeAccessPoint);
         if (ap) {
             details->wifiChannelFrequency = ap->frequency();
             QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
@@ -294,9 +294,10 @@ void InterfaceDetailsWidget::getDetails()
         details->activeAccessPoint.clear();
     }
 
-    NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+    NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+        ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+        modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
         if (modemNetworkIface) {
             details->registrationInfo = modemNetworkIface->getRegistrationInfo();
             details->signalQuality = modemNetworkIface->getSignalQuality();
@@ -312,7 +313,8 @@ void InterfaceDetailsWidget::getDetails()
             details->unlockRequired = modemNetworkIface->unlockRequired();
         }
 
-        ModemManager::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+        ModemManager::ModemGsmCardInterface::Ptr modemCardIface;
+        modemCardIface = giface->getModemCardIface().objectCast<ModemManager::ModemGsmCardInterface>();
         if (modemCardIface) {
             details->imei = modemCardIface->getImei();
             details->imsi = modemCardIface->getImsi();
@@ -322,7 +324,7 @@ void InterfaceDetailsWidget::getDetails()
 
 QString InterfaceDetailsWidget::connectionStateToString(NetworkManager::Device::State state, const QString &connectionName)
 {
-    NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+    NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface && !details->enabled) {
         return i18nc("state of mobile broadband connection", "not enabled");
     }
@@ -341,9 +343,9 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
     m_disconnectButton->setVisible(details->connectionState == NetworkManager::Device::Activated);
     if (!reset && m_iface) {
-        NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(m_iface);
-        NetworkManager::AccessPoint *ap = 0;
-        NetworkManager::ModemDevice *giface = 0;
+        NetworkManager::WirelessDevice::Ptr wiface = m_iface.objectCast<NetworkManager::WirelessDevice>();
+        NetworkManager::AccessPoint::Ptr ap;
+        NetworkManager::ModemDevice::Ptr giface;
 
         if (wiface) {
             ap = wiface->findAccessPoint(details->activeAccessPoint);
@@ -355,7 +357,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
                 details->wifiChannel = bandAndChannel.second;
             }
         } else {
-            giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+            giface = m_iface.objectCast<NetworkManager::ModemDevice>();
         }
 
         foreach (const QString & key, details->keys) {
@@ -427,13 +429,11 @@ int InterfaceDetailsWidget::bitRate()
     int bitRate = 0;
 
     //wifi?
-    NetworkManager::WirelessDevice * wliface =
-                    qobject_cast<NetworkManager::WirelessDevice*>(m_iface);
+    NetworkManager::WirelessDevice::Ptr wliface = m_iface.objectCast<NetworkManager::WirelessDevice>();
     if (wliface) {
         bitRate = wliface->bitRate(); //Bit
     } else {     // wired?
-        NetworkManager::WiredDevice * wdiface =
-                                    qobject_cast<NetworkManager::WiredDevice*> (m_iface);
+        NetworkManager::WiredDevice::Ptr wdiface = m_iface.objectCast<NetworkManager::WiredDevice>();
         if (wdiface) {
             bitRate = wdiface->bitRate();
         }
@@ -583,7 +583,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
     if ((new_state == NetworkManager::Device::Unavailable || new_state == NetworkManager::Device::Unmanaged || new_state == NetworkManager::Device::UnknownState) &&
         (reason == NetworkManager::Device::UnknownReason ||
          reason == NetworkManager::Device::DeviceRemovedReason)) {
-        setInterface(0, false);
+        setInterface(NetworkManager::Device::Ptr(), false);
         emit back();
     } else {
         updateIPv4Details();
@@ -592,8 +592,8 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
             QString interfaceName = m_iface->ipInterfaceName();
             if (interfaceName != details->interfaceName) {
                 // Hack to force updating interfaceName and traffic plot source.
-                NetworkManager::Device *temp = m_iface;
-                m_iface = 0;
+                NetworkManager::Device::Ptr temp = m_iface;
+                m_iface.clear();
                 kDebug() << "Reseting interface " << temp->uni() << "(" << interfaceName << ")";
                 setInterface(temp);
                 setUpdateEnabled(m_updateEnabled);
@@ -605,7 +605,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
     }
 }
 
-void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool disconnectOld)
+void InterfaceDetailsWidget::setInterface(const NetworkManager::Device::Ptr &iface, bool disconnectOld)
 {
     kDebug() << "entered to set interface";
     m_speedUnit = KNetworkManagerServicePrefs::self()->networkSpeedUnit();
@@ -663,8 +663,7 @@ void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool di
 QString InterfaceDetailsWidget::getMAC()
 {
     //wifi?
-    NetworkManager::WirelessDevice * wliface =
-                    qobject_cast<NetworkManager::WirelessDevice *>(m_iface);
+    NetworkManager::WirelessDevice::Ptr wliface = m_iface.objectCast<NetworkManager::WirelessDevice>();
     if (wliface) {
         return wliface->hardwareAddress();
         /*
@@ -676,15 +675,13 @@ QString InterfaceDetailsWidget::getMAC()
         }
         */
     } else {
-        NetworkManager::BluetoothDevice * btiface =
-                    qobject_cast<NetworkManager::BluetoothDevice *>(m_iface);
+        NetworkManager::BluetoothDevice::Ptr btiface = m_iface.objectCast<NetworkManager::BluetoothDevice>();
         if (btiface) {
             return btiface->interfaceName();
         }
 
         // wired?
-        NetworkManager::WiredDevice * wdiface =
-                                    qobject_cast<NetworkManager::WiredDevice *> (m_iface);
+        NetworkManager::WiredDevice::Ptr wdiface = m_iface.objectCast<NetworkManager::WiredDevice>();
         if (wdiface) {
             return wdiface->hardwareAddress();
         } else {
@@ -727,34 +724,35 @@ void InterfaceDetailsWidget::connectSignals()
     if (!m_iface) {
         return;
     }
-    connect(m_iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
+    connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
 
     if (m_iface->type() == NetworkManager::Device::Ethernet ||
         m_iface->type() == NetworkManager::Device::Wifi) {
-        connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
+        connect(m_iface.data(), SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
         if (m_iface->type() == NetworkManager::Device::Wifi) {
-            connect(m_iface, SIGNAL(activeAccessPointChanged(QString)), this, SLOT(updateActiveAccessPoint(QString)));
+            connect(m_iface.data(), SIGNAL(activeAccessPointChanged(QString)), this, SLOT(updateActiveAccessPoint(QString)));
         }
     }
     if (m_iface->type() == NetworkManager::Device::Modem ||
         m_iface->type() == NetworkManager::Device::Bluetooth
        ) {
-            NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+            NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
 
             if (giface) {
-                ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+                ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+                modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
                 if (modemNetworkIface) {
                     // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
                     connect(ModemManager::notifier(), SIGNAL(modemRemoved(QString)), this, SLOT(resetInterfaceDetails()));
-                    connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
-                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
+                    connect(modemNetworkIface.data(), SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
+                    connect(modemNetworkIface.data(), SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
 
-                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)));
-                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
-                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
-                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(ModemManager::ModemInterface::AllowedMode)));
+                    connect(modemNetworkIface.data(), SIGNAL(registrationInfoChanged(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)));
+                    connect(modemNetworkIface.data(), SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+                    connect(modemNetworkIface.data(), SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
+                    connect(modemNetworkIface.data(), SIGNAL(allowedModeChanged(ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(ModemManager::ModemInterface::AllowedMode)));
                 }
             }
     }
@@ -766,18 +764,19 @@ void InterfaceDetailsWidget::disconnectSignals()
         return;
     }
 
-    disconnect(m_iface, 0, this, 0);
+    disconnect(m_iface.data(), 0, this, 0);
 
     if (m_iface && (m_iface->type() == NetworkManager::Device::Modem
                  || m_iface->type() == NetworkManager::Device::Bluetooth
        )) {
-        NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+        NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
 
         if (giface) {
-            ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+            ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+            modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
 
             if (modemNetworkIface) {
-                disconnect(modemNetworkIface, 0, this, 0);
+                disconnect(modemNetworkIface.data(), 0, this, 0);
             }
         }
     }
@@ -806,7 +805,7 @@ void InterfaceDetailsWidget::updateIPv4Details()
         details->ipv4Address = addr.toString();
     }
 
-    NetworkManager::Dhcp4Config *dhcp4Config = m_iface->dhcp4Config();
+    NetworkManager::Dhcp4Config::Ptr dhcp4Config = m_iface->dhcp4Config();
     if (dhcp4Config) {
         details->ipv4Gateway = dhcp4Config->optionValue("routers");
     } else if (!m_iface->ipV4Config().routes().isEmpty()) {
@@ -846,9 +845,10 @@ void InterfaceDetailsWidget::modemUpdateUnlockRequired(const QString & codeRequi
 
 void InterfaceDetailsWidget::modemUpdateBand()
 {
-    NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
+    NetworkManager::ModemDevice::Ptr giface = m_iface.objectCast<NetworkManager::ModemDevice>();
     if (giface) {
-        ModemManager::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+        ModemManager::ModemGsmNetworkInterface::Ptr modemNetworkIface;
+        modemNetworkIface = giface->getModemNetworkIface().objectCast<ModemManager::ModemGsmNetworkInterface>();
         if (modemNetworkIface) {
             details->band = modemNetworkIface->getBand();
         }

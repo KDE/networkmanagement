@@ -183,7 +183,8 @@ void Bluetooth::init()
 void Bluetooth::modemAdded(const QString &udi)
 {
     kDebug(KDE_DEFAULT_DEBUG_AREA);
-    ModemManager::ModemInterface *modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard);
+    ModemManager::ModemInterface::Ptr modem;
+    modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard);
 
     if (!modem) {
         // Try CDMA if no GSM device has been found.

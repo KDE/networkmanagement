@@ -22,13 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSSECURITYSETTINGWIDGET_H
 
 #include "settingwidget.h"
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "knm_export.h"
 
 namespace NetworkManager
 {
     class AccessPoint;
-    class WirelessDevice;
 } // namespace NetworkManager
 
 namespace Knm
@@ -48,15 +48,15 @@ public:
      * rsn
      */
     explicit WirelessSecuritySettingWidget(Knm::Connection * connection,
-            NetworkManager::WirelessDevice * iface = 0,
-            NetworkManager::AccessPoint * ap = 0,
+            const NetworkManager::WirelessDevice::Ptr &iface,
+            const NetworkManager::AccessPoint::Ptr ap,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 public Q_SLOTS:
-    void setIfaceAndAccessPoint(NetworkManager::WirelessDevice * iface, NetworkManager::AccessPoint * ap);
+    void setIfaceAndAccessPoint(const NetworkManager::WirelessDevice::Ptr &iface, const NetworkManager::AccessPoint::Ptr &ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
     void validate();

@@ -43,7 +43,7 @@ Q_OBJECT
         * @param item takes ownership of the WirelessStatus
         */
         WirelessStatus(RemoteWirelessNetwork* remote);
-        WirelessStatus(NetworkManager::WirelessDevice* iface);
+        WirelessStatus(const NetworkManager::WirelessDevice::Ptr &wiface);
         ~WirelessStatus();
         void init(RemoteWirelessObject* obj);
         RemoteActivatable* activatable();

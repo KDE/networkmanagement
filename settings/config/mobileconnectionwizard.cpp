@@ -91,9 +91,9 @@ void MobileConnectionWizard::initializePage(int id)
             }
 
             if (!mInitialMethodType) {
-                NetworkManager::Device *iface = NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+                NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
                 if (iface) {
-                    const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
+                    NetworkManager::ModemDevice::Ptr nmModemIface = iface.objectCast<NetworkManager::ModemDevice>();
                     if (nmModemIface && UiUtils::modemSubType(nmModemIface->currentCapabilities()) == NetworkManager::ModemDevice::CdmaEvdo) {
                         mType = Knm::Connection::Cdma;
                     } else {
@@ -290,11 +290,12 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
     return page;
 }
 
-void MobileConnectionWizard::introAddDevice(NetworkManager::Device *device)
+void MobileConnectionWizard::introAddDevice(const NetworkManager::Device::Ptr &device)
 {
     QString desc;
 
-    ModemManager::ModemInterface *modem = ModemManager::findModemInterface(device->udi(), ModemManager::ModemInterface::GsmCard);
+    ModemManager::ModemInterface::Ptr modem;
+    modem = ModemManager::findModemInterface(device->udi(), ModemManager::ModemInterface::GsmCard);
     if (modem) {
         if (modem->enabled()) {
             desc.append(modem->getInfo().manufacturer);
@@ -315,7 +316,7 @@ void MobileConnectionWizard::introAddDevice(NetworkManager::Device *device)
         }
     }
 
-    const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(device);
+    NetworkManager::ModemDevice::Ptr nmModemIface = device.objectCast<NetworkManager::ModemDevice>();
     if (!nmModemIface) {
         return;
     }
@@ -382,8 +383,8 @@ void MobileConnectionWizard::introStatusChanged(NetworkManager::Status status)
 
 void MobileConnectionWizard::introAddInitialDevices()
 {
-    foreach(NetworkManager::Device *n, NetworkManager::networkInterfaces()) {
-        introAddDevice(n);
+    foreach(const NetworkManager::Device::Ptr &device, NetworkManager::networkInterfaces()) {
+        introAddDevice(device);
     }
 
     if (mDeviceComboBox->count() == NUMBER_OF_STATIC_ENTRIES) {

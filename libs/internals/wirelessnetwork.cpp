@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessNetwork::WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode, const QString & deviceUni, QObject * parent)
+WirelessNetwork::WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::AccessPoint::OperationMode mode, const QString & deviceUni, QObject * parent)
 : Activatable(Activatable::WirelessNetwork, deviceUni, parent), WirelessObject(ssid, strength, interfaceCapabilities, apCapabilities, wpaFlags, rsnFlags, mode)
 {
 }

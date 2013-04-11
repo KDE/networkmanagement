@@ -34,10 +34,9 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (const NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+    foreach (const NetworkManager::Device::Ptr &iface, NetworkManager::networkInterfaces()) {
         if (iface->type() == NetworkManager::Device::Wifi) {
-
-            const NetworkManager::WirelessDevice * wiface = static_cast<const NetworkManager::WirelessDevice*>(iface);
+            const NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
         }
     }
@@ -117,9 +116,9 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
     return accessPoint;
 }
 
-QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> ScanWidget::currentAccessPointUni()
+QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> ScanWidget::currentAccessPointUni()
 {
-    QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> pair(0, 0);
+    QPair<NetworkManager::WirelessDevice::Ptr, NetworkManager::AccessPoint::Ptr> pair;
     QModelIndex index;
 
     switch (m_stack->currentIndex())
@@ -142,10 +141,10 @@ QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> ScanWidge
         return pair;
     }
 
-    NetworkManager::WirelessDevice * wiface = qobject_cast<NetworkManager::WirelessDevice *>(NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
+    NetworkManager::WirelessDevice::Ptr wiface = NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()).objectCast<NetworkManager::WirelessDevice>();
     if (wiface) {
         foreach(const QString & uni, wiface->accessPoints()) {
-            NetworkManager::AccessPoint * ap = wiface->findAccessPoint(uni);
+            NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(uni);
             if (ap->hardwareAddress() == apMac) {
                 pair.first = wiface;
                 pair.second = ap;

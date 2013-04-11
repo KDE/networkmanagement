@@ -44,8 +44,7 @@ public:
      * This helper builds a GsmInterfaceConnection object from
      * the corresponding Connection object.
      */
-    static Knm::GsmInterfaceConnection * buildGsmInterfaceConnection(
-                       NetworkManager::ModemDevice *interface,
+    static Knm::GsmInterfaceConnection * buildGsmInterfaceConnection(const NetworkManager::ModemDevice::Ptr &interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

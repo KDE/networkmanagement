@@ -100,8 +100,8 @@ QVariantMapMap RemoteConnection::settings() const
 
 bool RemoteConnection::active() const
 {
-    QList<NetworkManager::ActiveConnection *> activeConnections = NetworkManager::activeConnections();
-    foreach (const NetworkManager::ActiveConnection *ac, activeConnections) {
+    NetworkManager::ActiveConnection::List activeConnections = NetworkManager::activeConnections();
+    foreach (const NetworkManager::ActiveConnection::Ptr &ac, activeConnections) {
         if (ac->connection()->path() == path()) {
             return true;
         }

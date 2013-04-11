@@ -76,7 +76,7 @@ void RemoteActivatableList::init()
     }
 }
 
-bool RemoteActivatableList::isConnectionForInterface(RemoteActivatable * activatable, NetworkManager::Device *interface)
+bool RemoteActivatableList::isConnectionForInterface(RemoteActivatable * activatable, const NetworkManager::Device::Ptr &interface)
 {
     if (activatable->deviceUni() == interface->uni()) {
         RemoteInterfaceConnection* remoteconnection = qobject_cast<RemoteInterfaceConnection*>(activatable);
@@ -91,7 +91,7 @@ bool RemoteActivatableList::isConnectionForInterface(RemoteActivatable * activat
 }
 
 
-RemoteInterfaceConnection* RemoteActivatableList::connectionForInterface(NetworkManager::Device *interface)
+RemoteInterfaceConnection* RemoteActivatableList::connectionForInterface(const NetworkManager::Device::Ptr &interface)
 {
     foreach (RemoteActivatable* activatable, activatables()) {
         if (isConnectionForInterface(activatable, interface)) {

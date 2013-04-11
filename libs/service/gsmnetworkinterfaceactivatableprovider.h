@@ -40,7 +40,7 @@ class KNM_EXPORT GsmNetworkInterfaceActivatableProvider : public NetworkInterfac
 {
 Q_OBJECT
 public:
-    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::ModemDevice * interface, QObject * parent);
+    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, const NetworkManager::ModemDevice::Ptr &interface, QObject * parent);
     virtual ~GsmNetworkInterfaceActivatableProvider();
 public slots:
     /**

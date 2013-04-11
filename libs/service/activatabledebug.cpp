@@ -51,7 +51,7 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
     QString string;
 
     QString identifier;
-    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(activatable->deviceUni());
+    NetworkManager::Device::Ptr iface = NetworkManager::findNetworkInterface(activatable->deviceUni());
     if (iface) {
         identifier = iface->interfaceName();
     } else {

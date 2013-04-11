@@ -74,20 +74,20 @@ public:
 
     }
 
-    void init(NetworkManager::WirelessDevice * wiface)
+    void init(const NetworkManager::WirelessDevice::Ptr &wiface)
     {
         iface = wiface;
     }
 
-    QList<NetworkManager::AccessPoint*> availableAccessPoints() const
+    NetworkManager::AccessPoint::List availableAccessPoints() const
     {
-        QList<NetworkManager::AccessPoint*> retVal;
+        NetworkManager::AccessPoint::List retVal;
         if (!iface) {
             return retVal;
         }
-        NetworkManager::AccessPointList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
+        QStringList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
         foreach (const QString &ap, aps) {
-            NetworkManager::AccessPoint *accesspoint = iface->findAccessPoint(ap);
+            NetworkManager::AccessPoint::Ptr accesspoint = iface->findAccessPoint(ap);
             if(accesspoint) {
                 retVal << accesspoint;
             }
@@ -101,8 +101,8 @@ public:
     int strength;
     bool adhoc;
 
-    NetworkManager::WirelessDevice * iface;
-    NetworkManager::AccessPoint * activeAccessPoint;
+    NetworkManager::WirelessDevice::Ptr iface;
+    NetworkManager::AccessPoint::Ptr activeAccessPoint;
     RemoteActivatable* activatable;
 };
 
@@ -129,15 +129,15 @@ void WirelessStatus::init(RemoteWirelessObject* wobj)
     d->init(wobj);
 }
 
-WirelessStatus::WirelessStatus(NetworkManager::WirelessDevice * iface)
+WirelessStatus::WirelessStatus(const NetworkManager::WirelessDevice::Ptr &wiface)
 : QObject(), d_ptr(new WirelessStatusPrivate())
 {
     Q_D(WirelessStatus);
 
-    connect(iface, SIGNAL(activeAccessPointChanged(QString)),
+    connect(wiface.data(), SIGNAL(activeAccessPointChanged(QString)),
         SLOT(activeAccessPointChanged(QString)));
 
-    d->init(iface);
+    d->init(wiface);
     activeAccessPointChanged(d->iface->uni());
 }
 
@@ -200,7 +200,7 @@ void WirelessStatus::activeAccessPointChanged(const QString &uni)
     // this is not called when the device is deactivated..
     if (d->activeAccessPoint) {
         d->activeAccessPoint->disconnect(this);
-        d->activeAccessPoint = 0;
+        d->activeAccessPoint.clear();
     }
     if (uni != "/") {
         d->activeAccessPoint = d->iface->findAccessPoint(uni);
@@ -208,8 +208,8 @@ void WirelessStatus::activeAccessPointChanged(const QString &uni)
             kDebug() << "new:" << d->activeAccessPoint->ssid();
             setStrength(d->activeAccessPoint->signalStrength());
             d->ssid = d->activeAccessPoint->ssid();
-            connect(d->activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(setStrength(int)));
-            connect(d->activeAccessPoint, SIGNAL(destroyed(QObject*)),
+            connect(d->activeAccessPoint.data(), SIGNAL(signalStrengthChanged(int)), SLOT(setStrength(int)));
+            connect(d->activeAccessPoint.data(), SIGNAL(destroyed(QObject*)),
                     SLOT(accessPointDestroyed(QObject*)));
         }
     } else {
@@ -222,7 +222,7 @@ void WirelessStatus::accessPointDestroyed(QObject* ap)
     Q_D(WirelessStatus);
     kDebug() << "*** AP gone ***";
     if (ap == d->activeAccessPoint) {
-        d->activeAccessPoint = 0;
+        d->activeAccessPoint.clear();
         setStrength(0);
     }
 }
