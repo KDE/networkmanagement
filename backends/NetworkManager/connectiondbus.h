@@ -41,11 +41,11 @@ public:
     ConnectionDbus(Knm::Connection *);
     ~ConnectionDbus();
 
-    QVariantMapMap toDbusMap();
-    QVariantMapMap toDbusSecretsMap();
-    QVariantMapMap toDbusSecretsMap(const QString &);
-    void fromDbusMap(const QVariantMapMap&);
-    void fromDbusSecretsMap(const QVariantMapMap&);
+    NMVariantMapMap toDbusMap();
+    NMVariantMapMap toDbusSecretsMap();
+    NMVariantMapMap toDbusSecretsMap(const QString &);
+    void fromDbusMap(const NMVariantMapMap&);
+    void fromDbusSecretsMap(const NMVariantMapMap&);
 private:
     SettingDbus * dbusFor(Knm::Setting *);
     QHash<Knm::Setting*, SettingDbus*> m_dbus;

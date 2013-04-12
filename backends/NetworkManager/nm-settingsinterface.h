@@ -37,7 +37,7 @@ public:
     ~OrgFreedesktopNetworkManagerSettingsInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<> AddConnection(const QVariantMapMap &connection)
+    inline QDBusPendingReply<> AddConnection(const NMVariantMapMap &connection)
     {
         QList<QVariant> argumentList;
         argumentList << qVariantFromValue(connection);

@@ -48,9 +48,9 @@ public:
     virtual ~NMDBusSecretAgent();
     void registerSecretsProvider(SecretsProvider *);
 public Q_SLOTS:
-    QVariantMapMap GetSecrets(const QVariantMapMap&, const QDBusObjectPath&, const QString&, const QStringList&, uint);
-    void SaveSecrets(const QVariantMapMap&, const QDBusObjectPath&);
-    void DeleteSecrets(const QVariantMapMap &, const QDBusObjectPath &);
+    NMVariantMapMap GetSecrets(const NMVariantMapMap&, const QDBusObjectPath&, const QString&, const QStringList&, uint);
+    void SaveSecrets(const NMVariantMapMap&, const QDBusObjectPath&);
+    void DeleteSecrets(const NMVariantMapMap &, const QDBusObjectPath &);
     void CancelGetSecrets(const QDBusObjectPath &, const QString &);
 protected:
     NMDBusSecretAgentPrivate *d_ptr;

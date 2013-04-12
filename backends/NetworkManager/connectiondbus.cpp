@@ -69,7 +69,7 @@ ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
     : m_connection(conn)
 {
     qDBusRegisterMetaType<QList<uint> >();
-    qDBusRegisterMetaType<QVariantMapMap>();
+    qDBusRegisterMetaType<NMVariantMapMap>();
     qDBusRegisterMetaType<QList<QList<uint> > >();
 
     qDBusRegisterMetaType<IpV6AddressMap>();
@@ -140,9 +140,9 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
     return sd;
 }
 
-QVariantMapMap ConnectionDbus::toDbusMap()
+NMVariantMapMap ConnectionDbus::toDbusMap()
 {
-    QVariantMapMap mapMap;
+    NMVariantMapMap mapMap;
     // connection settings
     QVariantMap connectionMap;
 
@@ -241,9 +241,9 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     return mapMap;
 }
 
-QVariantMapMap ConnectionDbus::toDbusSecretsMap()
+NMVariantMapMap ConnectionDbus::toDbusSecretsMap()
 {
-    QVariantMapMap mapMap;
+    NMVariantMapMap mapMap;
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {
         SettingDbus * sd = dbusFor(setting);
@@ -254,9 +254,9 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap()
     return mapMap;
 }
 
-QVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
+NMVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
 {
-    QVariantMapMap mapMap;
+    NMVariantMapMap mapMap;
     foreach (Setting * setting, m_connection->settings()) {
         if (setting->name() == name) {
             SettingDbus * sd = dbusFor(setting);
@@ -267,7 +267,7 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
     return mapMap;
 }
 
-void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
+void ConnectionDbus::fromDbusMap(const NMVariantMapMap &settings)
 {
     // connection settings
     QVariantMap connectionSettings = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
@@ -350,17 +350,17 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 //TODO: Write real fromDbusSecretsMap method, this one is fake, just uses toDbusMap, unite and fromDbusMap
 //correct one must be the exact reverse of toDbusSecretsMap method
 
-void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
+void ConnectionDbus::fromDbusSecretsMap(const NMVariantMapMap &secrets)
 {
     kDebug();
-    QVariantMapMap origs = toDbusMap();
+    NMVariantMapMap origs = toDbusMap();
 
     // WARNING: those debug messages print secrets, do not commit them uncommented.
     //kDebug() << "Printing connection map: ";
     //kDebug() << "Secrets:" << secrets;
     //kDebug() << "Original settings:" << origs;
 
-    QVariantMapMap::const_iterator i;
+    NMVariantMapMap::const_iterator i;
     for (i = secrets.constBegin(); i != secrets.constEnd(); ++i) {
         //kDebug() << "Secret setting name " << i.key();
         QVariantMap secret = i.value();

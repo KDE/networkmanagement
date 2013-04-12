@@ -36,14 +36,14 @@ public:
     QString id() const;
     NetworkManager::Device::Type type() const;
     QString path() const;
-    QVariantMapMap settings() const;
+    NMVariantMapMap settings() const;
     bool active() const;
 //public Q_SLOTS:
-//  settingsUpdated(const QVariantMapMap&);
+//  settingsUpdated(const NMVariantMapMap&);
 private:
     QString m_id;
     NetworkManager::Device::Type m_type;
-    QVariantMapMap m_connection;
+    NMVariantMapMap m_connection;
     QString m_path;
 };
 

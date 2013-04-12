@@ -93,7 +93,7 @@ NetworkManager::Device::Type RemoteConnection::type() const
     return m_type;
 }
 
-QVariantMapMap RemoteConnection::settings() const
+NMVariantMapMap RemoteConnection::settings() const
 {
     return m_connection;
 }

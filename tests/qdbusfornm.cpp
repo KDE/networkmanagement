@@ -117,8 +117,8 @@ static void printArg(const QVariant &v)
 
         }
         else if (arg.currentSignature() == QLatin1String("a{sa{sv}}")) {
-            QVariantMapMap t = qdbus_cast<QVariantMapMap>(arg);
-            QVariantMapMap::ConstIterator it = t.constBegin();
+            NMVariantMapMap t = qdbus_cast<NMVariantMapMap>(arg);
+            NMVariantMapMap::ConstIterator it = t.constBegin();
             for ( ; it != t.constEnd(); ++it) {
                 printf("==%s==\n", qPrintable(it.key()));
                 printArg(it.value());
@@ -445,7 +445,7 @@ static void printAllServices(QDBusConnectionInterface *bus)
 
 int main(int argc, char **argv)
 {
-qDBusRegisterMetaType<QVariantMapMap>();
+qDBusRegisterMetaType<NMVariantMapMap>();
 //qDBusRegisterMetaType<QPair<int,int> >();
     QCoreApplication app(argc, argv);
     QStringList args = app.arguments();

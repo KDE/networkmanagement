@@ -61,7 +61,7 @@ NMDBusSecretAgent::~NMDBusSecretAgent()
     delete d;
 }
 
-QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
+NMVariantMapMap NMDBusSecretAgent::GetSecrets(const NMVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
 {
     Q_D(NMDBusSecretAgent);
     // WARNING: do not commit this uncommented.
@@ -101,7 +101,7 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     return connection;
 }
 
-void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
+void NMDBusSecretAgent::SaveSecrets(const NMVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
     Q_UNUSED(connection_path)
     Q_D(NMDBusSecretAgent);
@@ -110,7 +110,7 @@ void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBu
     condbus.fromDbusMap(connection);
     if (d->secretsProvider) {
         ConnectionDbus condbus(con);
-        QVariantMapMap secrets = condbus.toDbusSecretsMap();
+        NMVariantMapMap secrets = condbus.toDbusSecretsMap();
 
         kDebug()<< "Secrets are being saved for connection " << con->uuid();
         d->secretsProvider->saveSecrets(con);
@@ -119,7 +119,7 @@ void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBu
     }
 }
 
-void NMDBusSecretAgent::DeleteSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
+void NMDBusSecretAgent::DeleteSecrets(const NMVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
     Q_UNUSED(connection_path)
     Q_D(NMDBusSecretAgent);
@@ -151,7 +151,7 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, 
             reply = pair.second.createErrorReply(QDBusError::Failed, QString());
         } else {
             ConnectionDbus condbus(con);
-            QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
+            NMVariantMapMap secrets = condbus.toDbusSecretsMap(name);
             reply = pair.second.createReply();
             QVariant arg = QVariant::fromValue(secrets);
             reply << arg;
