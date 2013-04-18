@@ -796,13 +796,10 @@ void InterfaceDetailsWidget::updateIPv4Details()
         return;
     }
 
-    QHostAddress addr;
-    addr.setAddress(ntohl(m_iface->ipV4Address()));
-
-    if (addr.isNull()) {
+    if (m_iface->ipV4Address().isNull()) {
         details->ipv4Address = i18nc("label of the network interface", "IP display error.");
     } else {
-        details->ipv4Address = addr.toString();
+        details->ipv4Address = m_iface->ipV4Address().toString();
     }
 
     NetworkManager::Dhcp4Config::Ptr dhcp4Config = m_iface->dhcp4Config();
