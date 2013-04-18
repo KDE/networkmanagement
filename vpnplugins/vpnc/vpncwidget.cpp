@@ -114,7 +114,7 @@ void VpncSettingWidget::readConfig()
 {
     Q_D(VpncSettingWidget);
     // General settings
-    QStringMap dataMap = d->setting->data();
+    NMStringMap dataMap = d->setting->data();
     //   gateway
     QString gateway = dataMap[NM_VPNC_KEY_GATEWAY];
     if (!gateway.isEmpty()) {
@@ -244,8 +244,8 @@ void VpncSettingWidget::writeConfig()
 
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_VPNC));
 
-    QStringMap data;
-    QStringMap secretData;
+    NMStringMap data;
+    NMStringMap secretData;
 
     // General settings
     //   gateway
@@ -381,7 +381,7 @@ void VpncSettingWidget::writeConfig()
     d->setting->setVpnSecrets(secretData);
 }
 
-uint VpncSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
+uint VpncSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, NMStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {
@@ -401,7 +401,7 @@ uint VpncSettingWidget::handleOnePasswordType(const KComboBox * combo, const QSt
 void VpncSettingWidget::readSecrets()
 {
     Q_D(VpncSettingWidget);
-    QStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap secrets = d->setting->vpnSecrets();
     Knm::Setting::secretsTypes userType;
     Knm::Setting::secretsTypes groupType;
 

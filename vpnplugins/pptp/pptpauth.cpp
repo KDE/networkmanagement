@@ -54,7 +54,7 @@ void PptpAuthWidget::writeConfig()
 {
     Q_D(PptpAuthWidget);
 
-    QStringMap secretData;
+    NMStringMap secretData;
     if (!d->ui.lePassword->text().isEmpty()) {
         secretData.insert(QLatin1String(NM_PPTP_KEY_PASSWORD), d->ui.lePassword->text());
     }

@@ -67,7 +67,7 @@ public:
     Knm::VpnSetting * setting;
     struct openconnect_info *vpninfo;
     QStringList certificateFingerprints;
-    QStringMap secrets;
+    NMStringMap secrets;
     QMutex mutex;
     QWaitCondition workerWaiting;
     OpenconnectAuthWorkerThread *worker;
@@ -135,7 +135,7 @@ void OpenconnectAuthWidget::readConfig()
 {
     Q_D(OpenconnectAuthWidget);
 
-    QStringMap dataMap = d->setting->data();
+    NMStringMap dataMap = d->setting->data();
 
     if (!dataMap[NM_OPENCONNECT_KEY_GATEWAY].isEmpty()) {
         QString gw = dataMap[NM_OPENCONNECT_KEY_GATEWAY];
@@ -276,7 +276,7 @@ void OpenconnectAuthWidget::writeConfig()
 {
     Q_D(OpenconnectAuthWidget);
 
-    QStringMap secretData;
+    NMStringMap secretData;
 
     secretData.unite(d->secrets);
     QString host(openconnect_get_hostname(d->vpninfo));
@@ -293,7 +293,7 @@ void OpenconnectAuthWidget::writeConfig()
     secretData.insert(QLatin1String("certsigs"), d->certificateFingerprints.join("\t"));
     secretData.insert(QLatin1String("autoconnect"), d->ui.chkAutoconnect->isChecked() ? "yes" : "no");
 
-    QStringMap::iterator i = secretData.begin();
+    NMStringMap::iterator i = secretData.begin();
     while (i != secretData.end()) {
         if (i.value().isEmpty())
             i = secretData.erase(i);

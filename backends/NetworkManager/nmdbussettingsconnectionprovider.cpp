@@ -84,7 +84,7 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     d->serviceName = NM_DBUS_SERVICE;
 
     // For VPN connections.
-    qDBusRegisterMetaType<QStringMap>();
+    qDBusRegisterMetaType<NMStringMap>();
 
     initConnections();
     // signal is from parent class

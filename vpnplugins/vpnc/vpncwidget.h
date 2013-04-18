@@ -50,7 +50,7 @@ protected Q_SLOTS:
     void showPasswordsChanged(bool);
 private:
     void fillOnePasswordCombo(KComboBox * combo, Knm::Setting::secretsTypes type);
-    uint handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data);
+    uint handleOnePasswordType(const KComboBox * combo, const QString & key, NMStringMap & data);
     VpncSettingWidgetPrivate * d_ptr;
 };
 

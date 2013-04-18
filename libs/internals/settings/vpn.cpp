@@ -5,7 +5,7 @@
 
 #include "vpn.h"
 
-QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
+QDBusArgument &operator<<(QDBusArgument &argument, const NMStringMap & mydict)
 {
     argument.beginMap( QVariant::String, QVariant::String );
 
@@ -20,7 +20,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
     return argument;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydict)
+const QDBusArgument &operator>>(const QDBusArgument &argument, NMStringMap & mydict)
 {
     argument.beginMap();
     mydict.clear();
@@ -42,12 +42,12 @@ using namespace Knm;
 
 VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {
-  qDBusRegisterMetaType<QStringMap>();
+  qDBusRegisterMetaType<NMStringMap>();
 }
 
 VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
 {
-    qDBusRegisterMetaType<QStringMap>();
+    qDBusRegisterMetaType<NMStringMap>();
 
     setServiceType(setting->serviceType());
     setData(setting->data());
@@ -87,9 +87,9 @@ QStringList VpnSetting::variantMapToStringList(const QVariantMap & map)
     return rawSecrets;
 }
 
-QStringMap VpnSetting::stringMapFromStringList(const QStringList & list)
+NMStringMap VpnSetting::stringMapFromStringList(const QStringList & list)
 {
-    QStringMap map;
+    NMStringMap map;
     if (list.count() % 2 == 0) {
         for ( int i = 0; i < list.count(); i += 2 ) {
             map.insert( list[i], list[i+1] );
@@ -98,10 +98,10 @@ QStringMap VpnSetting::stringMapFromStringList(const QStringList & list)
     return map;
 }
 
-QStringList VpnSetting::stringMapToStringList(const QStringMap & map)
+QStringList VpnSetting::stringMapToStringList(const NMStringMap & map)
 {
     QStringList rawSecrets;
-    QStringMapIterator i(map);
+    NMStringMapIterator i(map);
     while (i.hasNext()) {
         i.next();
         rawSecrets << i.key() << i.value();
@@ -118,7 +118,7 @@ QMap<QString,QString> VpnSetting::secretsToMap() const
 
 void VpnSetting::secretsFromMap(QMap<QString,QString> secrets)
 {
-    QStringMap systemSecrets = vpnSecrets();
+    NMStringMap systemSecrets = vpnSecrets();
     systemSecrets.unite(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
     setVpnSecrets(systemSecrets);
     setSecretsAvailable(true);
@@ -136,7 +136,7 @@ bool VpnSetting::hasPersistentSecrets() const
     return true;
 }
 
-QVariantMap VpnSetting::secretsToSave(const QStringMap & data, const QStringMap & secrets)
+QVariantMap VpnSetting::secretsToSave(const NMStringMap & data, const NMStringMap & secrets)
 {
     QVariantMap toSave;
     QMapIterator<QString,QString> i(secrets);

@@ -26,8 +26,8 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     void secretsFromMap(QMap<QString,QString>);
     static QStringList variantMapToStringList(const QVariantMap &);
     static QVariantMap variantMapFromStringList(const QStringList & list);
-    static QStringMap stringMapFromStringList(const QStringList & list);
-    static QStringList stringMapToStringList(const QStringMap & map);
+    static NMStringMap stringMapFromStringList(const QStringList & list);
+    static QStringList stringMapToStringList(const NMStringMap & map);
     QStringList needSecrets(const bool requestNew = false) const;
     bool hasPersistentSecrets() const;
 
@@ -50,7 +50,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Set Data bits
     */
-    void setData( const QStringMap & v )
+    void setData( const NMStringMap & v )
     {
         mData = v;
     }
@@ -58,7 +58,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Get Data bits
     */
-    QStringMap data() const
+    NMStringMap data() const
     {
       return mData;
     }
@@ -82,7 +82,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Set Vpnsecrets
     */
-    void setVpnSecrets( const QStringMap & v )
+    void setVpnSecrets( const NMStringMap & v )
     {
         mVpnSecrets = v;
     }
@@ -90,7 +90,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Get Vpnsecrets
     */
-    QStringMap vpnSecrets() const
+    NMStringMap vpnSecrets() const
     {
       return mVpnSecrets;
     }
@@ -112,12 +112,12 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     }
 
   protected:
-    static QVariantMap secretsToSave(const QStringMap &, const QStringMap &);
+    static QVariantMap secretsToSave(const NMStringMap &, const NMStringMap &);
     // vpn
     QString mServiceType;
-    QStringMap mData;
+    NMStringMap mData;
     QString mUserName;
-    QStringMap mVpnSecrets;
+    NMStringMap mVpnSecrets;
     QString mPluginName;
 
   private:

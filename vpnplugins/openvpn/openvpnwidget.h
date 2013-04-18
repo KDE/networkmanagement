@@ -62,7 +62,7 @@ private:
     Private * d;
     void setPasswordType(KLineEdit *, int);
     void fillOnePasswordCombo(KComboBox *, Knm::Setting::secretsTypes);
-    uint handleOnePasswordType(const KComboBox *, const QString &, QStringMap &);
+    uint handleOnePasswordType(const KComboBox *, const QString &, NMStringMap &);
 };
 
 #endif // OPENVPNWIDGET_H

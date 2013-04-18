@@ -30,9 +30,9 @@ void VpnPersistence::load()
   setting->setPluginName(m_config->readEntry("PluginName", ""));
 }
 
-QStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
+NMStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
 {
-    QStringMap map;
+    NMStringMap map;
     if (list.count() % 2 == 0) {
         for ( int i = 0; i < list.count(); i += 2 ) {
             map.insert( list[i], list[i+1] );

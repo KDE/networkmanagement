@@ -57,8 +57,8 @@ StrongswanAuthWidget::~StrongswanAuthWidget()
 void StrongswanAuthWidget::readSecrets()
 {
     Q_D(StrongswanAuthWidget);
-    QStringMap dataMap = d->setting->data();
-    QStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap dataMap = d->setting->data();
+    NMStringMap secrets = d->setting->vpnSecrets();
 
     QString method = dataMap[NM_STRONGSWAN_METHOD];
     if (method == QLatin1String(NM_STRONGSWAN_AUTH_AGENT) || dataMap[NM_STRONGSWAN_SECRET_TYPE] == QLatin1String(NM_STRONGSWAN_PW_TYPE_UNUSED)) {
@@ -102,7 +102,7 @@ void StrongswanAuthWidget::writeConfig()
 {
     Q_D(StrongswanAuthWidget);
 
-    QStringMap secretData;
+    NMStringMap secretData;
     if (d->setting->data()[NM_STRONGSWAN_METHOD] == QLatin1String(NM_STRONGSWAN_AUTH_AGENT)) {
         QString agent = QProcessEnvironment::systemEnvironment().value(QLatin1String("SSH_AUTH_SOCK"));
         if (!agent.isEmpty()) {

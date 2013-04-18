@@ -18,7 +18,7 @@ class VpnPersistence : public SettingPersistence
     VpnPersistence( VpnSetting * setting, KSharedConfig::Ptr config, SettingPersistence::SecretStorageMode mode = SettingPersistence::Secure);
     ~VpnPersistence();
     void load();
-    static QStringMap stringMapFromStringList(const QStringList &);
+    static NMStringMap stringMapFromStringList(const QStringList &);
 };
 }
 

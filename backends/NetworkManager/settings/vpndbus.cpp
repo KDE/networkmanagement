@@ -6,7 +6,7 @@
 #include "vpndbus.h"
 #include "vpn.h"
 
-QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
+QDBusArgument &operator<<(QDBusArgument &argument, const NMStringMap & mydict)
 {
     argument.beginMap( QVariant::String, QVariant::String );
 
@@ -21,7 +21,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
     return argument;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydict)
+const QDBusArgument &operator>>(const QDBusArgument &argument, NMStringMap & mydict)
 {
     argument.beginMap();
     mydict.clear();
@@ -41,8 +41,8 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydi
 
 VpnDbus::VpnDbus(Knm::VpnSetting * setting) : SettingDbus(setting)
 {
-    qDBusRegisterMetaType<QStringMap>();
-    qRegisterMetaType<QStringMap>();
+    qDBusRegisterMetaType<NMStringMap>();
+    qRegisterMetaType<NMStringMap>();
 }
 
 VpnDbus::~VpnDbus()
@@ -56,7 +56,7 @@ void VpnDbus::fromMap(const QVariantMap & map)
     setting->setServiceType(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
   }
   if (map.contains(QLatin1String(NM_SETTING_VPN_DATA))) {
-      setting->setData(qdbus_cast<QStringMap>(map.value(QLatin1String(NM_SETTING_VPN_DATA))));
+      setting->setData(qdbus_cast<NMStringMap>(map.value(QLatin1String(NM_SETTING_VPN_DATA))));
   }
 // TODO: check if this property has been deprecated, VPNC and OpenVPN does not use it anymore;
   if (map.contains(QLatin1String(NM_SETTING_VPN_USER_NAME))) {
@@ -64,7 +64,7 @@ void VpnDbus::fromMap(const QVariantMap & map)
   }
   // SECRET
   if (map.contains(QLatin1String(NM_SETTING_VPN_SECRETS))) {
-      setting->setVpnSecrets(qdbus_cast<QStringMap>(map.value(QLatin1String(NM_SETTING_VPN_SECRETS))));
+      setting->setVpnSecrets(qdbus_cast<NMStringMap>(map.value(QLatin1String(NM_SETTING_VPN_SECRETS))));
   }
 }
 

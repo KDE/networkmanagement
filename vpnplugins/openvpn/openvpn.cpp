@@ -167,9 +167,9 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
     }
 
     QVariantList conSetting;
-    QStringMap dataMap;
-    QStringMap secretData;
-    QStringMap ipv4Data;
+    NMStringMap dataMap;
+    NMStringMap secretData;
+    NMStringMap ipv4Data;
 
     QString proxy_type;
     QString proxy_user;
@@ -512,8 +512,8 @@ bool OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, con
         return false;
     }
 
-    QStringMap dataMap;
-    QStringMap secretData;
+    NMStringMap dataMap;
+    NMStringMap secretData;
 
     Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(connection->setting(Knm::Setting::Vpn));
     dataMap = vpnSetting->data();

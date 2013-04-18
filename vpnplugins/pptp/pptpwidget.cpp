@@ -84,8 +84,8 @@ void PptpSettingWidget::readConfig()
 {
     Q_D(PptpSettingWidget);
     // General settings
-    QStringMap dataMap = d->setting->data();
-    QStringMap vpnSecretsMap = d->setting->vpnSecrets();
+    NMStringMap dataMap = d->setting->data();
+    NMStringMap vpnSecretsMap = d->setting->vpnSecrets();
 
     // Authentication
     QString sGateway = dataMap[NM_PPTP_KEY_GATEWAY];
@@ -177,8 +177,8 @@ void PptpSettingWidget::writeConfig()
     // save the main dialog's data in the setting
     // if the advanced dialog is dirty, save its data in the vpn setting too
     //
-    QStringMap data;
-    QStringMap secretData;
+    NMStringMap data;
+    NMStringMap secretData;
 
     data.insert(NM_PPTP_KEY_GATEWAY,  d->ui.edt_gateway->text().toUtf8());
     data.insert(NM_PPTP_KEY_USER, d->ui.edt_login->text().toUtf8());
@@ -268,8 +268,8 @@ void PptpSettingWidget::writeConfig()
 void PptpSettingWidget::readSecrets()
 {
     Q_D(PptpSettingWidget);
-    QStringMap data = d->setting->data();
-    QStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap data = d->setting->data();
+    NMStringMap secrets = d->setting->vpnSecrets();
     Knm::Setting::secretsTypes type = (Knm::Setting::secretsTypes)data[NM_PPTP_KEY_PASSWORD"-flags"].toInt();
     if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
         d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)));
@@ -288,7 +288,7 @@ void PptpSettingWidget::fillOnePasswordCombo(KComboBox * combo, Knm::Setting::se
     }
 }
 
-uint PptpSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
+uint PptpSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, NMStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {

@@ -54,8 +54,8 @@ void OpenconnectSettingWidget::readConfig()
 {
     Q_D(OpenconnectSettingWidget);
     // General settings
-    QStringMap dataMap = d->setting->data();
-    QStringMap vpnSecretsMap = d->setting->vpnSecrets();
+    NMStringMap dataMap = d->setting->data();
+    NMStringMap vpnSecretsMap = d->setting->vpnSecrets();
 
     d->ui.leGateway->setText(dataMap[NM_OPENCONNECT_KEY_GATEWAY]);
     d->ui.leCaCertificate->setUrl(KUrl(dataMap[NM_OPENCONNECT_KEY_CACERT]));
@@ -73,8 +73,8 @@ void OpenconnectSettingWidget::writeConfig()
 
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_OPENCONNECT));
 
-    QStringMap data;
-    QStringMap secretData;
+    NMStringMap data;
+    NMStringMap secretData;
 
     data.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY), d->ui.leGateway->text().toUtf8());
     if (!d->ui.leCaCertificate->url().isEmpty())

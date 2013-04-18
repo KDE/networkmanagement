@@ -54,8 +54,8 @@ OpenVpnAuthWidget::~OpenVpnAuthWidget()
 void OpenVpnAuthWidget::readSecrets()
 {
     Q_D(OpenVpnAuthWidget);
-    QStringMap secrets = d->setting->vpnSecrets();
-    QStringMap dataMap = d->setting->data();
+    NMStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap dataMap = d->setting->data();
     QString cType = dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE];
     QLabel *label;
     KLineEdit *lineEdit;
@@ -130,7 +130,7 @@ void OpenVpnAuthWidget::writeConfig()
 {
     Q_D(OpenVpnAuthWidget);
 
-    QStringMap secretData;
+    NMStringMap secretData;
     for (int i = 0; i < d->layout->rowCount() - 1; i++)
     {
         KLineEdit *le = qobject_cast<KLineEdit*>(d->layout->itemAt(i, QFormLayout::FieldRole)->widget());

@@ -82,7 +82,7 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     if (args.count() > 5 ) {
         Knm::Ipv4Setting * ipv4Setting = static_cast<Knm::Ipv4Setting*>(m_connection->setting(Knm::Setting::Ipv4));
         QList <NetworkManager::IpRoute> routes;
-        QStringMap ipv4Data = Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[5].toMap()));
+        NMStringMap ipv4Data = Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[5].toMap()));
         if (ipv4Data.contains(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT))) {
             ipv4Setting->setNeverdefault( static_cast<bool>(ipv4Data[QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT)].toUInt()) );
         }

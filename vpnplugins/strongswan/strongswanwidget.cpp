@@ -89,7 +89,7 @@ void StrongswanSettingWidget::readConfig()
 
     Q_D(StrongswanSettingWidget);
     // General settings
-    QStringMap dataMap = d->setting->data();
+    NMStringMap dataMap = d->setting->data();
     // Gateway Address
     QString gateway = dataMap[NM_STRONGSWAN_GATEWAY];
     if (!gateway.isEmpty()) {
@@ -121,7 +121,7 @@ void StrongswanSettingWidget::readConfig()
 
 }
 
-void StrongswanSettingWidget::fillOnePasswordCombo(KComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword)
+void StrongswanSettingWidget::fillOnePasswordCombo(KComboBox * combo, const QString & key, const NMStringMap & data, bool hasPassword)
 {
     if (data.contains(key)) {
         if (data.value(key) == NM_STRONGSWAN_PW_TYPE_SAVE) {
@@ -140,8 +140,8 @@ void StrongswanSettingWidget::writeConfig()
     kDebug();
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_STRONGSWAN));
 
-    QStringMap data;
-    QStringMap secretData;
+    NMStringMap data;
+    NMStringMap secretData;
 
     // General settings
     // Gateway
@@ -186,7 +186,7 @@ void StrongswanSettingWidget::writeConfig()
     d->setting->setVpnSecrets(secretData);
 }
 
-uint StrongswanSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
+uint StrongswanSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, NMStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {
@@ -206,7 +206,7 @@ uint StrongswanSettingWidget::handleOnePasswordType(const KComboBox * combo, con
 void StrongswanSettingWidget::readSecrets()
 {
     Q_D(StrongswanSettingWidget);
-    QStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap secrets = d->setting->vpnSecrets();
     if (d->setting->data().value(NM_STRONGSWAN_SECRET_TYPE) == QLatin1String(NM_STRONGSWAN_PW_TYPE_SAVE)) {
         switch (d->ui.cmbMethod->currentIndex())
         {

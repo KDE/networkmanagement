@@ -1720,7 +1720,7 @@ diff -ur origsettings//vpndbus.cpp settings/vpndbus.cpp
    }
    if (map.contains(QLatin1String(NM_SETTING_VPN_DATA))) {
 -    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringList>());
-+    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringMap>());
++    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<NMStringMap>());
    }
    if (map.contains(QLatin1String(NM_SETTING_VPN_USER_NAME))) {
      setting->setUserName(map.value(QLatin1String(NM_SETTING_VPN_USER_NAME)).value<QString>());
@@ -1740,7 +1740,7 @@ diff -ur origsettings//vpndbus.cpp settings/vpndbus.cpp
 -  map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
 +  if (!setting->data().isEmpty())
 +      map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
-+  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
++  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(NMStringMap()));
 +  if (!setting->userName().isEmpty())
 +      map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
    return map;
@@ -1771,7 +1771,7 @@ diff -ur origsettings//vpn.h settings/vpn.h
        Set Data bits
      */
 -    void setData( const QStringList & v )
-+    void setData( const QStringMap & v )
++    void setData( const NMStringMap & v )
      {
          mData = v;
      }
@@ -1780,7 +1780,7 @@ diff -ur origsettings//vpn.h settings/vpn.h
        Get Data bits
      */
 -    QStringList data() const
-+    QStringMap data() const
++    NMStringMap data() const
      {
        return mData;
      }
@@ -1807,7 +1807,7 @@ diff -ur origsettings//vpn.h settings/vpn.h
      // vpn
      QString mServiceType;
 -    QStringList mData;
-+    QStringMap mData;
++    NMStringMap mData;
      QString mUserName;
 -    QStringList mVpnSecrets;
 +    QVariantMap mVpnSecrets;
@@ -1879,9 +1879,9 @@ diff -ur origsettings//vpnpersistence.cpp settings/vpnpersistence.cpp
 +    return rawSecrets;
 +}
 +
-+QStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
++NMStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
 +{
-+    QStringMap map;
++    NMStringMap map;
 +    if (list.count() % 2 == 0) {
 +        for ( int i = 0; i < list.count(); i += 2 ) {
 +            map.insert( list[i], list[i+1] );
@@ -1890,10 +1890,10 @@ diff -ur origsettings//vpnpersistence.cpp settings/vpnpersistence.cpp
 +    return map;
 +}
 +
-+QStringList VpnPersistence::stringMapToStringList(const QStringMap & map)
++QStringList VpnPersistence::stringMapToStringList(const NMStringMap & map)
 +{
 +    QStringList rawSecrets;
-+    QStringMapIterator i(map);
++    NMStringMapIterator i(map);
 +    while (i.hasNext()) {
 +        i.next();
 +        rawSecrets << i.key() << i.value();
@@ -1938,8 +1938,8 @@ diff -ur origsettings//vpnpersistence.h settings/vpnpersistence.h
      void restoreSecrets(QMap<QString,QString>) const;
 +    static QStringList variantMapToStringList(const QVariantMap &);
 +    static QVariantMap variantMapFromStringList(const QStringList &);
-+    static QStringList stringMapToStringList(const QStringMap &);
-+    static QStringMap stringMapFromStringList(const QStringList &);
++    static QStringList stringMapToStringList(const NMStringMap &);
++    static NMStringMap stringMapFromStringList(const QStringList &);
  };
  }
  

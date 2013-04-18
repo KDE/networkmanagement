@@ -57,8 +57,8 @@ void VpncAuthWidget::readConfig()
 void VpncAuthWidget::readSecrets()
 {
     Q_D(VpncAuthWidget);
-    QStringMap data = d->setting->data();
-    QStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap data = d->setting->data();
+    NMStringMap secrets = d->setting->vpnSecrets();
 
     //   username
     QString user = data.value(NM_VPNC_KEY_XAUTH_USER);
@@ -101,7 +101,7 @@ void VpncAuthWidget::writeConfig()
 {
     Q_D(VpncAuthWidget);
 
-    QStringMap secretData;
+    NMStringMap secretData;
 
     //   user password
     if (!d->ui.leUserPassword->text().isEmpty()) {

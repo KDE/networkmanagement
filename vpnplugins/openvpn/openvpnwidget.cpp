@@ -156,7 +156,7 @@ void OpenVpnSettingWidget::openVpnFinished(int exitCode, QProcess::ExitStatus ex
     d->gotOpenVpnCiphers = true;
 
     if (d->readConfig) {
-        QStringMap dataMap = d->setting->data();
+        NMStringMap dataMap = d->setting->data();
         if (dataMap.contains(NM_OPENVPN_KEY_CIPHER)) {
             d->ui.cboCipher->setCurrentIndex(d->ui.cboCipher->findText(dataMap[NM_OPENVPN_KEY_CIPHER]));
         }
@@ -168,7 +168,7 @@ void OpenVpnSettingWidget::readConfig()
     kDebug();
 
     // General settings
-    QStringMap dataMap = d->setting->data();
+    NMStringMap dataMap = d->setting->data();
 
     QString cType = dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE];
 
@@ -298,8 +298,8 @@ void OpenVpnSettingWidget::writeConfig()
 
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_OPENVPN));
 
-    QStringMap data;
-    QStringMap secretData;
+    NMStringMap data;
+    NMStringMap secretData;
 
     // required settings
     data.insert(QLatin1String(NM_OPENVPN_KEY_REMOTE), d->ui.gateway->text());
@@ -471,8 +471,8 @@ void OpenVpnSettingWidget::writeConfig()
 
 void OpenVpnSettingWidget::readSecrets()
 {
-    QStringMap secrets = d->setting->vpnSecrets();
-    QStringMap dataMap = d->setting->data();
+    NMStringMap secrets = d->setting->vpnSecrets();
+    NMStringMap dataMap = d->setting->data();
     QString cType = dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE];
     Knm::Setting::secretsTypes type;
 
@@ -573,7 +573,7 @@ void OpenVpnSettingWidget::fillOnePasswordCombo(KComboBox * combo, Knm::Setting:
     }
 }
 
-uint OpenVpnSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
+uint OpenVpnSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, NMStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {

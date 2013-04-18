@@ -47,8 +47,8 @@ protected Q_SLOTS:
     void gatewayTypeChanged(int);
     void showPasswordsChanged(bool);
 private:
-    void readX509Auth(const QStringMap &);
-    void writeX509Auth(QStringMap & data, QStringMap & secretData);
+    void readX509Auth(const NMStringMap &);
+    void writeX509Auth(NMStringMap & data, NMStringMap & secretData);
     class Private;
     Private * d;
 };
