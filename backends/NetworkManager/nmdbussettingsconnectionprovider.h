@@ -36,8 +36,6 @@ namespace Knm
     class Connection;
 } // namespace Knm
 
-typedef QMap<QString,QVariantMap> QVariantMapMap;
-
 class ConnectionList;
 class RemoteConnection;
 

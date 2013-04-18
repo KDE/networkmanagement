@@ -61,7 +61,7 @@ public:
     // hash of object path to object
     QHash<QString, RemoteConnection*> connections;
     QHash<QUuid, QString> uuidToPath;
-    QMap<QUuid, QVariantMapMap> secretsToSave;
+    QMap<QUuid, NMVariantMapMap> secretsToSave;
     QHash<QUuid, Knm::Connection *> secretsToGet;
     OrgFreedesktopNetworkManagerSettingsInterface * iface;
     QString serviceName;
@@ -134,7 +134,7 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
     } else {
         RemoteConnection * connectionIface = new RemoteConnection(d->iface->service(), path, this);
         makeConnections(connectionIface);
-        const QVariantMapMap settings = connectionIface->GetSettings();
+        const NMVariantMapMap settings = connectionIface->GetSettings();
 
         // Sometimes we get an ghost wired connection (https://bugs.kde.org/show_bug.cgi?id=311032), ignore it. 
         if (settings.isEmpty()) {
@@ -374,7 +374,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 
         newConnection->setUuid(uuid);
         ConnectionDbus converter(newConnection);
-        QVariantMapMap map = converter.toDbusMap();
+        NMVariantMapMap map = converter.toDbusMap();
         remote->Update(map);
 
         // don't do any processing on d->connections and d->connectionList here
@@ -392,7 +392,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     Q_D(NMDBusSettingsConnectionProvider);
 
     ConnectionDbus converter(newConnection);
-    QVariantMapMap map = converter.toDbusMap();
+    NMVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
     // WARNING: this debug message print secrets, do not commit it uncommented.
     //kDebug() << "Here is the map: " << map;
@@ -431,7 +431,7 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
             initialiseAndRegisterRemoteConnection(objPath.path());
         }
         uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
-        QVariantMapMap map = d->secretsToSave.take(uuid);
+        NMVariantMapMap map = d->secretsToSave.take(uuid);
         RemoteConnection *remote = d->connections.value(uuid);
         if (remote) {
             sleep(1);
@@ -470,7 +470,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
         kWarning() << "This connection has more than 1 secret setting, not supported yet :/";
 
 
-    QDBusPendingReply<QVariantMapMap> reply = secretIface.GetSecrets(secretSettings.at(0));
+    QDBusPendingReply<NMVariantMapMap> reply = secretIface.GetSecrets(secretSettings.at(0));
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
@@ -491,11 +491,11 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     if (!watcher)
         return;
 
-    QDBusPendingReply<QVariantMapMap> reply = *watcher;
+    QDBusPendingReply<NMVariantMapMap> reply = *watcher;
 
     if (reply.isValid())
     {
-        QVariantMapMap set = reply.argumentAt<0>();
+        NMVariantMapMap set = reply.argumentAt<0>();
         // WARNING: this print secrets, do not commit it uncommented.
         //kDebug() << "Got secrets, yay! " << set;
         kDebug() << "Got secrets, yay! ";

@@ -47,11 +47,11 @@ inline const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QLi
     return argument;
 }
 
-inline QDBusArgument &operator<<(QDBusArgument &argument, const QVariantMapMap &mymap)
+inline QDBusArgument &operator<<(QDBusArgument &argument, const NMVariantMapMap &mymap)
 {
     argument.beginMap( QVariant::String, QVariant::Map );
 
-    QVariantMapMap::const_iterator i = mymap.constBegin();
+    NMVariantMapMap::const_iterator i = mymap.constBegin();
     while (i != mymap.constEnd()) {
         argument.beginMapEntry();
         argument << i.key() << i.value();
@@ -62,7 +62,7 @@ inline QDBusArgument &operator<<(QDBusArgument &argument, const QVariantMapMap &
     return argument;
 }
 
-inline const QDBusArgument &operator>>(const QDBusArgument &argument, QVariantMapMap &mymap)
+inline const QDBusArgument &operator>>(const QDBusArgument &argument, NMVariantMapMap &mymap)
 {
     argument.beginMap();
     mymap.clear();
