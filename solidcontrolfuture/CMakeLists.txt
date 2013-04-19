@@ -17,7 +17,7 @@ set(solidcontrolfuture_LIB_SRCS
 
 kde4_add_library(solidcontrolfuture SHARED ${solidcontrolfuture_LIB_SRCS})
 
-target_link_libraries(solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} solidcontrol solidcontrolnm09)
+target_link_libraries(solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} solidcontrolnm09)
 
 install(TARGETS solidcontrolfuture EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 

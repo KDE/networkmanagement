@@ -3,6 +3,17 @@
 ########### next target ###############
 
 set(solidcontrolnm09ifaces_LIB_SRCS
+   modemcdmainterface.cpp
+   modemgsmcontactsinterface.cpp
+   modemgsmnetworkinterface.cpp
+   modemgsmussdinterface.cpp
+   modemlocationinterface.cpp
+   modemmanagerinterface.cpp
+   modemgsmcardinterface.cpp
+   modemgsmhsointerface.cpp
+   modemgsmsmsinterface.cpp
+   modeminterface.cpp
+   modemmanager.cpp
    networkinterface.cpp
    networkmodeminterface.cpp
    networkbtinterface.cpp
@@ -29,5 +40,25 @@ install(TARGETS solidcontrolnm09ifaces EXPORT kdeworkspaceLibraryTargets ${INSTA
 
 ########### install files ###############
 
-install( FILES networkmanager.h networkinterface.h networkmodeminterface.h networkbtinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h authentication.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/controlnm09/ifaces COMPONENT Devel)
+install( FILES
+   modemcdmainterface.h
+   modemgsmcontactsinterface.h
+   modemgsmnetworkinterface.h
+   modemgsmussdinterface.h
+   modemlocationinterface.h
+   modemmanagerinterface.h
+   modemgsmcardinterface.h
+   modemgsmhsointerface.h
+   modemgsmsmsinterface.h
+   modeminterface.h
+   modemmanager.h
+   networkmanager.h
+   networkinterface.h
+   networkmodeminterface.h
+   networkbtinterface.h
+   wirednetworkinterface.h
+   wirelessnetworkinterface.h
+   wirelessaccesspoint.h
+   authentication.h
+   DESTINATION ${INCLUDE_INSTALL_DIR}/solid/controlnm09/ifaces COMPONENT Devel)
 

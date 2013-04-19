@@ -55,7 +55,7 @@ set(NMPROPTEST_SRCS nmpropertyhelper.cpp nmpropertytest.cpp)
 #kde4_add_executable(nmpropertytest ${NMPROPTEST_SRCS})
 #target_link_libraries(nmpropertytest ${KDE4_KDECORE_LIBS})
 
-target_link_libraries(solid_networkmanager09 ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolnm09 solidcontrolnm09ifaces)
+target_link_libraries(solid_networkmanager09 ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrolnm09 solidcontrolnm09ifaces)
 install(TARGETS solid_networkmanager09 DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager09.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )

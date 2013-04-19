@@ -1,6 +1,7 @@
 include(MacroEnsureVersion)
-macro_optional_find_package(NetworkManager)
 
+add_subdirectory(modemmanager-0.5)
+macro_optional_find_package(NetworkManager)
 set(HAVE_NETWORKMANAGER FALSE)
 if(NETWORKMANAGER_FOUND)
   macro_ensure_version("0.9.0" ${NETWORKMANAGER_VERSION} NM_0_9)

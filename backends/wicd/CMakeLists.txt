@@ -16,7 +16,7 @@ set(knm_wicd_LIB_SRCS
 
 kde4_add_library(knm_wicd SHARED ${knm_wicd_LIB_SRCS})
 
-target_link_libraries(knm_wicd ${KDE4_KDEUI_LIBS} solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knm_wicd ${KDE4_KDEUI_LIBS} knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
 
 
 #set_target_properties(nmbackend PROPERTIES
