@@ -31,7 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <connectionlist.h>
 
 #include "activatableobserver.h"
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 #include "knm_export.h"
 

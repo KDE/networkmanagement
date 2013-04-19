@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KTabWidget>
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"

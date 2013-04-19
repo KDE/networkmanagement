@@ -7,7 +7,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include <QtNetworkManager/ipconfig.h>
+#include <NetworkManagerQt/ipconfig.h>
 #include "setting.h"
 #include "knminternals_export.h"
 

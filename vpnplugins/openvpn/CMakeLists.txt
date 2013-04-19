@@ -12,7 +12,7 @@ kde4_add_ui_files(openvpn_SRCS openvpnprop.ui)
 
 kde4_add_plugin(networkmanagement_openvpnui ${openvpn_SRCS})
 
-target_link_libraries(networkmanagement_openvpnui QtNetworkManager ${KDE4_KIO_LIBS} knmui knminternals )
+target_link_libraries(networkmanagement_openvpnui NetworkManagerQt ${KDE4_KIO_LIBS} knmui knminternals )
 
 install(TARGETS networkmanagement_openvpnui  DESTINATION ${PLUGIN_INSTALL_DIR})
 

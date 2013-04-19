@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KPushButton>
 #include <solid/device.h>
-#include <QtModemManager/modemgsmcardinterface.h>
+#include <ModemManagerQt/modemgsmcardinterface.h>
 
 class PinWidget;
 

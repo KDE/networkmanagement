@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 #include "connectionhandler.h"
 

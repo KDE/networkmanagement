@@ -22,9 +22,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wirelessdevice.h>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/wirelessdevice.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 // libs/internals includes
 #include "settings/802-11-wireless.h"

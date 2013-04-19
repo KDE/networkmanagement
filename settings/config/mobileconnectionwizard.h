@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/networking.h>
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 #include "mobileproviders.h"
 #include "../../libs/internals/connection.h"

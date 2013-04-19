@@ -52,10 +52,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kfiledialog.h>
 #include <KUser>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/modemdevice.h>
-#include <QtNetworkManager/activeconnection.h>
-#include <QtNetworkManager/connection.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/modemdevice.h>
+#include <NetworkManagerQt/activeconnection.h>
+#include <NetworkManagerQt/connection.h>
 
 #include "connectiondbus.h"
 #include "knmserviceprefs.h"

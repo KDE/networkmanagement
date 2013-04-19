@@ -132,7 +132,7 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals knmui QtModemManager QtNetworkManager ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
+target_link_libraries(knmservice knminternals knmui ModemManagerQt NetworkManagerQt ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
    )
 
 set_target_properties(knmservice PROPERTIES

@@ -22,14 +22,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 macro_optional_find_package(MobileBroadbandProviderInfo)
 macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
 
-pkg_check_modules(QTMODEMMANAGER REQUIRED QtModemManager)
+pkg_check_modules(QTMODEMMANAGER REQUIRED ModemManagerQt)
 if (NOT QTMODEMMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: QtModemManager not found. http://projects.kde.org/search?q=modemmanager&scope=all&all_words=1&projects=1&submit=Submit")
+    message(FATAL_ERROR "ERROR: ModemManagerQt not found. http://projects.kde.org/search?q=modemmanager&scope=all&all_words=1&projects=1&submit=Submit")
 endif (NOT QTMODEMMANAGER_FOUND)
 
-pkg_check_modules(QTNETWORKMANAGER REQUIRED QtNetworkManager)
+pkg_check_modules(QTNETWORKMANAGER REQUIRED NetworkManagerQt)
 if (NOT QTNETWORKMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: QtNetworkManager not found. http://projects.kde.org/search?q=networkmanager&scope=all&all_words=1&projects=1&submit=Submit")
+    message(FATAL_ERROR "ERROR: NetworkManagerQt not found. http://projects.kde.org/search?q=networkmanager&scope=all&all_words=1&projects=1&submit=Submit")
 endif (NOT QTNETWORKMANAGER_FOUND)
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})

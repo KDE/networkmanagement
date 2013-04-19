@@ -1,8 +1,8 @@
 Requires:
 kdebase4-workspace-devel, its prerequisites
 NetworkManager-devel
-QtNetworkManager-devel (aka libnm-qt)
-QtModemManager-devel (aka libmm-qt)
+NetworkManagerQt-devel (aka libnm-qt)
+ModemManagerQt-devel (aka libmm-qt)
 glib2-devel
 
 NetworkManager specification:

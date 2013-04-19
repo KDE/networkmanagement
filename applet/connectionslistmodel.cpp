@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotegsminterfaceconnection.h"
 #include "knmserviceprefs.h"
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 ConnectionsListModel::ConnectionsListModel(RemoteActivatableList *activatables, QObject *parent)
     : QAbstractListModel(parent),

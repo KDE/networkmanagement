@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSOBJECT_H
 
 #include <QString>
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 #include "knminternals_export.h"
 

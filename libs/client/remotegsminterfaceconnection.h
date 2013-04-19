@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteinterfaceconnection.h"
 
-#include <QtNetworkManager/modemdevice.h>
+#include <NetworkManagerQt/modemdevice.h>
 
 #include "knmclient_export.h"
 

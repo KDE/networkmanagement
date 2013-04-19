@@ -50,7 +50,7 @@ kde4_add_library(
     knmexternals SHARED ${knmconnection_SRCS}
 )
 
-target_link_libraries(knmexternals ${KDE4_KDECORE_LIBS} QtNetworkManager)
+target_link_libraries(knmexternals ${KDE4_KDECORE_LIBS} NetworkManagerQt)
 
 set_target_properties(knmexternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

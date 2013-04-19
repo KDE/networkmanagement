@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef REMOTEWIRELESSOBJECT_H
 #define REMOTEWIRELESSOBJECT_H
 
-#include <QtNetworkManager/wirelessdevice.h>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/wirelessdevice.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 class RemoteWirelessObject
 {

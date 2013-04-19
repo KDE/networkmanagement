@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <kwindowsystem.h>
-#include <QtModemManager/manager.h>
+#include <ModemManagerQt/manager.h>
 
 PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type, QWidget *parent)
     : KDialog(parent), m_type(type)

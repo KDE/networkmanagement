@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSSTATUS_H
 
 #include <QObject>
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 class RemoteActivatable;
 class RemoteWirelessNetwork;

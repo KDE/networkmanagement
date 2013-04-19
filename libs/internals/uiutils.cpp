@@ -32,12 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <kdeversion.h>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/device.h>
-#include <QtNetworkManager/modemdevice.h>
-#include <QtNetworkManager/accesspoint.h>
-#include <QtNetworkManager/wireddevice.h>
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/device.h>
+#include <NetworkManagerQt/modemdevice.h>
+#include <NetworkManagerQt/accesspoint.h>
+#include <NetworkManagerQt/wireddevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 // Qt
 #include <QSizeF>

@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 
 #include "interfaceconnectionhelpers_p.h"
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 class QObject;
 

@@ -22,7 +22,7 @@ target_link_libraries(kded_networkmanagement
    knminternals
    knmservice
    knm_nm
-   QtNetworkManager
+   NetworkManagerQt
 
    ${QT_QTNETWORK_LIBRARY}
    )

@@ -24,10 +24,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include "connectionhandler.h"
 
-#include <QtNetworkManager/device.h>
-#include <QtNetworkManager/wireddevice.h>
-#include <QtNetworkManager/wirelessdevice.h>
-#include <QtNetworkManager/modemdevice.h>
+#include <NetworkManagerQt/device.h>
+#include <NetworkManagerQt/wireddevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
+#include <NetworkManagerQt/modemdevice.h>
 
 #include "connection.h"
 #include "setting.h"

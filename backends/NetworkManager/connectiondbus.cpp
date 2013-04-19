@@ -61,7 +61,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/vpn.h"
 #include "vpndbus.h"
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 using namespace Knm;
 
@@ -274,7 +274,7 @@ void ConnectionDbus::fromDbusMap(const NMVariantMapMap &settings)
 
     kDebug();
     // WARNING: this print secrets, do not commit it uncommented.
-    //kDebug() << "Settings map is " << settings;
+    kDebug() << "Settings map is " << settings;
 
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());

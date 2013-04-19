@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include <Plasma/IconWidget>
 //#include <Plasma/Meter>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 #include <activatable.h>
 #include <remotewirelessobject.h>

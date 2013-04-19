@@ -20,7 +20,7 @@
 
 #include "networkmanagementengine.h"
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 // networkmanagement lib
 #include "remoteactivatable.h"

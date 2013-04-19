@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelesssecuritysettingwidget.h"
 #include "settingwidget_p.h"
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/device.h>
-#include <QtNetworkManager/wirelessdevice.h>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/device.h>
+#include <NetworkManagerQt/wirelessdevice.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 #include <KDebug>
 

@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 
-#include <QtNetworkManager/device.h>
-#include <QtNetworkManager/modemdevice.h>
+#include <NetworkManagerQt/device.h>
+#include <NetworkManagerQt/modemdevice.h>
 #include <Plasma/Label>
 #include <Plasma/IconWidget>
 #include <Plasma/SignalPlotter>

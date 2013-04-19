@@ -31,8 +31,8 @@ class KCModuleProxy;
 
 #include <plasma/framesvg.h>
 #include <plasma/svg.h>
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 #include <interfaceconnection.h>
 

@@ -39,8 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Containment>
 #include <Plasma/DeclarativeWidget>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wireddevice.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/wireddevice.h>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 

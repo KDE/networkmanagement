@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
-#include <QtNetworkManager/device.h>
+#include <NetworkManagerQt/device.h>
 
 #include "ui_othersettings.h"
 

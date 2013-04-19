@@ -25,8 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 #include "remotewirelessobject.h"
 
-#include <QtNetworkManager/accesspoint.h>
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/accesspoint.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 #include "knmclient_export.h"
 

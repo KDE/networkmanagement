@@ -38,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vpninterfaceconnectionprovider.h>
 #include <notificationmanager.h>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/secretagent.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/secretagent.h>
 
 #include <nmdbussecretagent.h>
 #include <nmdbusactiveconnectionmonitor.h>

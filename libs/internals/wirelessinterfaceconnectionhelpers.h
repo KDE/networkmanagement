@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_EXTERNALS_WIRELESSINTERFACECONNECTIONHELPERS_H
 
 #include "knminternals_export.h"
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 class QObject;
 class QString;

@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSortFilterProxyModel>
 
 #include <KLocale>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 #include "apitemview.h"
 #include "networkitemmodel.h"

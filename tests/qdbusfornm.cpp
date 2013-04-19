@@ -47,7 +47,7 @@
 #include <QtXml/QDomElement>
 #include <QtDBus/QtDBus>
 
-#include <QtNetworkManager/generic-types.h>
+#include <NetworkManagerQt/generic-types.h>
 
 typedef QPair<int,int> IntPair;
 

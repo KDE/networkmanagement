@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include <KUser>
-#include <QtNetworkManager/device.h>
+#include <NetworkManagerQt/device.h>
 
 #include "setting.h"
 

@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 #include <QString>
-#include <QtNetworkManager/accesspoint.h>
+#include <NetworkManagerQt/accesspoint.h>
 
 #include "knmclient_export.h"
 

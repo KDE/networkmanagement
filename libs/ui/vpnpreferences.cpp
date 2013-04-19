@@ -28,8 +28,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KServiceTypeTrader>
 #include <KTabWidget>
 
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/device.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/device.h>
 
 #include <nm-setting-connection.h>
 #include <nm-setting-vpn.h>

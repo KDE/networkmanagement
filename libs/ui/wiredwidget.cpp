@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kdeversion.h>
 #include <Solid/Device>
-#include <QtNetworkManager/manager.h>
-#include <QtNetworkManager/wireddevice.h>
+#include <NetworkManagerQt/manager.h>
+#include <NetworkManagerQt/wireddevice.h>
 
 #include <connection.h>
 #include <settings/802-3-ethernet.h>

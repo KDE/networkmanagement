@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSSECURITYSETTINGWIDGET_H
 
 #include "settingwidget.h"
-#include <QtNetworkManager/wirelessdevice.h>
+#include <NetworkManagerQt/wirelessdevice.h>
 
 #include "knm_export.h"
 

@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusContext>
 #include <QDBusServiceWatcher>
 
-#include <QtNetworkManager/secretagent.h>
+#include <NetworkManagerQt/secretagent.h>
 
 namespace Knm
 {

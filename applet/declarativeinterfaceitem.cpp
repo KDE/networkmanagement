@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <arpa/inet.h>
 
 #include <Solid/Device>
-#include <QtNetworkManager/wireddevice.h>
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/wireddevice.h>
+#include <NetworkManagerQt/manager.h>
 #include <NetworkManager/NetworkManager.h>
 
 #include "knmserviceprefs.h"

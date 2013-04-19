@@ -24,7 +24,7 @@ kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui)
 kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
 target_link_libraries(kcm_networkmanagement knm_nm knmui knminternals
-        knmservice QtModemManager QtNetworkManager ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBRARY} ${KDE4_KIO_LIBS} ${KDE4_KCMUTILS_LIBS})
+        knmservice ModemManagerQt NetworkManagerQt ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBRARY} ${KDE4_KIO_LIBS} ${KDE4_KCMUTILS_LIBS})
 
 ## next target: tray config KCM
 

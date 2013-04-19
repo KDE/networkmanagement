@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QPointer>
 
-#include <QtNetworkManager/manager.h>
+#include <NetworkManagerQt/manager.h>
 
 #include <connection.h>
 #include <vpninterfaceconnection.h>

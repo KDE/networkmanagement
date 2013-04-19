@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 #include <kdebug.h>
-#include <QtNetworkManager/modemdevice.h>
+#include <NetworkManagerQt/modemdevice.h>
 
 #include "uiutils.h"
 
