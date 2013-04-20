@@ -41,7 +41,10 @@ link_directories(${MODEMMANAGERQT_LIBRARY_DIRS} ${NETWORKMANAGERQT_LIBRARY_DIRS}
 find_package(NetworkManager ${MINIMUM_NM_VERSION_REQUIRED})
 
 if (NETWORKMANAGER_FOUND)
-    find_package(GLIB2 REQUIRED)
+    PKG_SEARCH_MODULE( NM-UTIL libnm-util )
+    if (NOT NM-UTIL_FOUND)
+        message(FATAL_ERROR "Could NOT find libnm-util, check FindPkgConfig output above!")
+    endif (NOT NM-UTIL_FOUND)
 
     configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm09backend.h )
 
@@ -52,7 +55,6 @@ if (NETWORKMANAGER_FOUND)
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
-           ${GLIB2_INCLUDE_DIR}
            ${CMAKE_CURRENT_BUILD_DIR}
            ${KDE4_INCLUDE_DIR}/solid/control
         )
