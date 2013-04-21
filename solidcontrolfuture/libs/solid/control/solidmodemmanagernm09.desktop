@@ -3,6 +3,13 @@ Type=ServiceType
 X-KDE-ServiceType=SolidModemManager
 
 Comment=Modem Management Backend
+Comment[da]=Backend til modemhåndtering
+Comment[de]=Backend zur Netzwerkverwaltung
+Comment[kk]=Модемді басқару тетігі
+Comment[pt_BR]=Infraestrutura de gerenciamento de modem
+Comment[sk]=Backend pre správu modemu
+Comment[uk]=Модуль керування модемом
+Comment[x-test]=xxModem Management Backendxx
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
 Type=QString
