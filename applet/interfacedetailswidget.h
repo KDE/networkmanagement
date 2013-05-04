@@ -65,6 +65,7 @@ Q_OBJECT
         void updateWidgets();
         int bitRate();
         QString currentIpAddress();
+        QString currentIpGateway();
         QString getMAC();
         QString connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName = QString());
         void getDetails();

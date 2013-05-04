@@ -24,6 +24,7 @@ set(networkmanager_SRCS
     hiddenwirelessnetworkitem.cpp
     wirelessstatus.cpp
     gsminterfaceconnectionitem.cpp
+    ../solidcontrolfuture/solid/networkmanager-0.9/dbus/nm-dhcp4-configinterface.cpp
 
     ../libs/service/events.cpp
     )

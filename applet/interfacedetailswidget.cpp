@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceitem.h"
 #include "nm-device-interface.h"
+#include "../solidcontrolfuture/solid/networkmanager-0.9/dbus/nm-dhcp4-configinterface.h"
 #include "nm-ip4-config-interface.h"
 #include "../libs/internals/settings/802-11-wireless.h"
 
@@ -68,6 +69,7 @@ class InterfaceDetails
         Solid::Control::NetworkInterfaceNm09::Type type;
         Solid::Control::NetworkInterfaceNm09::ConnectionState connectionState;
         QString ipAddress;
+        QString ipGateway;
         int bitRate;
         QString interfaceName;
         QString mac;
@@ -227,6 +229,7 @@ void InterfaceDetailsWidget::getDetails()
     details->type = m_iface->type();
     details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState());
     details->ipAddress = currentIpAddress();
+    details->ipGateway = currentIpGateway();
     details->bitRate = bitRate();
     details->interfaceName = m_iface->ipInterfaceName();
     if (details->interfaceName.isEmpty()) {
@@ -307,6 +310,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
         info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
         info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
         info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
+        info += QString(format).arg(i18nc("interface details", "IP Gateway"), details->ipGateway);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
         info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
         info += QString(format).arg(i18nc("interface details", "MAC Address"), details->mac);
@@ -389,6 +393,44 @@ QString InterfaceDetailsWidget::currentIpAddress()
         return i18nc("label of the network interface", "IP display error.");
     }
     return addr.toString();
+}
+
+QString InterfaceDetailsWidget::currentIpGateway()
+{
+    if (!m_iface)
+        return QString();
+
+    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
+        return i18nc("label of the network interface", "No IP gateway.");
+    }
+
+    OrgFreedesktopNetworkManagerDeviceInterface deviceIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    if (!deviceIface.isValid()) {
+        return i18nc("label of the network interface", "IP display error.");
+    }
+
+    QDBusObjectPath dhcp4ConfigPath = deviceIface.dhcp4Config();
+    if (dhcp4ConfigPath.path().isNull()) {
+        QHostAddress addr;
+        QList<Solid::Control::IPv4RouteNm09> routes = m_iface->ipV4Config().routes();
+        if (routes.isEmpty()) {
+            return i18nc("label of the network interface", "No IP gateway.");
+        } else {
+            addr.setAddress(ntohl(routes.first().route()));
+            if (addr.isNull()) {
+                return i18nc("label of the network interface", "IP display error.");
+            }
+        }
+        return addr.toString();
+    } else {
+        OrgFreedesktopNetworkManagerDHCP4ConfigInterface dhcp4Iface(NM_DBUS_SERVICE, dhcp4ConfigPath.path(), QDBusConnection::systemBus());
+        QVariantMap options = dhcp4Iface.options();
+        if (options.contains("routers")) {
+            return options.value("routers").toString();
+        }
+    }
+
+    return i18nc("label of the network interface", "No IP gateway.");
 }
 
 int InterfaceDetailsWidget::bitRate()
@@ -554,6 +596,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
         emit back();
     } else {
         details->ipAddress = currentIpAddress();
+        details->ipGateway = currentIpGateway();
         details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(new_state);
         if (new_state > Solid::Control::NetworkInterfaceNm09::Unavailable && m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
@@ -750,6 +793,7 @@ void InterfaceDetailsWidget::disconnectSignals()
 void InterfaceDetailsWidget::updateIpAddress()
 {
     details->ipAddress = currentIpAddress();
+    details->ipGateway = currentIpGateway();
     showDetails();
 }
 
