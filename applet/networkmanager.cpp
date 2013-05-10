@@ -128,8 +128,7 @@ QString NetworkManagerApplet::svgElement(const NetworkManager::Device::Ptr &ifac
         NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
 
         if (wiface) {
-            QString uni = wiface->activeAccessPoint();
-            NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(uni);
+            NetworkManager::AccessPoint::Ptr ap = wiface->activeAccessPoint();
             if (ap) {
                 int str = ap->signalStrength();
                 if (str < 13) {
@@ -247,8 +246,10 @@ void NetworkManagerApplet::setupInterfaceSignals()
             NetworkManager::WirelessDevice::Ptr wirelessiface =
                             interface.objectCast<NetworkManager::WirelessDevice>();
             connect(wirelessiface.data(), SIGNAL(activeAccessPointChanged(QString)), SLOT(setupAccessPointSignals(QString)));
-            QMetaObject::invokeMethod(wirelessiface.data(), "activeAccessPointChanged",
-                                      Q_ARG(QString, wirelessiface->activeAccessPoint()));
+            if (wirelessiface->activeAccessPoint()) {
+                QMetaObject::invokeMethod(wirelessiface.data(), "activeAccessPointChanged",
+                                          Q_ARG(QString, wirelessiface->activeAccessPoint()->uni()));
+            }
         } else if (interface->type() == NetworkManager::Device::Modem) {
             NetworkManager::ModemDevice::Ptr modemiface =
                             interface.objectCast<NetworkManager::ModemDevice>();

@@ -98,7 +98,7 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                         NetworkManager::WirelessDevice::Ptr wifiDevice =
                             networkInterface.objectCast<NetworkManager::WirelessDevice>();
 
-                        NetworkManager::AccessPoint::Ptr ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
+                        NetworkManager::AccessPoint::Ptr ap = wifiDevice->activeAccessPoint();
                         if (ap) {
                             Knm::WirelessSetting * ws
                                 = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));

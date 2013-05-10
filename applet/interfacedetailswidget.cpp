@@ -278,8 +278,7 @@ void InterfaceDetailsWidget::getDetails()
 
     NetworkManager::WirelessDevice::Ptr wiface = m_iface.objectCast<NetworkManager::WirelessDevice>();
     if (wiface) {
-        details->activeAccessPoint = wiface->activeAccessPoint();
-        NetworkManager::AccessPoint::Ptr ap = wiface->findAccessPoint(details->activeAccessPoint);
+        NetworkManager::AccessPoint::Ptr ap = wiface->activeAccessPoint();
         if (ap) {
             details->wifiChannelFrequency = ap->frequency();
             QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);

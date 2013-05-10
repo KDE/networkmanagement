@@ -582,7 +582,7 @@ void NotificationManager::networkAppeared(const QString & ssid)
 {
     Q_D(NotificationManager);
     NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
-    if (wifiDevice && wifiDevice->activeAccessPoint() == QLatin1String("/")) {
+    if (wifiDevice && wifiDevice->activeAccessPoint().isNull()) {
         d->newWirelessNetworks.append(ssid);
         d->newNetworkTimer->start(500);
     }
@@ -592,7 +592,7 @@ void NotificationManager::networkDisappeared(const QString & ssid)
 {
     Q_D(NotificationManager);
     NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
-    if (wifiDevice && wifiDevice->activeAccessPoint() == QLatin1String("/")) {
+    if (wifiDevice && wifiDevice->activeAccessPoint().isNull()) {
         d->disappearedWirelessNetworks.append(ssid);
         d->disappearedNetworkTimer->start(500);
     }

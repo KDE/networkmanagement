@@ -329,12 +329,9 @@ void Wireless80211Widget::copyToBssid()
             NetworkManager::WirelessDevice::Ptr wiface = iface.objectCast<NetworkManager::WirelessDevice>();
             int i = d->ui.cmbMacAddress->currentIndex();
             if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
-                QString activeAp = wiface->activeAccessPoint();
-                NetworkManager::AccessPoint::Ptr ap;
-                if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
-                    ap = wiface->findAccessPoint(activeAp);
-                    if (ap && ap->ssid() != d->ui.ssid->text())
-                        ap.clear();
+                NetworkManager::AccessPoint::Ptr ap = wiface->activeAccessPoint();
+                if (ap && ap->ssid() != d->ui.ssid->text()) {
+                    ap.clear();
                 }
                 if (!ap && !d->ui.ssid->text().isEmpty()) {
                     NetworkManager::WirelessNetwork::Ptr network = wiface->findNetwork(d->ui.ssid->text());
