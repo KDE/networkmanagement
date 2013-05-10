@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KIcon>
 #include <KDebug>
+#include <KLocalizedString>
 
 ApItemModel::ApItemModel(QString uni, QObject *parent)
     : QAbstractItemModel(parent),
@@ -97,7 +98,7 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
         case 1:
             return accessPoint->signalStrength();
         case 2:
-            return (accessPoint->wpaFlags() != 0) ? QString("Yes") : QString("No");
+            return (accessPoint->wpaFlags() != 0) ? i18n("Yes") : i18n("No");
         case 3:
             return accessPoint->hardwareAddress();
         default:
@@ -117,13 +118,13 @@ QVariant ApItemModel::headerData(int section, Qt::Orientation orientation, int r
 
                 switch (section) {
                     case 0:
-                        return QVariant("Name");
+                        return i18n("Name");
                     case 1:
-                        return QVariant("Signal Strength");
+                        return i18n("Signal Strength");
                     case 2:
-                        return QVariant("Encrypted");
+                        return i18n("Encrypted");
                     case 3:
-                        return QVariant("MAC Address");
+                        return i18n("MAC Address");
                     default:
                         return QVariant();
                 }
