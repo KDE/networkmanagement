@@ -216,6 +216,11 @@ void NMDBusSettingsConnectionProvider::serviceOwnerChanged(const QString & chang
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
             clearConnections();
             //emit disappeared(this);
+
+            // Call this before initConnections() to prevent crashes when
+            // signals triggered by clearConnections() are still being processed.
+            // https://bugs.kde.org/show_bug.cgi?id=317700
+            qApp->processEvents();
             initConnections();
             //emit appeared(this);
         }
