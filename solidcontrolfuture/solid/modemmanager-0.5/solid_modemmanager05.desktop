@@ -2,7 +2,7 @@
 Type=Service
 X-KDE-ServiceTypes=SolidModemManager
 X-KDE-Library=solid_modemmanager05
-InitialPreference=100
+InitialPreference=105
 Name=ModemManager 0.5
 Name[ca]=ModemManager 0.5
 Name[cs]=ModemManager 0.5
