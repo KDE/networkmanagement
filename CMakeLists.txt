@@ -1,6 +1,6 @@
 project(plasma-networkmanagement)
 
-set (MINIMUM_NM_VERSION_REQUIRED "0.9.4")
+set (MINIMUM_NM_VERSION_REQUIRED "0.9.8")
 
 # We need some features from QML components from kde-runtime >= 4.9.0, like
 # TextField.qml's accepted() signal.
