@@ -88,6 +88,10 @@ void NMDBusActiveConnectionProxy::setState(uint nmState)
             aState = Knm::InterfaceConnection::Activated;
             break;
         case NM_ACTIVE_CONNECTION_STATE_DEACTIVATING:
+            aState = Knm::InterfaceConnection::Deactivating;
+            break;
+        case NM_ACTIVE_CONNECTION_STATE_DEACTIVATED:
+            aState = Knm::InterfaceConnection::Deactivated;
             break;
         default:
             kDebug() << "Unhandled activation state" << nmState;
