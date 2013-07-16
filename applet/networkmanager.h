@@ -1,6 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -154,6 +155,7 @@ private:
     void updateInterfaceList();
     Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
+    virtual void popupEvent(bool show);
 
     RemoteActivatableList* m_activatables;
     NMPopup* m_popup;

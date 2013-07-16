@@ -1,7 +1,7 @@
 /*
 Copyright 2008, 2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
-Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -1123,6 +1123,11 @@ void NetworkManagerApplet::updateInterfaceList()
 {
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
     setStatus(m_interfaces.isEmpty() ? Plasma::PassiveStatus : Plasma::ActiveStatus);
+}
+
+void NetworkManagerApplet::popupEvent(bool show)
+{
+    m_popup->setPopupOpened(show);
 }
 
 #include "networkmanager.moc"

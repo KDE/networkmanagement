@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2010-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -57,6 +58,7 @@ public:
     Solid::Control::NetworkInterfaceNm09* defaultInterface();
     bool available(int state);
     bool hasWireless();
+    void setPopupOpened(bool);
 
     QHash<QString, InterfaceItem*> m_interfaces;
 

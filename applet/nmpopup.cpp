@@ -1,7 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
-Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2011-2013 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -735,6 +735,11 @@ void NMPopup::toggleInterfaceTab()
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
+}
+
+void NMPopup::setPopupOpened(bool opened)
+{
+    m_interfaceDetailsWidget->setUpdateEnabled(opened && m_leftWidget->currentIndex() == 1);
 }
 
 void NMPopup::refresh()
