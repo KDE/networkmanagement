@@ -32,7 +32,7 @@ if (NOT NETWORKMANAGERQT_FOUND)
     message(FATAL_ERROR "ERROR: NetworkManagerQt not found. http://projects.kde.org/search?q=networkmanager&scope=all&all_words=1&projects=1&submit=Submit")
 endif (NOT NETWORKMANAGERQT_FOUND)
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DWITH_MODEMMANAGERQT=1)
 include_directories(${KDE4_INCLUDES} ${MODEMMANAGERQT_INCLUDE_DIRS} ${NETWORKMANAGERQT_INCLUDE_DIRS} ${CMAKE_INCLUDE_PATH})
 link_directories(${MODEMMANAGERQT_LIBRARY_DIRS} ${NETWORKMANAGERQT_LIBRARY_DIRS} ${CMAKE_LIBRARY_PATH})
 

@@ -28,6 +28,7 @@ class QSizeF;
 #include "../client/remoteinterfaceconnection.h"
 #include "../client/remoteactivatablelist.h"
 
+#include <ModemManagerQt/modeminterface.h>
 #include <NetworkManagerQt/device.h>
 #include <NetworkManagerQt/modemdevice.h>
 #include <NetworkManagerQt/wirelessdevice.h>

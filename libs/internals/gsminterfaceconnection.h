@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 #define KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 
+#include <ModemManagerQt/modeminterface.h>
 #include <NetworkManagerQt/modemdevice.h>
 
 #include "interfaceconnection.h"
