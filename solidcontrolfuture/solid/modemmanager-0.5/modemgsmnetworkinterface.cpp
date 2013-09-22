@@ -1,6 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2013 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of
@@ -42,7 +42,7 @@ MMModemGsmNetworkInterface::MMModemGsmNetworkInterface(const QString & path, MMM
     connect( &d->modemGsmNetworkIface, SIGNAL(RegistrationInfo(uint,QString,QString)),
                 this, SLOT(slotRegistrationInfoChanged(uint,QString,QString)));
     connect( &d->modemGsmNetworkIface, SIGNAL(SignalQuality(uint)),
-                this, SIGNAL(signalQualityChanged(uint)));
+                this, SLOT(slotSignalQualityChanged(uint)));
 
     d->signalQuality = d->modemGsmNetworkIface.GetSignalQuality();
     d->registrationInfo = d->modemGsmNetworkIface.GetRegistrationInfo();

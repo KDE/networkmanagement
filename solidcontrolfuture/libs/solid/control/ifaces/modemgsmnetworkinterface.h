@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2010 Lamarque Souza <lamarque@gmail.com>
+    Copyright (C) 2010-2013 Lamarque Souza <lamarque@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -129,14 +129,14 @@ namespace Ifaces
          *
          * @param mode the new allowed mode.
          */
-        void gsmNetworkAllowedModeChanged(const Solid::Control::ModemGsmNetworkInterface::AllowedMode mode);
+        void allowedModeChanged(const Solid::Control::ModemGsmNetworkInterface::AllowedMode mode);
 
         /**
          * This signal is emitted when the AccessTechnology property changes.
          *
          * @param mode the new access technology used by the modem.
          */
-        void gsmNetworkAccessTechnologyChanged(const Solid::Control::ModemGsmNetworkInterface::AccessTechnology tech);
+        void accessTechnologyChanged(const Solid::Control::ModemGsmNetworkInterface::AccessTechnology tech);
     };
 } // Ifaces
 } // Control

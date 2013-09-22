@@ -273,7 +273,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
             Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = modemiface->getModemNetworkIface();
             if (modemNetworkIface) {
                 connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(interfaceConnectionStateChanged()));
-                connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemNetworkInterfaceNm09::AccessTechnology)), this, SLOT(interfaceConnectionStateChanged()));
+                connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(interfaceConnectionStateChanged()));
             }
         }
     }
