@@ -69,6 +69,8 @@ set(knm_nm_LIB_SRCS
    nm-manager-interface.cpp
    nm-device-interface.cpp
    nm-ip4-config-interface.cpp
+   nm-ip6-config-interface.cpp
+
    ../../libs/service/events.cpp
 )
 

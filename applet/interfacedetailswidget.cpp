@@ -61,15 +61,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-device-interface.h"
 #include "../solidcontrolfuture/solid/networkmanager-0.9/dbus/nm-dhcp4-configinterface.h"
 #include "nm-ip4-config-interface.h"
+#include "nm-ip6-config-interface.h"
 #include "../libs/internals/settings/802-11-wireless.h"
+#include "../backends/NetworkManager/settings/ipv6dbus.h"
 
 class InterfaceDetails
 {
     public:
         Solid::Control::NetworkInterfaceNm09::Type type;
         Solid::Control::NetworkInterfaceNm09::ConnectionState connectionState;
-        QString ipAddress;
-        QString ipGateway;
+        QString ip4Address;
+        QString ip4Gateway;
+        QString ip6Address;
+        QString ip6Gateway;
         int bitRate;
         QString interfaceName;
         QString mac;
@@ -228,8 +232,10 @@ void InterfaceDetailsWidget::getDetails()
 
     details->type = m_iface->type();
     details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState());
-    details->ipAddress = currentIpAddress();
-    details->ipGateway = currentIpGateway();
+    details->ip4Address = currentIp4Address();
+    details->ip4Gateway = currentIp4Gateway();
+    details->ip6Address = currentIp6Address();
+    details->ip6Gateway = currentIp6Gateway();
     details->bitRate = bitRate();
     details->interfaceName = m_iface->ipInterfaceName();
     if (details->interfaceName.isEmpty()) {
@@ -309,8 +315,10 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     if (!reset && m_iface) {
         info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
         info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
-        info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
-        info += QString(format).arg(i18nc("interface details", "IP Gateway"), details->ipGateway);
+        info += QString(format).arg(i18nc("interface details", "IPv4 Address"), details->ip4Address);
+        info += QString(format).arg(i18nc("interface details", "IPv4 Gateway"), details->ip4Gateway);
+        info += QString(format).arg(i18nc("interface details", "IPv6 Address"), details->ip6Address);
+        info += QString(format).arg(i18nc("interface details", "IPv6 Gateway"), details->ip6Gateway);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
         info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
         info += QString(format).arg(i18nc("interface details", "MAC Address"), details->mac);
@@ -373,7 +381,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     update();
 }
 
-QString InterfaceDetailsWidget::currentIpAddress()
+QString InterfaceDetailsWidget::currentIp4Address()
 {
     if (!m_iface)
         return QString();
@@ -395,7 +403,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
     return addr.toString();
 }
 
-QString InterfaceDetailsWidget::currentIpGateway()
+QString InterfaceDetailsWidget::currentIp4Gateway()
 {
     if (!m_iface)
         return QString();
@@ -414,11 +422,11 @@ QString InterfaceDetailsWidget::currentIpGateway()
         QHostAddress addr;
         QList<Solid::Control::IPv4RouteNm09> routes = m_iface->ipV4Config().routes();
         if (routes.isEmpty()) {
-            return i18nc("label of the network interface", "No IP gateway.");
+            return i18nc("label of the network interface", "No IPv4 gateway.");
         } else {
             addr.setAddress(ntohl(routes.first().route()));
             if (addr.isNull()) {
-                return i18nc("label of the network interface", "IP display error.");
+                return i18nc("label of the network interface", "IPv4 display error.");
             }
         }
         return addr.toString();
@@ -431,6 +439,77 @@ QString InterfaceDetailsWidget::currentIpGateway()
     }
 
     return i18nc("label of the network interface", "No IP gateway.");
+}
+
+QString InterfaceDetailsWidget::currentIp6Address()
+{
+    if (!m_iface)
+        return QString();
+
+    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
+        return i18nc("label of the network interface", "No IPv6 address.");
+    }
+
+    QHostAddress addr;
+
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    if (devIface.isValid()) {
+        OrgFreedesktopNetworkManagerIP6ConfigInterface ipv6Config(NM_DBUS_SERVICE, devIface.ip6Config().path(), QDBusConnection::systemBus());
+        if (ipv6Config.isValid()) {
+            QList<IpV6AddressMap> addresses = ipv6Config.addresses();
+            if (addresses.count()) {
+                IpV6AddressMap address = addresses.first();
+                Q_IPV6ADDR tmp;
+                for (int i = 0; i < 16; ++i) {
+                    tmp[i] = address.address[i];
+                }
+                addr.setAddress(tmp);
+            }
+        }
+    }
+
+    if (addr.isNull()) {
+        return i18nc("label of the network interface", "IP display error.");
+    }
+    return addr.toString();
+}
+
+QString InterfaceDetailsWidget::currentIp6Gateway()
+{
+    if (!m_iface)
+        return QString();
+
+    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
+        return i18nc("label of the network interface", "No IP gateway.");
+    }
+
+    QHostAddress addr;
+
+    OrgFreedesktopNetworkManagerDeviceInterface deviceIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    if (!deviceIface.isValid()) {
+        return i18nc("label of the network interface", "IP display error.");
+    }
+
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    if (devIface.isValid()) {
+        OrgFreedesktopNetworkManagerIP6ConfigInterface ipv6Config(NM_DBUS_SERVICE, devIface.ip6Config().path(), QDBusConnection::systemBus());
+        if (ipv6Config.isValid()) {
+            QList<IpV6AddressMap> addresses = ipv6Config.addresses();
+            if (addresses.count()) {
+                IpV6AddressMap address = addresses.first();
+                Q_IPV6ADDR tmp;
+                for (int i = 0; i < 16; ++i) {
+                    tmp[i] = address.gateway[i];
+                }
+                addr.setAddress(tmp);
+            }
+        }
+    }
+
+    if (addr.isNull() || addr.toString() == "::") {
+        return i18nc("label of the network interface", "No IP gateway.");
+    }
+    return addr.toString();
 }
 
 int InterfaceDetailsWidget::bitRate()
@@ -595,8 +674,10 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
         setInterface(0, false);
         emit back();
     } else {
-        details->ipAddress = currentIpAddress();
-        details->ipGateway = currentIpGateway();
+        details->ip4Address = currentIp4Address();
+        details->ip4Gateway = currentIp4Gateway();
+        details->ip6Address = currentIp6Address();
+        details->ip6Gateway = currentIp6Gateway();
         details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(new_state);
         if (new_state > Solid::Control::NetworkInterfaceNm09::Unavailable && m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
@@ -699,17 +780,17 @@ QString InterfaceDetailsWidget::getMAC()
             if (m_iface) { // last resort, although using ifaceName is not portable
                 QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(m_iface->interfaceName()));
                 QList<Solid::Device>::iterator it = list.begin();
-            
+
                 if (it != list.end()) {
                     Solid::Device device = *it;
                     Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
-            
+
                     if (interface) {
                         const QMetaObject *meta = interface->metaObject();
-            
+
                         for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
                             QMetaProperty property = meta->property(i);
-            
+
                             if (QString(meta->className()).mid(7) + '.' + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
                                 QVariant value = property.read(interface);
                                 return value.toString();
@@ -792,8 +873,10 @@ void InterfaceDetailsWidget::disconnectSignals()
 
 void InterfaceDetailsWidget::updateIpAddress()
 {
-    details->ipAddress = currentIpAddress();
-    details->ipGateway = currentIpGateway();
+    details->ip4Address = currentIp4Address();
+    details->ip4Gateway = currentIp4Gateway();
+    details->ip6Address = currentIp6Address();
+    details->ip6Gateway = currentIp6Gateway();
     showDetails();
 }
 

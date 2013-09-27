@@ -7,7 +7,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include "networkipv6config.h"
+#include "../solidcontrolfuture/networkipv6config.h"
 #include "setting.h"
 #include "knminternals_export.h"
 

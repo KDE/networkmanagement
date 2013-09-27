@@ -64,8 +64,10 @@ Q_OBJECT
         Plasma::DataEngine* engine();
         void updateWidgets();
         int bitRate();
-        QString currentIpAddress();
-        QString currentIpGateway();
+        QString currentIp4Address();
+        QString currentIp4Gateway();
+        QString currentIp6Address();
+        QString currentIp6Gateway();
         QString getMAC();
         QString connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName = QString());
         void getDetails();

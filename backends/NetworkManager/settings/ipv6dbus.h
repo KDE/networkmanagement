@@ -14,7 +14,7 @@
 #include "nm09dbus_export.h"
 
 #include "settings/ipv6.h"
-#include "networkipv6config.h"
+#include "../solidcontrolfuture/networkipv6config.h"
 
 typedef struct
 {
