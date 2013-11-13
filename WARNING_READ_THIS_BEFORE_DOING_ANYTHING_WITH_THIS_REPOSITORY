@@ -1,0 +1,10 @@
+Since the release of the new Plasma NM applet (version 0.9.3) this repository
+is mostly deprecated. Only NM/0.9 branch has any use (for now). That branch
+holds the old stable Plasma NM 0.9.0.x version.
+
+Unless you have a patch to fix one of bugs in the old Plasma NM 0.9.0.x [1] you
+should use plasma-nm repository instead of this one. There is even a frameworks
+branch in plasma-nm, so it already works with frameworks5, which
+networkmanagement does not.
+ 
+[1] https://bugs.kde.org/buglist.cgi?cmdtype=runnamed&namedcmd=Plasma%20NM%20bugs&list_id=786801
