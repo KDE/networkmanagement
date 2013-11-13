@@ -1,5 +1,7 @@
 project(plasma-networkmanagement)
 
+message(FATAL_ERROR "Read WARNING_READ_THIS_BEFORE_DOING_ANYTHING_WITH_THIS_REPOSITORY file before proceeding. If you really want to continue remove this line before compiling.")
+
 set (MINIMUM_NM_VERSION_REQUIRED "0.9.8")
 
 # We need some features from QML components from kde-runtime >= 4.9.0, like
