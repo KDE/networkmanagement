@@ -1,7 +1,7 @@
 project(plasma-networkmanagement)
 
 option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
-set (MINIMUM_NM_VERSION_REQUIRED "0.9.8")
+set (MINIMUM_NM_VERSION_REQUIRED "0.9.6")
 
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
@@ -39,6 +39,11 @@ if (NETWORKMANAGER_FOUND)
 
     if (${NETWORKMANAGER_VERSION} VERSION_GREATER ${MINIMUM_NM_VERSION_REQUIRED} OR
         ${NETWORKMANAGER_VERSION} VERSION_EQUAL ${MINIMUM_NM_VERSION_REQUIRED})
+
+        if (${NETWORKMANAGER_VERSION} VERSION_LESS "0.9.8")
+            message(WARNING "Unfortunately with NetworkManager < 0.9.8 we cannot correctly detect when the connection is deactivated (see http://bugs.kde.org/320533)")
+        endif()
+
         set(NM_0_9 TRUE)
         add_definitions(-DMINIMUM_NM_VERSION_REQUIRED=\\"${MINIMUM_NM_VERSION_REQUIRED}\\")
         include_directories(
@@ -76,4 +81,3 @@ if(INSTALL_KNM_AUTOSTART)
 endif(INSTALL_KNM_AUTOSTART)
 
 macro_display_feature_log()
-

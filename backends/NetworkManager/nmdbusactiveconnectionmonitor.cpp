@@ -90,9 +90,14 @@ void NMDBusActiveConnectionProxy::setState(uint nmState)
         case NM_ACTIVE_CONNECTION_STATE_DEACTIVATING:
             aState = Knm::InterfaceConnection::Deactivating;
             break;
+
+        // Unfortunately with NetworkManager < 0.9.8 we cannot correctly detect
+        // when the connection is deactivated (see http://bugs.kde.org/320533).
+#if NM_CHECK_VERSION(0, 9, 8)
         case NM_ACTIVE_CONNECTION_STATE_DEACTIVATED:
             aState = Knm::InterfaceConnection::Deactivated;
             break;
+#endif
         default:
             kDebug() << "Unhandled activation state" << nmState;
     }
