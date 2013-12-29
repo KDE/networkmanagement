@@ -71,6 +71,7 @@ void SecurityWired8021x::readConfig()
 void SecurityWired8021x::writeConfig()
 {
     d_ptr->setting8021x->setEnabled(d_ptr->securityEap->isEnabled());
+    d_ptr->setting8021x->setInitialized(d_ptr->securityEap->isEnabled());
     d_ptr->securityEap->writeConfig();
 }
 
