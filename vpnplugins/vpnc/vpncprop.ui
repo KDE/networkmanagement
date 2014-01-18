@@ -234,7 +234,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Weak</string>
+           <string>Weak (DES encryption)</string>
           </property>
          </item>
          <item>
