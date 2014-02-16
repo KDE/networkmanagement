@@ -148,12 +148,6 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("Sleep"), argumentList);
     }
 
-    inline QDBusPendingReply<uint> state()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QLatin1String("state"), argumentList);
-    }
-
 Q_SIGNALS: // SIGNALS
     void CheckPermissions();
     void DeviceAdded(const QDBusObjectPath &device_path);
