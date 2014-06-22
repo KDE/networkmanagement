@@ -544,6 +544,8 @@ void ManageConnectionWidget::editClicked()
 
             if (!rep) {
                 KMessageBox::error(this, i18n("Connection edit option failed, make sure that NetworkManager is properly running."));
+                delete mEditConnection;
+                mEditConnection = 0;
                 return;
             }
 
@@ -563,6 +565,10 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
+
+        delete mEditConnection;
+        mEditConnection = 0;
+        return;
     }
 
     if (!mEditConnection || mEditConnection->uuid() != uuid) {
