@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 Copyright 2011-2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2012-2014 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -65,6 +66,7 @@ K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "networkmanagement_openvpnui", "libknet
 #define TLS_CLIENT_TAG "tls-client"
 #define TLS_REMOTE_TAG "tls-remote"
 #define TUNMTU_TAG "tun-mtu"
+#define REDIRECT_GATEWAY "redirect-gateway"
 
 #define PROC_TYPE_TAG "Proc-Type: 4,ENCRYPTED"
 #define PKCS8_TAG "-----BEGIN ENCRYPTED PRIVATE KEY-----"
@@ -179,6 +181,7 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
     bool proxy_set = false;
     bool have_pass = false;
     bool have_sk = false;
+    bool have_redirect_gateway = false;
 
     QTextStream in(&impFile);
     while (!in.atEnd()) {
@@ -444,11 +447,21 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
             }
             continue;
         }
+        if (key_value[0] == REDIRECT_GATEWAY) {
+            have_redirect_gateway = true;
+            continue;
+        }
         // Import X-NM-Routes if present
         if (key_value[0] == "X-NM-Routes") {
             ipv4Data.insert(NM_SETTING_IP4_CONFIG_ROUTES, key_value[1]);
             continue;
         }
+    }
+    // NetworkManager set vpn connections as default route by default. If the
+    // imported file does not contain "redirect-gateway" entry then set the
+    // connection as never default.
+    if (!have_redirect_gateway) {
+        ipv4Data.insert(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, "true");
     }
     if (!have_client && !have_sk) {
         mError = VpnUiPlugin::Error;
@@ -644,8 +657,13 @@ bool OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, con
             }
         }
     }
-    // Export X-NM-Routes
+    // Export never default setting.
     Knm::Ipv4Setting *ipv4Setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    if (!ipv4Setting->neverdefault()) {
+        line = QString(REDIRECT_GATEWAY) + '\n';
+        expFile.write(line.toLatin1());
+    }
+    // Export X-NM-Routes
     if (!ipv4Setting->routes().isEmpty()) {
         QString routes;
         foreach(const Solid::Control::IPv4RouteNm09 &oneRoute, ipv4Setting->routes()) {
