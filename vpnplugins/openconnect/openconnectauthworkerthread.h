@@ -59,6 +59,18 @@ struct x509_st;
 #define OC_FORM_RESULT_NEWGROUP 2
 #endif
 
+#if OPENCONNECT_CHECK_VER(4,0)
+#define OC3DUP(x)			(x)
+#else
+#define openconnect_set_option_value(opt, val) do { \
+		struct oc_form_opt *_o = (opt);				\
+		free(_o->value); _o->value = strdup(val);		\
+	} while (0)
+#define openconnect_free_cert_info(v, x) ::free(x)
+#define OC3DUP(x)			strdup(x)
+#endif
+
+
 #include <QThread>
 
 class QMutex;
@@ -70,7 +82,7 @@ class OpenconnectAuthWorkerThread : public QThread
     Q_OBJECT
     friend class OpenconnectAuthStaticWrapper;
 public:
-    OpenconnectAuthWorkerThread(QMutex *, QWaitCondition *, bool *, int);
+    OpenconnectAuthWorkerThread(QMutex *, QWaitCondition *, bool *, bool *, int);
     ~OpenconnectAuthWorkerThread();
     struct openconnect_info* getOpenconnectInfo();
 
@@ -85,14 +97,15 @@ protected:
     void run();
 
 private:
-    int writeNewConfig(char *, int);
-    int validatePeerCert(OPENCONNECT_X509 *, const char *);
+    int writeNewConfig(const char *, int);
+    int validatePeerCert(void *, const char *);
     int processAuthFormP(struct oc_auth_form *);
     void writeProgress(int level, const char *, va_list);
 
     QMutex *m_mutex;
     QWaitCondition *m_waitForUserInput;
     bool *m_userDecidedToQuit;
+    bool *m_formGroupChanged;
     struct openconnect_info *m_openconnectInfo;
 };
 

@@ -18,6 +18,7 @@ if (OPENCONNECT_FOUND)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
+        include_directories(${OPENCONNECT_INCLUDE_DIRS})
 
         set(openconnect_SRCS
         openconnectui.cpp
