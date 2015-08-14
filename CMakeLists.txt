@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(plasma-networkmanagement)
 
 option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
@@ -45,7 +46,7 @@ if (NETWORKMANAGER_FOUND)
         endif()
 
         set(NM_0_9 TRUE)
-        add_definitions(-DMINIMUM_NM_VERSION_REQUIRED=\\"${MINIMUM_NM_VERSION_REQUIRED}\\")
+        add_definitions(-DMINIMUM_NM_VERSION_REQUIRED="\\\"${MINIMUM_NM_VERSION_REQUIRED}\\\"")
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
